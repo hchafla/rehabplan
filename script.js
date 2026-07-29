@@ -44,6 +44,7 @@ async function cargarEjercicios() {
 
 
 
+
 function mostrarEjercicios(ejercicios) {
 
 
@@ -61,6 +62,12 @@ function mostrarEjercicios(ejercicios) {
 
 
         tarjeta.className = "card";
+
+
+
+        const añadido = planPaciente.some(
+            e => e.id == ejercicio.id
+        );
 
 
 
@@ -94,7 +101,13 @@ function mostrarEjercicios(ejercicios) {
 
 
             <button onclick="añadirEjercicio(${ejercicio.id})">
-                Añadir al plan
+
+                ${
+                    añadido
+                    ? "✓ Añadido"
+                    : "Añadir al plan"
+                }
+
             </button>
 
         `;
@@ -107,6 +120,9 @@ function mostrarEjercicios(ejercicios) {
 
 
 }
+
+
+
 
 
 
@@ -184,6 +200,8 @@ function crearFiltros(ejercicios) {
 
 
 
+
+
 function aplicarFiltros() {
 
 
@@ -250,6 +268,8 @@ function aplicarFiltros() {
 
 
 
+
+
 function añadirEjercicio(id) {
 
 
@@ -277,8 +297,12 @@ function añadirEjercicio(id) {
 
     mostrarPlan();
 
+    mostrarEjercicios(ejerciciosGlobal);
 
 }
+
+
+
 
 
 
@@ -328,6 +352,9 @@ function mostrarPlan() {
 
 
 
+
+
+
 function eliminarEjercicio(id) {
 
 
@@ -338,7 +365,11 @@ function eliminarEjercicio(id) {
 
     mostrarPlan();
 
+    mostrarEjercicios(ejerciciosGlobal);
+
 }
+
+
 
 
 
