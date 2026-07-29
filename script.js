@@ -18,6 +18,7 @@ let datosPaciente = {
 
 
 
+
 // ==============================
 // CARGAR EJERCICIOS
 // ==============================
@@ -69,7 +70,7 @@ async function cargarEjercicios() {
 
 
 // ==============================
-// MOSTRAR BIBLIOTECA
+// BIBLIOTECA
 // ==============================
 
 function mostrarEjercicios(ejercicios) {
@@ -106,8 +107,7 @@ function mostrarEjercicios(ejercicios) {
 
         <img 
         src="${BASE_URL}${ejercicio.imagen}"
-        alt="${ejercicio.nombre}"
-        >
+        alt="${ejercicio.nombre}">
 
 
         <h3>
@@ -141,8 +141,7 @@ function mostrarEjercicios(ejercicios) {
         </a>
 
 
-        <button 
-        onclick="añadirEjercicio(${ejercicio.id})">
+        <button onclick="añadirEjercicio(${ejercicio.id})">
 
             ${
                 añadido
@@ -206,9 +205,9 @@ function crearFiltros(ejercicios) {
 
         selectRegion.innerHTML += `
 
-            <option value="${region}">
-                ${region}
-            </option>
+        <option value="${region}">
+            ${region}
+        </option>
 
         `;
 
@@ -217,14 +216,16 @@ function crearFiltros(ejercicios) {
 
 
 
+
+
     materiales.forEach(material => {
 
 
         selectMaterial.innerHTML += `
 
-            <option value="${material}">
-                ${material}
-            </option>
+        <option value="${material}">
+            ${material}
+        </option>
 
         `;
 
@@ -263,7 +264,6 @@ function crearFiltros(ejercicios) {
 
 
 
-
 function aplicarFiltros() {
 
 
@@ -286,6 +286,8 @@ function aplicarFiltros() {
         document
         .getElementById("filtroMaterial")
         .value;
+
+
 
 
 
@@ -322,7 +324,6 @@ function aplicarFiltros() {
                     ejercicio.material === material
                 )
 
-
             );
 
 
@@ -334,8 +335,6 @@ function aplicarFiltros() {
 
 
 }
-
-
 
 
 
@@ -405,11 +404,9 @@ function añadirEjercicio(id) {
 
 }
 
-
-
-
-
-
+// ==============================
+// MOSTRAR PLAN
+// ==============================
 
 function mostrarPlan() {
 
@@ -430,6 +427,7 @@ function mostrarPlan() {
 
 
     planPaciente.forEach(item => {
+
 
 
         const bloque =
@@ -455,55 +453,17 @@ function mostrarPlan() {
 
         <label>
 
-        Series:
+            Series:
 
-        <input 
-        type="number"
-        value="${item.series}"
-        onchange="
-        actualizarCampo(
-        ${item.id},
-        'series',
-        this.value
-        )">
-
-        </label>
-
-
-
-
-        <label>
-
-        Tipo:
-
-        <select 
-        onchange="
-        actualizarCampo(
-        ${item.id},
-        'tipo',
-        this.value
-        )">
-
-
-            <option value="repeticiones"
-            ${item.tipo === "repeticiones" ? "selected" : ""}>
-
-                Repeticiones
-
-            </option>
-
-
-
-            <option value="segundos"
-            ${item.tipo === "segundos" ? "selected" : ""}>
-
-                Segundos
-
-            </option>
-
-
-        </select>
-
+            <input 
+            type="number"
+            value="${item.series}"
+            onchange="
+            actualizarCampo(
+                ${item.id},
+                'series',
+                this.value
+            )">
 
         </label>
 
@@ -513,22 +473,37 @@ function mostrarPlan() {
 
         <label>
 
-        ${
-            item.tipo === "segundos"
-            ? "Segundos:"
-            : "Repeticiones:"
-        }
+            Tipo:
+
+            <select 
+            onchange="
+            actualizarCampo(
+                ${item.id},
+                'tipo',
+                this.value
+            )">
 
 
-        <input
-        type="number"
-        value="${item.cantidad}"
-        onchange="
-        actualizarCampo(
-        ${item.id},
-        'cantidad',
-        this.value
-        )">
+                <option 
+                value="repeticiones"
+                ${item.tipo === "repeticiones" ? "selected" : ""}>
+
+                    Repeticiones
+
+                </option>
+
+
+
+                <option 
+                value="segundos"
+                ${item.tipo === "segundos" ? "selected" : ""}>
+
+                    Segundos
+
+                </option>
+
+
+            </select>
 
 
         </label>
@@ -539,17 +514,22 @@ function mostrarPlan() {
 
         <label>
 
-        Notas:
+            ${
+                item.tipo === "segundos"
+                ? "Segundos:"
+                : "Repeticiones:"
+            }
 
 
-        <textarea
-        onchange="
-        actualizarCampo(
-        ${item.id},
-        'notas',
-        this.value
-        )"
-        >${item.notas}</textarea>
+            <input
+            type="number"
+            value="${item.cantidad}"
+            onchange="
+            actualizarCampo(
+                ${item.id},
+                'cantidad',
+                this.value
+            )">
 
 
         </label>
@@ -558,7 +538,28 @@ function mostrarPlan() {
 
 
 
-        <button onclick="eliminarEjercicio(${item.id})">
+        <label>
+
+            Notas:
+
+
+            <textarea
+            onchange="
+            actualizarCampo(
+                ${item.id},
+                'notas',
+                this.value
+            )">${item.notas}</textarea>
+
+
+        </label>
+
+
+
+
+
+        <button 
+        onclick="eliminarEjercicio(${item.id})">
 
             Eliminar
 
@@ -578,7 +579,6 @@ function mostrarPlan() {
 
 
 }
-
 
 
 
@@ -631,7 +631,6 @@ function actualizarCampo(id, campo, valor) {
 
 
 
-
 function eliminarEjercicio(id) {
 
 
@@ -661,6 +660,10 @@ function eliminarEjercicio(id) {
 
 
 
+
+// ==============================
+// NUEVO PLAN
+// ==============================
 
 function nuevoPlan() {
 
@@ -755,6 +758,7 @@ function configurarDatosPaciente() {
         document.getElementById(
             "observacionesPaciente"
         );
+
 
 
 
@@ -911,6 +915,7 @@ function cargarPlan() {
 
 
 
+
 // ==============================
 // GENERAR PDF
 // ==============================
@@ -957,7 +962,6 @@ async function generarPDF() {
         20,
         y
     );
-
 
 
     y += 15;
@@ -1011,7 +1015,10 @@ async function generarPDF() {
         pdf.text(
             datosPaciente.observaciones,
             20,
-            y
+            y,
+            {
+                maxWidth:170
+            }
         );
 
 
@@ -1069,13 +1076,17 @@ async function generarPDF() {
 
         if(item.tipo === "segundos"){
 
+
             pauta +=
             `${item.cantidad} segundos`;
 
+
         } else {
+
 
             pauta +=
             `${item.cantidad} repeticiones`;
+
 
         }
 
@@ -1095,17 +1106,23 @@ async function generarPDF() {
 
 
 
+
+
+
         if(item.notas){
 
 
             pdf.text(
                 `Notas: ${item.notas}`,
                 20,
-                y
+                y,
+                {
+                    maxWidth:170
+                }
             );
 
 
-            y += 8;
+            y += 10;
 
 
         }
@@ -1115,7 +1132,23 @@ async function generarPDF() {
 
 
 
+
         if(item.ejercicio.youtube){
+
+
+
+            pdf.text(
+                "Vídeo del ejercicio:",
+                20,
+                y
+            );
+
+
+
+            y += 5;
+
+
+
 
 
             const qrContainer =
@@ -1124,14 +1157,20 @@ async function generarPDF() {
                 );
 
 
+
             new QRCode(
                 qrContainer,
                 {
+
                     text:item.ejercicio.youtube,
+
                     width:120,
+
                     height:120
+
                 }
             );
+
 
 
 
@@ -1142,6 +1181,7 @@ async function generarPDF() {
 
 
 
+
             const qrImage =
                 qrContainer
                 .querySelector("img")
@@ -1149,14 +1189,6 @@ async function generarPDF() {
 
 
 
-            pdf.text(
-                "Vídeo:",
-                20,
-                y
-            );
-
-
-            y += 5;
 
 
 
@@ -1171,10 +1203,26 @@ async function generarPDF() {
 
 
 
+
+
+
+            pdf.textWithLink(
+                "▶ Ver vídeo explicativo",
+                65,
+                y + 18,
+                {
+                    url:item.ejercicio.youtube
+                }
+            );
+
+
+
             y += 45;
 
 
+
         }
+
 
 
 
@@ -1193,6 +1241,7 @@ async function generarPDF() {
 
 
 }
+
 
 
 
