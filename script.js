@@ -1,43 +1,77 @@
 const BASE_URL = "/rehabplan";
 
+
 let ejerciciosGlobal = [];
+
 
 let planPaciente = [];
 
 
 
+
+// ==============================
+// CARGAR EJERCICIOS
+// ==============================
+
+
 async function cargarEjercicios() {
 
+
     try {
+
 
         const respuesta = await fetch("ejercicios.json");
 
 
+
         if (!respuesta.ok) {
-            throw new Error("No se pudo cargar ejercicios.json");
+
+            throw new Error(
+                "No se pudo cargar ejercicios.json"
+            );
+
         }
+
 
 
         const ejercicios = await respuesta.json();
 
 
+
         ejerciciosGlobal = ejercicios;
 
 
-        console.log("Ejercicios cargados:", ejercicios);
+
+        console.log(
+            "Ejercicios cargados:",
+            ejercicios
+        );
+
 
 
         crearFiltros(ejercicios);
 
 
+
         mostrarEjercicios(ejercicios);
 
 
-    } catch (error) {
 
-        console.error("Error cargando ejercicios:", error);
+        mostrarPlan();
+
+
+
+    } catch(error) {
+
+
+        console.error(
+            "Error cargando ejercicios:",
+            error
+        );
+
 
     }
+
 
 }
 
@@ -45,49 +79,75 @@ async function cargarEjercicios() {
 
 
 
+
+// ==============================
+// BIBLIOTECA
+// ==============================
+
+
 function mostrarEjercicios(ejercicios) {
 
 
-    const contenedor = document.getElementById("biblioteca");
+    const contenedor =
+        document.getElementById("biblioteca");
+
 
 
     contenedor.innerHTML = "";
 
 
 
+
     ejercicios.forEach(ejercicio => {
 
 
-        const tarjeta = document.createElement("div");
+
+        const tarjeta =
+            document.createElement("div");
+
 
 
         tarjeta.className = "card";
 
 
 
-        const añadido = planPaciente.some(
-            e => e.id == ejercicio.id
-        );
+
+        const añadido =
+            planPaciente.some(
+                e => e.id == ejercicio.id
+            );
+
 
 
 
         tarjeta.innerHTML = `
 
-            <img src="${BASE_URL}${ejercicio.imagen}" 
-                 alt="${ejercicio.nombre}">
+
+            <img 
+            src="${BASE_URL}${ejercicio.imagen}"
+            alt="${ejercicio.nombre}"
+            >
 
 
-            <h3>${ejercicio.nombre}</h3>
+
+            <h3>
+                ${ejercicio.nombre}
+            </h3>
+
 
 
             <p>
-                <strong>Región:</strong> ${ejercicio.region}
+                <strong>Región:</strong>
+                ${ejercicio.region}
             </p>
+
 
 
             <p>
-                <strong>Material:</strong> ${ejercicio.material}
+                <strong>Material:</strong>
+                ${ejercicio.material}
             </p>
+
 
 
             <p>
@@ -95,12 +155,21 @@ function mostrarEjercicios(ejercicios) {
             </p>
 
 
-            <a href="${ejercicio.youtube}" target="_blank">
+
+            <a 
+            href="${ejercicio.youtube}" 
+            target="_blank">
+
                 Ver vídeo
+
             </a>
 
 
-            <button onclick="añadirEjercicio(${ejercicio.id})">
+
+
+            <button 
+            onclick="añadirEjercicio(${ejercicio.id})">
+
 
                 ${
                     añadido
@@ -108,15 +177,21 @@ function mostrarEjercicios(ejercicios) {
                     : "Añadir al plan"
                 }
 
+
             </button>
 
+
         `;
+
+
 
 
         contenedor.appendChild(tarjeta);
 
 
+
     });
+
 
 
 }
@@ -127,24 +202,42 @@ function mostrarEjercicios(ejercicios) {
 
 
 
+// ==============================
+// FILTROS
+// ==============================
+
+
 function crearFiltros(ejercicios) {
 
 
-    const regiones = [...new Set(
-        ejercicios.map(e => e.region)
-    )];
 
-
-    const materiales = [...new Set(
-        ejercicios.map(e => e.material)
-    )];
+    const regiones =
+        [...new Set(
+            ejercicios.map(e => e.region)
+        )];
 
 
 
-    const selectRegion = document.getElementById("filtroRegion");
+    const materiales =
+        [...new Set(
+            ejercicios.map(e => e.material)
+        )];
 
 
-    const selectMaterial = document.getElementById("filtroMaterial");
+
+    const selectRegion =
+        document.getElementById(
+            "filtroRegion"
+        );
+
+
+
+    const selectMaterial =
+        document.getElementById(
+            "filtroMaterial"
+        );
+
+
 
 
 
@@ -153,13 +246,18 @@ function crearFiltros(ejercicios) {
 
         selectRegion.innerHTML += `
 
+
             <option value="${region}">
                 ${region}
             </option>
 
+
         `;
 
+
     });
+
+
 
 
 
@@ -168,29 +266,44 @@ function crearFiltros(ejercicios) {
 
         selectMaterial.innerHTML += `
 
+
             <option value="${material}">
                 ${material}
             </option>
 
+
         `;
+
 
     });
 
 
 
+
+
+
     document
-        .getElementById("buscador")
-        .addEventListener("input", aplicarFiltros);
+    .getElementById("buscador")
+    .addEventListener(
+        "input",
+        aplicarFiltros
+    );
 
 
 
-    selectRegion
-        .addEventListener("change", aplicarFiltros);
+
+    selectRegion.addEventListener(
+        "change",
+        aplicarFiltros
+    );
 
 
 
-    selectMaterial
-        .addEventListener("change", aplicarFiltros);
+    selectMaterial.addEventListener(
+        "change",
+        aplicarFiltros
+    );
+
 
 
 }
@@ -204,60 +317,79 @@ function crearFiltros(ejercicios) {
 function aplicarFiltros() {
 
 
-    const texto = document
+
+    const texto =
+        document
         .getElementById("buscador")
         .value
         .toLowerCase();
 
 
 
-    const region = document
+
+    const region =
+        document
         .getElementById("filtroRegion")
         .value;
 
 
 
-    const material = document
+
+    const material =
+        document
         .getElementById("filtroMaterial")
         .value;
 
 
 
-    const resultado = ejerciciosGlobal.filter(ejercicio => {
 
 
-        return (
 
-            ejercicio.nombre
+    const resultado =
+        ejerciciosGlobal.filter(
+            ejercicio => {
+
+
+            return (
+
+                ejercicio.nombre
                 .toLowerCase()
                 .includes(texto)
 
 
-            &&
+
+                &&
 
 
-            (
-                !region ||
-                ejercicio.region === region
-            )
+
+                (
+                    !region ||
+                    ejercicio.region === region
+                )
 
 
-            &&
+
+                &&
 
 
-            (
-                !material ||
-                ejercicio.material === material
-            )
 
-        );
+                (
+                    !material ||
+                    ejercicio.material === material
+                )
 
 
-    });
+            );
+
+
+        });
+
+
 
 
 
     mostrarEjercicios(resultado);
+
 
 
 }
@@ -268,40 +400,64 @@ function aplicarFiltros() {
 
 
 
+
+
+// ==============================
+// PLAN PACIENTE
+// ==============================
+
+
 function añadirEjercicio(id) {
 
 
-    const ejercicio = ejerciciosGlobal.find(
-        e => e.id == id
-    );
+
+    const ejercicio =
+        ejerciciosGlobal.find(
+            e => e.id == id
+        );
 
 
-    if (!ejercicio) return;
+
+    if (!ejercicio)
+        return;
 
 
 
-    const existe = planPaciente.some(
-        e => e.id == id
-    );
+
+
+    const existe =
+        planPaciente.some(
+            e => e.id == id
+        );
+
+
 
 
 
     if (!existe) {
 
 
+
         planPaciente.push({
+
 
             id: ejercicio.id,
 
+
             ejercicio: ejercicio,
+
 
             series: 3,
 
+
             tipo: "repeticiones",
+
 
             cantidad: 10,
 
+
             notas: ""
+
 
         });
 
@@ -309,11 +465,25 @@ function añadirEjercicio(id) {
     }
 
 
+
+
+
+    guardarPlan();
+
+
+
     mostrarPlan();
 
-    mostrarEjercicios(ejerciciosGlobal);
+
+
+    mostrarEjercicios(
+        ejerciciosGlobal
+    );
+
+
 
 }
+
 
 
 
@@ -324,101 +494,208 @@ function añadirEjercicio(id) {
 function mostrarPlan() {
 
 
-    const contenedor = document.getElementById("planPaciente");
+    const contenedor =
+        document.getElementById(
+            "planPaciente"
+        );
+
+
+
+    if (!contenedor)
+        return;
+
+
+
 
 
     contenedor.innerHTML = "";
 
 
 
+
+
     planPaciente.forEach(item => {
 
 
-        const elemento = document.createElement("div");
 
 
-        elemento.className = "plan-item";
-
-
-
-        elemento.innerHTML = `
-
-            <h3>
-                ${item.ejercicio.nombre}
-            </h3>
-
-
-            <label>
-                Series:
-                <input 
-                    type="number"
-                    value="${item.series}"
-                    onchange="actualizarCampo(${item.id}, 'series', this.value)"
-                >
-            </label>
-
-
-            <label>
-                Tipo:
-                <select 
-                    onchange="actualizarCampo(${item.id}, 'tipo', this.value)"
-                >
-
-                    <option value="repeticiones"
-                    ${item.tipo === "repeticiones" ? "selected" : ""}>
-                        Repeticiones
-                    </option>
-
-
-                    <option value="segundos"
-                    ${item.tipo === "segundos" ? "selected" : ""}>
-                        Segundos
-                    </option>
-
-                </select>
-            </label>
+        const bloque =
+            document.createElement(
+                "div"
+            );
 
 
 
-            <label>
+        bloque.className =
+            "plan-item";
+
+
+
+
+
+        bloque.innerHTML = `
+
+
+        <h3>
+            ${item.ejercicio.nombre}
+        </h3>
+
+
+
+        <label>
+
+            Series:
+
+            <input 
+            type="number"
+            value="${item.series}"
+            onchange="
+            actualizarCampo(
+            ${item.id},
+            'series',
+            this.value
+            )">
+
+        </label>
+
+
+
+
+        <label>
+
+
+            Tipo:
+
+
+            <select 
+            onchange="
+            actualizarCampo(
+            ${item.id},
+            'tipo',
+            this.value
+            )">
+
+
+                <option 
+                value="repeticiones"
                 ${
-                    item.tipo === "segundos"
-                    ? "Segundos:"
-                    : "Repeticiones:"
-                }
+                item.tipo === "repeticiones"
+                ? "selected"
+                : ""
+                }>
 
-                <input 
-                    type="number"
-                    value="${item.cantidad}"
-                    onchange="actualizarCampo(${item.id}, 'cantidad', this.value)"
-                >
+                    Repeticiones
 
-            </label>
+                </option>
 
 
 
-            <label>
-                Notas:
 
-                <textarea
-                    onchange="actualizarCampo(${item.id}, 'notas', this.value)"
-                >${item.notas}</textarea>
+                <option 
+                value="segundos"
+                ${
+                item.tipo === "segundos"
+                ? "selected"
+                : ""
+                }>
 
-            </label>
+                    Segundos
+
+                </option>
 
 
 
-            <button onclick="eliminarEjercicio(${item.id})">
-                Eliminar
-            </button>
+            </select>
+
+
+
+        </label>
+
+
+
+
+
+
+        <label>
+
+
+            ${
+            item.tipo === "segundos"
+            ? "Segundos:"
+            : "Repeticiones:"
+            }
+
+
+
+            <input 
+            type="number"
+            value="${item.cantidad}"
+            onchange="
+            actualizarCampo(
+            ${item.id},
+            'cantidad',
+            this.value
+            )">
+
+
+        </label>
+
+
+
+
+
+
+
+        <label>
+
+
+            Notas:
+
+
+            <textarea
+            onchange="
+            actualizarCampo(
+            ${item.id},
+            'notas',
+            this.value
+            )"
+            >${item.notas}</textarea>
+
+
+
+        </label>
+
+
+
+
+
+        <button
+        onclick="
+        eliminarEjercicio(${item.id})
+        ">
+
+            Eliminar
+
+        </button>
+
+
+
 
         `;
 
 
-        contenedor.appendChild(elemento);
+
+
+
+        contenedor.appendChild(
+            bloque
+        );
+
+
 
 
     });
+
 
 
 }
@@ -429,23 +706,42 @@ function mostrarPlan() {
 
 
 
-function actualizarCampo(id, campo, valor) {
 
 
-    const ejercicio = planPaciente.find(
-        e => e.id == id
-    );
-
-
-    if (!ejercicio) return;
+function actualizarCampo(
+    id,
+    campo,
+    valor
+) {
 
 
 
-    if (campo === "series" || campo === "cantidad") {
+    const ejercicio =
+        planPaciente.find(
+            e => e.id == id
+        );
+
+
+
+    if (!ejercicio)
+        return;
+
+
+
+
+
+    if (
+        campo === "series" ||
+        campo === "cantidad"
+    ) {
+
 
         valor = Number(valor);
 
+
     }
+
+
 
 
 
@@ -453,10 +749,20 @@ function actualizarCampo(id, campo, valor) {
 
 
 
+
+
+    guardarPlan();
+
+
+
     mostrarPlan();
 
 
+
+
 }
+
+
 
 
 
@@ -467,14 +773,26 @@ function actualizarCampo(id, campo, valor) {
 function eliminarEjercicio(id) {
 
 
-    planPaciente = planPaciente.filter(
-        e => e.id != id
-    );
+    planPaciente =
+        planPaciente.filter(
+            e => e.id != id
+        );
+
+
+
+    guardarPlan();
+
 
 
     mostrarPlan();
 
-    mostrarEjercicios(ejerciciosGlobal);
+
+
+    mostrarEjercicios(
+        ejerciciosGlobal
+    );
+
+
 
 }
 
@@ -482,6 +800,115 @@ function eliminarEjercicio(id) {
 
 
 
+
+
+
+
+function nuevoPlan() {
+
+
+    const confirmar =
+        confirm(
+        "¿Seguro que quieres borrar el plan actual?"
+        );
+
+
+
+    if (!confirmar)
+        return;
+
+
+
+
+
+    planPaciente = [];
+
+
+
+    guardarPlan();
+
+
+
+    mostrarPlan();
+
+
+
+    mostrarEjercicios(
+        ejerciciosGlobal
+    );
+
+
+
+}
+
+
+
+
+
+
+
+// ==============================
+// LOCAL STORAGE
+// ==============================
+
+
+function guardarPlan() {
+
+
+    localStorage.setItem(
+
+        "planPaciente",
+
+        JSON.stringify(
+            planPaciente
+        )
+
+    );
+
+
+}
+
+
+
+
+
+
+
+function cargarPlan() {
+
+
+    const guardado =
+        localStorage.getItem(
+            "planPaciente"
+        );
+
+
+
+    if (guardado) {
+
+
+        planPaciente =
+            JSON.parse(
+                guardado
+            );
+
+
+    }
+
+
+}
+
+
+
+
+
+
+// ==============================
+// INICIO
+// ==============================
+
+
+cargarPlan();
 
 
 cargarEjercicios();
