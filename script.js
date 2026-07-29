@@ -915,6 +915,68 @@ function cargarPlan() {
 
 
 
+async function cargarImagenPDF(url) {
+
+    return new Promise((resolve, reject) => {
+
+
+        const img = new Image();
+
+
+        img.crossOrigin = "Anonymous";
+
+
+        img.onload = function(){
+
+
+            const canvas =
+                document.createElement("canvas");
+
+
+            canvas.width =
+                img.width;
+
+
+            canvas.height =
+                img.height;
+
+
+
+            const ctx =
+                canvas.getContext("2d");
+
+
+
+            ctx.drawImage(
+                img,
+                0,
+                0
+            );
+
+
+
+            resolve(
+                canvas.toDataURL(
+                    "image/jpeg",
+                    0.8
+                )
+            );
+
+
+        };
+
+
+
+        img.onerror = reject;
+
+
+
+        img.src = url;
+
+
+    });
+
+}
 
 // ==============================
 // GENERAR PDF
@@ -1057,6 +1119,41 @@ async function generarPDF() {
             20,
             y
         );
+
+        y += 5;
+
+
+try {
+
+
+    const imagen = await cargarImagenPDF(
+        `${BASE_URL}${item.ejercicio.imagen}`
+    );
+
+
+    pdf.addImage(
+        imagen,
+        "JPEG",
+        20,
+        y,
+        50,
+        50
+    );
+
+
+    y += 60;
+
+
+} catch(error){
+
+
+    console.error(
+        "No se pudo cargar imagen",
+        error
+    );
+
+
+}
 
 
 
