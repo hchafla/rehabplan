@@ -25,11 +25,22 @@ function mostrarEjercicios(ejercicios) {
         tarjeta.className = "card";
 
         tarjeta.innerHTML = `
-            <img src="https://hchafla.github.io/rehabplan${ejercicio.imagen}">
-            <h3>${ejercicio.nombre}</h3>
-            <p>${ejercicio.region}</p>
-            <p>${ejercicio.objetivo}</p>
-        `;
+    <img src="https://hchafla.github.io/rehabplan${ejercicio.imagen}">
+    
+    <h3>${ejercicio.nombre}</h3>
+
+    <p><strong>Región:</strong> ${ejercicio.region}</p>
+
+    <p><strong>Objetivo:</strong> ${ejercicio.objetivo}</p>
+
+    <p><strong>Material:</strong> ${ejercicio.material}</p>
+
+    <p>${ejercicio.descripcion}</p>
+
+    <a href="${ejercicio.youtube}" target="_blank">
+        Ver vídeo
+    </a>
+`;
 
         contenedor.appendChild(tarjeta);
 
