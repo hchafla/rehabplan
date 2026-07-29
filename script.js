@@ -1098,8 +1098,12 @@ async function generarPDF() {
     for (const item of planPaciente) {
 
 
+        // Altura estimada del bloque completo (imagen o QR, lo que sea más alto)
+        // para decidir si hace falta salto de página ANTES de empezar a dibujar.
+        const alturaBloque = 110;
 
-        if(y > 250){
+
+        if(y + alturaBloque > 280){
 
             pdf.addPage();
 
@@ -1123,6 +1127,11 @@ async function generarPDF() {
         y += 5;
 
 
+        // Guardamos la altura de referencia: imagen y QR se pintan
+        // a la misma altura (columna izquierda / columna derecha).
+        const inicioImagenY = y;
+
+
 try {
 
 
@@ -1135,13 +1144,10 @@ try {
         imagen,
         "JPEG",
         20,
-        y,
+        inicioImagenY,
         50,
         50
     );
-
-
-    y += 60;
 
 
 } catch(error){
@@ -1156,6 +1162,9 @@ try {
 }
 
 
+
+        // Columna izquierda: continúa el flujo de texto debajo de la imagen
+        y = inicioImagenY + 60;
 
         y += 8;
 
@@ -1230,19 +1239,21 @@ try {
 
 
 
+        // Columna derecha: QR y enlace, SIEMPRE a la misma altura
+        // que la imagen (inicioImagenY), independiente de cuánto
+        // texto haya en la columna izquierda.
+        let finColumnaDerecha = inicioImagenY;
+
+
         if(item.ejercicio.youtube){
 
 
 
             pdf.text(
                 "Vídeo del ejercicio:",
-                20,
-                y
+                130,
+                inicioImagenY
             );
-
-
-
-            y += 5;
 
 
 
@@ -1306,6 +1317,7 @@ if(canvasQR){
 
 
 
+            const qrY = inicioImagenY + 5;
 
 
 
@@ -1313,7 +1325,7 @@ if(canvasQR){
                 qrImage,
                 "PNG",
                 155,
-                y,
+                qrY,
                 35,
                 35
             );
@@ -1325,7 +1337,7 @@ if(canvasQR){
 
 pdf.link(
     150,
-    y + 38,
+    qrY + 38,
     45,
     12,
     {
@@ -1337,13 +1349,12 @@ pdf.link(
 pdf.text(
     "Ver vídeo",
     155,
-    y + 45
+    qrY + 45
 );
 
 
 
-            y += 65;
-
+            finColumnaDerecha = qrY + 45 + 5;
 
 
         }
@@ -1351,7 +1362,9 @@ pdf.text(
 
 
 
-        y += 10;
+        // La siguiente ficha empieza debajo de lo más alto entre
+        // la columna izquierda (texto) y la derecha (QR + enlace).
+        y = Math.max(y, finColumnaDerecha) + 10;
 
 
     }
