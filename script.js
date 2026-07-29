@@ -1095,21 +1095,55 @@ async function generarPDF() {
 
 
 
-    for (const item of planPaciente) {
+    for (let indice = 0; indice < planPaciente.length; indice++) {
 
 
-        // Altura estimada del bloque completo (imagen o QR, lo que sea más alto)
-        // para decidir si hace falta salto de página ANTES de empezar a dibujar.
-        const alturaBloque = 110;
+        const item = planPaciente[indice];
 
 
-        if(y + alturaBloque > 280){
+        // Altura estimada del bloque completo (separador + número +
+        // imagen/QR + texto) para decidir si hace falta salto de
+        // página ANTES de empezar a dibujar.
+        const alturaBloque = 120;
+
+
+        if(y + alturaBloque > 275){
 
             pdf.addPage();
 
             y = 20;
 
         }
+
+
+
+
+        // Línea separadora entre ejercicios
+        pdf.setDrawColor(200);
+
+        pdf.setLineWidth(0.5);
+
+        pdf.line(20, y, 190, y);
+
+        y += 8;
+
+
+
+
+        // Número de ejercicio
+        pdf.setFontSize(10);
+
+        pdf.setTextColor(120);
+
+        pdf.text(
+            `Ejercicio ${indice + 1}`,
+            20,
+            y
+        );
+
+        pdf.setTextColor(0);
+
+        y += 6;
 
 
 
@@ -1369,6 +1403,54 @@ pdf.text(
 
     }
 
+
+
+
+
+    // ==============================
+    // PIE DE PÁGINA
+    // ==============================
+
+    const totalPaginas =
+        pdf.internal.getNumberOfPages();
+
+
+    for (let pagina = 1; pagina <= totalPaginas; pagina++) {
+
+
+        pdf.setPage(pagina);
+
+
+        pdf.setDrawColor(200);
+
+        pdf.setLineWidth(0.3);
+
+        pdf.line(20, 283, 190, 283);
+
+
+        pdf.setFontSize(9);
+
+        pdf.setTextColor(120);
+
+        pdf.text(
+            "RehabPlan | Programa de ejercicios personalizado",
+            20,
+            290
+        );
+
+        pdf.text(
+            `Página ${pagina}`,
+            190,
+            290,
+            {
+                align: "right"
+            }
+        );
+
+        pdf.setTextColor(0);
+
+
+    }
 
 
 
