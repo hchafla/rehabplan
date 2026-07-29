@@ -14,15 +14,15 @@
   },
   {
     "id": 2,
-    "nombre": "Rotaci?n externa hombro",
+    "nombre": "Rotacion externa hombro",
     "region": "hombro",
     "objetivo": "fortalecer",
-    "material": "El?stico",
+    "material": "Elastico",
     "imagen": "img/hombro/rotextbanda.png",
     "youtube": "https://www.youtube.com/watch?v=wQdfeB80fqo",
     "descripcion": "Ejercicio para fortalecer",
     "etiquetas": [
-      "Prevenci?n"
+      "Prevencion"
     ]
   }
 ]
