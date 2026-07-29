@@ -1304,7 +1304,7 @@ try {
 
 
             pdf.textWithLink(
-                "▶ Ver vídeo explicativo",
+                "🔗 Ver vídeo explicativo",
                 65,
                 y + 18,
                 {
