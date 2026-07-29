@@ -2,7 +2,7 @@
   {
     "id": 1,
     "nombre": "Puente de gluteos",
-    "region": "lumbar",
+    "region": "Lumbar",
     "objetivo": "fortalecer",
     "material": "Ninguno",
     "imagen": "/img/lumbar/puente.webp",
@@ -15,7 +15,7 @@
   {
     "id": 2,
     "nombre": "Rotación externa hombro",
-    "region": "hombro",
+    "region": "Hombro",
     "objetivo": "fortalecer",
     "material": "Elástico",
     "imagen": "/img/hombro/rotextbanda.webp",
