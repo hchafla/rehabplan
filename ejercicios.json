@@ -9,20 +9,20 @@
     "youtube": "https://www.youtube.com/watch?v=TZBUBUrmA9g",
     "descripcion": "Ejercicio para fortalecer",
     "etiquetas": [
-      "Tonificaci?n"
+      "Tonificación"
     ]
   },
   {
     "id": 2,
-    "nombre": "Rotaci?n externa hombro",
+    "nombre": "Rotación externa hombro",
     "region": "hombro",
     "objetivo": "fortalecer",
-    "material": "El?stico",
+    "material": "Elástico",
     "imagen": "/img/hombro/rotextbanda.webp",
     "youtube": "https://www.youtube.com/watch?v=wQdfeB80fqo",
     "descripcion": "Ejercicio para fortalecer",
     "etiquetas": [
-      "Prevenci?n"
+      "Prevención"
     ]
   }
 ]
