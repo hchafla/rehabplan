@@ -16,54 +16,77 @@
 
 <body>
 
-    <h1>RehabPlan</h1>
 
-
-    <div class="filtros">
-
-        <input 
-            type="text" 
-            id="buscador" 
-            placeholder="Buscar ejercicio..."
-        >
-
-
-        <select id="filtroRegion">
-
-            <option value="">
-                Todas las regiones
-            </option>
-
-        </select>
-
-
-        <select id="filtroMaterial">
-
-            <option value="">
-                Todos los materiales
-            </option>
-
-        </select>
-
-    </div>
+<h1>RehabPlan</h1>
 
 
 
-    <h2>Biblioteca de ejercicios</h2>
+<div class="filtros">
 
 
-    <div id="biblioteca"></div>
-
-
-
-    <h2>Plan del paciente</h2>
-
-
-    <div id="planPaciente"></div>
+    <input 
+        type="text" 
+        id="buscador" 
+        placeholder="Buscar ejercicio..."
+    >
 
 
 
-    <script src="script.js"></script>
+    <select id="filtroRegion">
+
+        <option value="">
+            Todas las regiones
+        </option>
+
+    </select>
+
+
+
+    <select id="filtroMaterial">
+
+        <option value="">
+            Todos los materiales
+        </option>
+
+    </select>
+
+
+</div>
+
+
+
+
+
+<h2>Biblioteca de ejercicios</h2>
+
+
+<div id="biblioteca"></div>
+
+
+
+
+
+
+
+<h2>Plan del paciente</h2>
+
+
+<button onclick="nuevoPlan()">
+
+    Nuevo plan
+
+</button>
+
+
+
+<div id="planPaciente"></div>
+
+
+
+
+
+
+<script src="script.js"></script>
 
 
 </body>
