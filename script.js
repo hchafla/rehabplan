@@ -178,7 +178,6 @@ function crearFiltros(ejercicios) {
 
 
 
-
     document
         .getElementById("buscador")
         .addEventListener("input", aplicarFiltros);
@@ -221,7 +220,6 @@ function aplicarFiltros() {
     const material = document
         .getElementById("filtroMaterial")
         .value;
-
 
 
 
@@ -290,7 +288,23 @@ function añadirEjercicio(id) {
 
     if (!existe) {
 
-        planPaciente.push(ejercicio);
+
+        planPaciente.push({
+
+            id: ejercicio.id,
+
+            ejercicio: ejercicio,
+
+            series: 3,
+
+            tipo: "repeticiones",
+
+            cantidad: 10,
+
+            notas: ""
+
+        });
+
 
     }
 
@@ -317,7 +331,7 @@ function mostrarPlan() {
 
 
 
-    planPaciente.forEach(ejercicio => {
+    planPaciente.forEach(item => {
 
 
         const elemento = document.createElement("div");
@@ -329,13 +343,73 @@ function mostrarPlan() {
 
         elemento.innerHTML = `
 
-            <span>
-                ${ejercicio.nombre}
-            </span>
+            <h3>
+                ${item.ejercicio.nombre}
+            </h3>
 
 
-            <button onclick="eliminarEjercicio(${ejercicio.id})">
-                ❌
+            <label>
+                Series:
+                <input 
+                    type="number"
+                    value="${item.series}"
+                    onchange="actualizarCampo(${item.id}, 'series', this.value)"
+                >
+            </label>
+
+
+            <label>
+                Tipo:
+                <select 
+                    onchange="actualizarCampo(${item.id}, 'tipo', this.value)"
+                >
+
+                    <option value="repeticiones"
+                    ${item.tipo === "repeticiones" ? "selected" : ""}>
+                        Repeticiones
+                    </option>
+
+
+                    <option value="segundos"
+                    ${item.tipo === "segundos" ? "selected" : ""}>
+                        Segundos
+                    </option>
+
+                </select>
+            </label>
+
+
+
+            <label>
+                ${
+                    item.tipo === "segundos"
+                    ? "Segundos:"
+                    : "Repeticiones:"
+                }
+
+                <input 
+                    type="number"
+                    value="${item.cantidad}"
+                    onchange="actualizarCampo(${item.id}, 'cantidad', this.value)"
+                >
+
+            </label>
+
+
+
+            <label>
+                Notas:
+
+                <textarea
+                    onchange="actualizarCampo(${item.id}, 'notas', this.value)"
+                >${item.notas}</textarea>
+
+            </label>
+
+
+
+            <button onclick="eliminarEjercicio(${item.id})">
+                Eliminar
             </button>
 
         `;
@@ -345,6 +419,41 @@ function mostrarPlan() {
 
 
     });
+
+
+}
+
+
+
+
+
+
+
+function actualizarCampo(id, campo, valor) {
+
+
+    const ejercicio = planPaciente.find(
+        e => e.id == id
+    );
+
+
+    if (!ejercicio) return;
+
+
+
+    if (campo === "series" || campo === "cantidad") {
+
+        valor = Number(valor);
+
+    }
+
+
+
+    ejercicio[campo] = valor;
+
+
+
+    mostrarPlan();
 
 
 }
