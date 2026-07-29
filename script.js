@@ -1271,18 +1271,38 @@ try {
 
 
 
-            await new Promise(
-                resolve =>
-                setTimeout(resolve,300)
-            );
+           await new Promise(
+    resolve =>
+    setTimeout(resolve,500)
+);
+
+
+let qrImage;
+
+
+const imgQR =
+    qrContainer.querySelector("img");
+
+
+const canvasQR =
+    qrContainer.querySelector("canvas");
 
 
 
+if(imgQR){
 
-            const qrImage =
-                qrContainer
-                .querySelector("img")
-                .src;
+    qrImage = imgQR.src;
+
+}
+
+
+if(canvasQR){
+
+    qrImage = canvasQR.toDataURL(
+        "image/png"
+    );
+
+}
 
 
 
@@ -1303,11 +1323,11 @@ try {
 
 
 
-           pdf.link(
+pdf.link(
     65,
-    y + 8,
-    55,
-    10,
+    y + 10,
+    70,
+    12,
     {
         url:item.ejercicio.youtube
     }
@@ -1315,7 +1335,7 @@ try {
 
 
 pdf.text(
-    "🔗 Ver vídeo explicativo",
+    "Ver vídeo",
     65,
     y + 18
 );
