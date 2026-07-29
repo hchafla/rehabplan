@@ -25,7 +25,7 @@ function mostrarEjercicios(ejercicios) {
         tarjeta.className = "card";
 
         tarjeta.innerHTML = `
-            <img src="${ejercicio.imagen}">
+            <img src="https://hchafla.github.io/rehabplan${ejercicio.imagen}">
             <h3>${ejercicio.nombre}</h3>
             <p>${ejercicio.region}</p>
             <p>${ejercicio.objetivo}</p>
