@@ -1303,14 +1303,22 @@ try {
 
 
 
-            pdf.textWithLink(
-                "🔗 Ver vídeo explicativo",
-                65,
-                y + 18,
-                {
-                    url:item.ejercicio.youtube
-                }
-            );
+           pdf.link(
+    65,
+    y + 8,
+    55,
+    10,
+    {
+        url:item.ejercicio.youtube
+    }
+);
+
+
+pdf.text(
+    "🔗 Ver vídeo explicativo",
+    65,
+    y + 18
+);
 
 
 
