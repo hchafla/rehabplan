@@ -18,16 +18,13 @@ let datosPaciente = {
 
 
 
-
 // ==============================
 // CARGAR EJERCICIOS
 // ==============================
 
 async function cargarEjercicios() {
 
-
     try {
-
 
         const respuesta = await fetch("ejercicios.json");
 
@@ -41,38 +38,29 @@ async function cargarEjercicios() {
         }
 
 
-
         const ejercicios = await respuesta.json();
-
 
 
         ejerciciosGlobal = ejercicios;
 
 
-
         crearFiltros(ejercicios);
-
 
 
         mostrarEjercicios(ejercicios);
 
 
-
         mostrarPlan();
 
 
-
     } catch(error) {
-
 
         console.error(
             "Error cargando ejercicios:",
             error
         );
 
-
     }
-
 
 }
 
@@ -80,9 +68,8 @@ async function cargarEjercicios() {
 
 
 
-
 // ==============================
-// BIBLIOTECA
+// MOSTRAR BIBLIOTECA
 // ==============================
 
 function mostrarEjercicios(ejercicios) {
@@ -101,7 +88,6 @@ function mostrarEjercicios(ejercicios) {
 
         const tarjeta =
             document.createElement("div");
-
 
 
         tarjeta.className = "card";
@@ -124,11 +110,9 @@ function mostrarEjercicios(ejercicios) {
         >
 
 
-
         <h3>
             ${ejercicio.nombre}
         </h3>
-
 
 
         <p>
@@ -137,18 +121,15 @@ function mostrarEjercicios(ejercicios) {
         </p>
 
 
-
         <p>
             <strong>Material:</strong>
             ${ejercicio.material}
         </p>
 
 
-
         <p>
             ${ejercicio.descripcion}
         </p>
-
 
 
         <a 
@@ -160,8 +141,8 @@ function mostrarEjercicios(ejercicios) {
         </a>
 
 
-
-        <button onclick="añadirEjercicio(${ejercicio.id})">
+        <button 
+        onclick="añadirEjercicio(${ejercicio.id})">
 
             ${
                 añadido
@@ -179,13 +160,10 @@ function mostrarEjercicios(ejercicios) {
         contenedor.appendChild(tarjeta);
 
 
-
     });
 
 
-
 }
-
 
 
 
@@ -228,9 +206,9 @@ function crearFiltros(ejercicios) {
 
         selectRegion.innerHTML += `
 
-        <option value="${region}">
-            ${region}
-        </option>
+            <option value="${region}">
+                ${region}
+            </option>
 
         `;
 
@@ -239,16 +217,14 @@ function crearFiltros(ejercicios) {
 
 
 
-
-
     materiales.forEach(material => {
 
 
         selectMaterial.innerHTML += `
 
-        <option value="${material}">
-            ${material}
-        </option>
+            <option value="${material}">
+                ${material}
+            </option>
 
         `;
 
@@ -287,6 +263,7 @@ function crearFiltros(ejercicios) {
 
 
 
+
 function aplicarFiltros() {
 
 
@@ -309,8 +286,6 @@ function aplicarFiltros() {
         document
         .getElementById("filtroMaterial")
         .value;
-
-
 
 
 
@@ -347,6 +322,7 @@ function aplicarFiltros() {
                     ejercicio.material === material
                 )
 
+
             );
 
 
@@ -366,6 +342,7 @@ function aplicarFiltros() {
 
 
 
+
 // ==============================
 // PLAN PACIENTE
 // ==============================
@@ -377,7 +354,6 @@ function añadirEjercicio(id) {
         ejerciciosGlobal.find(
             e => e.id == id
         );
-
 
 
     if (!ejercicio)
@@ -435,7 +411,6 @@ function añadirEjercicio(id) {
 
 
 
-
 function mostrarPlan() {
 
 
@@ -457,9 +432,10 @@ function mostrarPlan() {
     planPaciente.forEach(item => {
 
 
-
         const bloque =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
 
@@ -496,7 +472,6 @@ function mostrarPlan() {
 
 
 
-
         <label>
 
         Tipo:
@@ -529,8 +504,8 @@ function mostrarPlan() {
 
         </select>
 
-        </label>
 
+        </label>
 
 
 
@@ -557,7 +532,6 @@ function mostrarPlan() {
 
 
         </label>
-
 
 
 
@@ -591,7 +565,6 @@ function mostrarPlan() {
         </button>
 
 
-
         `;
 
 
@@ -602,7 +575,6 @@ function mostrarPlan() {
 
 
     });
-
 
 
 }
@@ -648,11 +620,11 @@ function actualizarCampo(id, campo, valor) {
     guardarPlan();
 
 
-
     mostrarPlan();
 
 
 }
+
 
 
 
@@ -673,9 +645,7 @@ function eliminarEjercicio(id) {
     guardarPlan();
 
 
-
     mostrarPlan();
-
 
 
     mostrarEjercicios(
@@ -684,6 +654,7 @@ function eliminarEjercicio(id) {
 
 
 }
+
 
 
 
@@ -774,19 +745,16 @@ function configurarDatosPaciente() {
         );
 
 
-
     const fecha =
         document.getElementById(
             "fechaPlan"
         );
 
 
-
     const observaciones =
         document.getElementById(
             "observacionesPaciente"
         );
-
 
 
 
@@ -862,6 +830,8 @@ function configurarDatosPaciente() {
 
 
 
+
+
 // ==============================
 // LOCAL STORAGE
 // ==============================
@@ -873,6 +843,7 @@ function guardarPlan() {
         "planPaciente",
         JSON.stringify(planPaciente)
     );
+
 
 
     localStorage.setItem(
@@ -887,6 +858,7 @@ function guardarPlan() {
 
 
 
+
 function cargarPlan() {
 
 
@@ -896,14 +868,18 @@ function cargarPlan() {
         );
 
 
+
     if (planGuardado) {
+
 
         planPaciente =
             JSON.parse(
                 planGuardado
             );
 
+
     }
+
 
 
 
@@ -917,15 +893,307 @@ function cargarPlan() {
 
     if (datosGuardados) {
 
+
         datosPaciente =
             JSON.parse(
                 datosGuardados
             );
 
+
     }
 
 
 }
+
+
+
+
+
+
+
+// ==============================
+// GENERAR PDF
+// ==============================
+
+async function generarPDF() {
+
+
+    if (planPaciente.length === 0) {
+
+
+        alert(
+            "No hay ejercicios en el plan"
+        );
+
+
+        return;
+
+    }
+
+
+
+
+    const { jsPDF } =
+        window.jspdf;
+
+
+
+    const pdf =
+        new jsPDF();
+
+
+
+
+    let y = 20;
+
+
+
+
+    pdf.setFontSize(18);
+
+
+    pdf.text(
+        "Plan de ejercicios",
+        20,
+        y
+    );
+
+
+
+    y += 15;
+
+
+
+
+    pdf.setFontSize(12);
+
+
+
+    pdf.text(
+        `Paciente: ${datosPaciente.nombre || ""}`,
+        20,
+        y
+    );
+
+
+    y += 8;
+
+
+
+    pdf.text(
+        `Fecha: ${datosPaciente.fecha || ""}`,
+        20,
+        y
+    );
+
+
+
+    y += 10;
+
+
+
+
+
+    if(datosPaciente.observaciones){
+
+
+        pdf.text(
+            "Observaciones:",
+            20,
+            y
+        );
+
+
+        y += 7;
+
+
+
+        pdf.text(
+            datosPaciente.observaciones,
+            20,
+            y
+        );
+
+
+        y += 15;
+
+
+    }
+
+
+
+
+
+
+
+    for (const item of planPaciente) {
+
+
+
+        if(y > 250){
+
+            pdf.addPage();
+
+            y = 20;
+
+        }
+
+
+
+
+        pdf.setFontSize(15);
+
+
+
+        pdf.text(
+            item.ejercicio.nombre,
+            20,
+            y
+        );
+
+
+
+        y += 8;
+
+
+
+
+        pdf.setFontSize(12);
+
+
+
+        let pauta =
+            `${item.series} series - `;
+
+
+
+        if(item.tipo === "segundos"){
+
+            pauta +=
+            `${item.cantidad} segundos`;
+
+        } else {
+
+            pauta +=
+            `${item.cantidad} repeticiones`;
+
+        }
+
+
+
+
+        pdf.text(
+            pauta,
+            20,
+            y
+        );
+
+
+
+        y += 8;
+
+
+
+
+        if(item.notas){
+
+
+            pdf.text(
+                `Notas: ${item.notas}`,
+                20,
+                y
+            );
+
+
+            y += 8;
+
+
+        }
+
+
+
+
+
+
+        if(item.ejercicio.youtube){
+
+
+            const qrContainer =
+                document.createElement(
+                    "div"
+                );
+
+
+            new QRCode(
+                qrContainer,
+                {
+                    text:item.ejercicio.youtube,
+                    width:120,
+                    height:120
+                }
+            );
+
+
+
+            await new Promise(
+                resolve =>
+                setTimeout(resolve,300)
+            );
+
+
+
+            const qrImage =
+                qrContainer
+                .querySelector("img")
+                .src;
+
+
+
+            pdf.text(
+                "Vídeo:",
+                20,
+                y
+            );
+
+
+            y += 5;
+
+
+
+            pdf.addImage(
+                qrImage,
+                "PNG",
+                20,
+                y,
+                35,
+                35
+            );
+
+
+
+            y += 45;
+
+
+        }
+
+
+
+        y += 10;
+
+
+    }
+
+
+
+
+
+    pdf.save(
+        "plan-ejercicios.pdf"
+    );
+
+
+}
+
 
 
 
