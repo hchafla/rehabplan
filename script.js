@@ -2,6 +2,9 @@ const BASE_URL = "/rehabplan";
 
 let ejerciciosGlobal = [];
 
+let planPaciente = [];
+
+
 
 async function cargarEjercicios() {
 
@@ -40,6 +43,7 @@ async function cargarEjercicios() {
 
 
 
+
 function mostrarEjercicios(ejercicios) {
 
 
@@ -47,6 +51,7 @@ function mostrarEjercicios(ejercicios) {
 
 
     contenedor.innerHTML = "";
+
 
 
     ejercicios.forEach(ejercicio => {
@@ -58,9 +63,11 @@ function mostrarEjercicios(ejercicios) {
         tarjeta.className = "card";
 
 
+
         tarjeta.innerHTML = `
 
-            <img src="${BASE_URL}${ejercicio.imagen}" alt="${ejercicio.nombre}">
+            <img src="${BASE_URL}${ejercicio.imagen}" 
+                 alt="${ejercicio.nombre}">
 
 
             <h3>${ejercicio.nombre}</h3>
@@ -85,6 +92,11 @@ function mostrarEjercicios(ejercicios) {
                 Ver vídeo
             </a>
 
+
+            <button onclick="añadirEjercicio(${ejercicio.id})">
+                Añadir al plan
+            </button>
+
         `;
 
 
@@ -95,6 +107,7 @@ function mostrarEjercicios(ejercicios) {
 
 
 }
+
 
 
 
@@ -149,6 +162,7 @@ function crearFiltros(ejercicios) {
 
 
 
+
     document
         .getElementById("buscador")
         .addEventListener("input", aplicarFiltros);
@@ -165,6 +179,7 @@ function crearFiltros(ejercicios) {
 
 
 }
+
 
 
 
@@ -230,6 +245,101 @@ function aplicarFiltros() {
 
 
 }
+
+
+
+
+
+function añadirEjercicio(id) {
+
+
+    const ejercicio = ejerciciosGlobal.find(
+        e => e.id == id
+    );
+
+
+    if (!ejercicio) return;
+
+
+
+    const existe = planPaciente.some(
+        e => e.id == id
+    );
+
+
+
+    if (!existe) {
+
+        planPaciente.push(ejercicio);
+
+    }
+
+
+    mostrarPlan();
+
+
+}
+
+
+
+
+function mostrarPlan() {
+
+
+    const contenedor = document.getElementById("planPaciente");
+
+
+    contenedor.innerHTML = "";
+
+
+
+    planPaciente.forEach(ejercicio => {
+
+
+        const elemento = document.createElement("div");
+
+
+        elemento.className = "plan-item";
+
+
+
+        elemento.innerHTML = `
+
+            <span>
+                ${ejercicio.nombre}
+            </span>
+
+
+            <button onclick="eliminarEjercicio(${ejercicio.id})">
+                ❌
+            </button>
+
+        `;
+
+
+        contenedor.appendChild(elemento);
+
+
+    });
+
+
+}
+
+
+
+
+function eliminarEjercicio(id) {
+
+
+    planPaciente = planPaciente.filter(
+        e => e.id != id
+    );
+
+
+    mostrarPlan();
+
+}
+
 
 
 
