@@ -1312,7 +1312,7 @@ if(canvasQR){
             pdf.addImage(
                 qrImage,
                 "PNG",
-                20,
+                155,
                 y,
                 35,
                 35
@@ -1324,9 +1324,9 @@ if(canvasQR){
 
 
 pdf.link(
-    65,
-    y + 10,
-    70,
+    150,
+    y + 38,
+    45,
     12,
     {
         url:item.ejercicio.youtube
@@ -1336,13 +1336,13 @@ pdf.link(
 
 pdf.text(
     "Ver vídeo",
-    65,
-    y + 18
+    155,
+    y + 45
 );
 
 
 
-            y += 45;
+            y += 65;
 
 
 
