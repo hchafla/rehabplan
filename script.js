@@ -978,6 +978,82 @@ async function cargarImagenPDF(url) {
 
 }
 
+
+// ==============================
+// ESPERAR A QUE EL QR ESTÉ LISTO
+// ==============================
+
+function esperarQRListo(qrContainer, maxEsperaMs = 3000) {
+
+    return new Promise((resolve, reject) => {
+
+
+        const inicio = Date.now();
+
+
+        function comprobar() {
+
+
+            const imgQR =
+                qrContainer.querySelector("img");
+
+
+            const canvasQR =
+                qrContainer.querySelector("canvas");
+
+
+
+            // El QR usa <img> cuando el navegador ya generó el dataURL
+            if (imgQR && imgQR.complete && imgQR.naturalWidth > 0) {
+
+                resolve(imgQR.src);
+
+                return;
+
+            }
+
+
+
+            // Algunos navegadores se quedan en <canvas> (no llegan a crear el <img>)
+            if (canvasQR && canvasQR.width > 0) {
+
+                resolve(
+                    canvasQR.toDataURL("image/png")
+                );
+
+                return;
+
+            }
+
+
+
+            // Todavía no está listo: si no ha pasado el tiempo máximo, reintentamos
+            if (Date.now() - inicio < maxEsperaMs) {
+
+                setTimeout(comprobar, 50);
+
+                return;
+
+            }
+
+
+
+            // Se agotó el tiempo de espera: avisamos en vez de fallar en silencio
+            reject(
+                new Error("Tiempo de espera agotado generando el código QR")
+            );
+
+        }
+
+
+        comprobar();
+
+
+    });
+
+}
+
+
 // ==============================
 // GENERAR PDF
 // ==============================
@@ -1291,6 +1367,8 @@ try {
 
 
 
+            const qrY = inicioImagenY + 5;
+
 
 
             const qrContainer =
@@ -1315,80 +1393,98 @@ try {
 
 
 
-
-           await new Promise(
-    resolve =>
-    setTimeout(resolve,500)
-);
-
-
-let qrImage;
-
-
-const imgQR =
-    qrContainer.querySelector("img");
-
-
-const canvasQR =
-    qrContainer.querySelector("canvas");
+            let qrImage = null;
 
 
 
-if(imgQR){
+            try {
 
-    qrImage = imgQR.src;
+                qrImage =
+                    await esperarQRListo(qrContainer);
 
-}
+            } catch(error) {
 
+                console.error(
+                    `No se pudo generar el QR para "${item.ejercicio.nombre}":`,
+                    error
+                );
 
-if(canvasQR){
-
-    qrImage = canvasQR.toDataURL(
-        "image/png"
-    );
-
-}
-
-
-
-            const qrY = inicioImagenY + 5;
+            }
 
 
 
-            pdf.addImage(
-                qrImage,
-                "PNG",
-                155,
-                qrY,
-                35,
-                35
-            );
+            if(qrImage) {
 
 
+                pdf.addImage(
+                    qrImage,
+                    "PNG",
+                    155,
+                    qrY,
+                    35,
+                    35
+                );
 
 
+                pdf.link(
+                    150,
+                    qrY + 38,
+                    45,
+                    12,
+                    {
+                        url:item.ejercicio.youtube
+                    }
+                );
 
 
-pdf.link(
-    150,
-    qrY + 38,
-    45,
-    12,
-    {
-        url:item.ejercicio.youtube
-    }
-);
+                pdf.text(
+                    "Ver vídeo",
+                    155,
+                    qrY + 45
+                );
 
 
-pdf.text(
-    "Ver vídeo",
-    155,
-    qrY + 45
-);
+                finColumnaDerecha = qrY + 45 + 5;
 
 
+            } else {
 
-            finColumnaDerecha = qrY + 45 + 5;
+
+                // El QR falló: no bloqueamos el resto del PDF, dejamos
+                // el enlace como texto para que el plan siga siendo útil.
+                pdf.setFontSize(10);
+
+                pdf.text(
+                    "No se pudo generar el código QR.",
+                    130,
+                    qrY + 10
+                );
+
+                pdf.setFontSize(12);
+
+
+                pdf.link(
+                    130,
+                    qrY + 14,
+                    60,
+                    8,
+                    {
+                        url:item.ejercicio.youtube
+                    }
+                );
+
+
+                pdf.text(
+                    "Ver vídeo (enlace)",
+                    130,
+                    qrY + 20
+                );
+
+
+                finColumnaDerecha = qrY + 25;
+
+
+            }
 
 
         }
