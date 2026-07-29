@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": 1,
+    "nombre": "Puente de glúteos",
+    "region": "lumbar",
+    "objetivo": "fortalecer",
+    "material": "ninguno",
+    "imagen": "/img/lumbar/puente.webp",
+    "youtube": "https://www.youtube.com/watch?v=TZBUBUrmA9g",
+    "descripcion": "Ejercicio para fortalecer",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  }
+]
