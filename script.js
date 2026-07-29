@@ -2,20 +2,40 @@ const API_URL = "https://script.googleusercontent.com/macros/echo?user_content_k
 
 async function cargarEjercicios() {
 
-    try {
+    const respuesta = await fetch(API_URL);
 
-        const respuesta = await fetch(API_URL);
+    const ejercicios = await respuesta.json();
 
-        const ejercicios = await respuesta.json();
+    console.log(ejercicios);
 
-        console.log(ejercicios);
+    mostrarEjercicios(ejercicios);
+}
 
-    } catch(error) {
 
-        console.error(error);
+function mostrarEjercicios(ejercicios) {
 
-    }
+    const contenedor = document.getElementById("biblioteca");
+
+    contenedor.innerHTML = "";
+
+    ejercicios.forEach(ejercicio => {
+
+        const tarjeta = document.createElement("div");
+
+        tarjeta.className = "card";
+
+        tarjeta.innerHTML = `
+            <img src="${ejercicio.imagen}">
+            <h3>${ejercicio.nombre}</h3>
+            <p>${ejercicio.region}</p>
+            <p>${ejercicio.objetivo}</p>
+        `;
+
+        contenedor.appendChild(tarjeta);
+
+    });
 
 }
+
 
 cargarEjercicios();
