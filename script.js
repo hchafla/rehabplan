@@ -1008,29 +1008,6 @@ async function generarPDF() {
     const pdf =
         new jsPDF();
 
-    const añadirPiePagina = () => {
-
-    const paginas = pdf.internal.getNumberOfPages();
-
-
-    for(let i = 1; i <= paginas; i++){
-
-        pdf.setPage(i);
-
-
-        pdf.setFontSize(9);
-
-
-        pdf.text(
-            `RehabPlan - Página ${i}`,
-            20,
-            285
-        );
-
-    }
-
-};
-
 
 
 
@@ -1118,20 +1095,21 @@ async function generarPDF() {
 
 
 
-    const alturaEjercicio = 130;
-
-
-if(y + alturaEjercicio > 270){
-
-    pdf.addPage();
-
-    y = 20;
-
-}
+    for (const item of planPaciente) {
 
 
 
-    
+        if(y > 250){
+
+            pdf.addPage();
+
+            y = 20;
+
+        }
+
+
+
+
         pdf.setFontSize(15);
 
 
@@ -1380,7 +1358,7 @@ pdf.text(
 
 
 
-añadirPiePagina();
+
 
     pdf.save(
         "plan-ejercicios.pdf"
