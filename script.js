@@ -3,8 +3,18 @@ const BASE_URL = "/rehabplan";
 
 let ejerciciosGlobal = [];
 
-
 let planPaciente = [];
+
+
+let datosPaciente = {
+
+    nombre: "",
+
+    fecha: "",
+
+    observaciones: ""
+
+};
 
 
 
@@ -13,7 +23,6 @@ let planPaciente = [];
 // CARGAR EJERCICIOS
 // ==============================
 
-
 async function cargarEjercicios() {
 
 
@@ -21,7 +30,6 @@ async function cargarEjercicios() {
 
 
         const respuesta = await fetch("ejercicios.json");
-
 
 
         if (!respuesta.ok) {
@@ -39,13 +47,6 @@ async function cargarEjercicios() {
 
 
         ejerciciosGlobal = ejercicios;
-
-
-
-        console.log(
-            "Ejercicios cargados:",
-            ejercicios
-        );
 
 
 
@@ -84,7 +85,6 @@ async function cargarEjercicios() {
 // BIBLIOTECA
 // ==============================
 
-
 function mostrarEjercicios(ejercicios) {
 
 
@@ -92,14 +92,11 @@ function mostrarEjercicios(ejercicios) {
         document.getElementById("biblioteca");
 
 
-
     contenedor.innerHTML = "";
 
 
 
-
     ejercicios.forEach(ejercicio => {
-
 
 
         const tarjeta =
@@ -111,7 +108,6 @@ function mostrarEjercicios(ejercicios) {
 
 
 
-
         const añadido =
             planPaciente.some(
                 e => e.id == ejercicio.id
@@ -119,70 +115,64 @@ function mostrarEjercicios(ejercicios) {
 
 
 
-
         tarjeta.innerHTML = `
 
 
-            <img 
-            src="${BASE_URL}${ejercicio.imagen}"
-            alt="${ejercicio.nombre}"
-            >
+        <img 
+        src="${BASE_URL}${ejercicio.imagen}"
+        alt="${ejercicio.nombre}"
+        >
 
 
 
-            <h3>
-                ${ejercicio.nombre}
-            </h3>
+        <h3>
+            ${ejercicio.nombre}
+        </h3>
 
 
 
-            <p>
-                <strong>Región:</strong>
-                ${ejercicio.region}
-            </p>
+        <p>
+            <strong>Región:</strong>
+            ${ejercicio.region}
+        </p>
 
 
 
-            <p>
-                <strong>Material:</strong>
-                ${ejercicio.material}
-            </p>
+        <p>
+            <strong>Material:</strong>
+            ${ejercicio.material}
+        </p>
 
 
 
-            <p>
-                ${ejercicio.descripcion}
-            </p>
+        <p>
+            ${ejercicio.descripcion}
+        </p>
 
 
 
-            <a 
-            href="${ejercicio.youtube}" 
-            target="_blank">
+        <a 
+        href="${ejercicio.youtube}"
+        target="_blank">
 
-                Ver vídeo
+            Ver vídeo
 
-            </a>
-
-
+        </a>
 
 
-            <button 
-            onclick="añadirEjercicio(${ejercicio.id})">
 
+        <button onclick="añadirEjercicio(${ejercicio.id})">
 
-                ${
-                    añadido
-                    ? "✓ Añadido"
-                    : "Añadir al plan"
-                }
+            ${
+                añadido
+                ? "✓ Añadido"
+                : "Añadir al plan"
+            }
 
-
-            </button>
+        </button>
 
 
         `;
-
 
 
 
@@ -202,20 +192,18 @@ function mostrarEjercicios(ejercicios) {
 
 
 
+
 // ==============================
 // FILTROS
 // ==============================
 
-
 function crearFiltros(ejercicios) {
-
 
 
     const regiones =
         [...new Set(
             ejercicios.map(e => e.region)
         )];
-
 
 
     const materiales =
@@ -226,18 +214,12 @@ function crearFiltros(ejercicios) {
 
 
     const selectRegion =
-        document.getElementById(
-            "filtroRegion"
-        );
+        document.getElementById("filtroRegion");
 
 
 
     const selectMaterial =
-        document.getElementById(
-            "filtroMaterial"
-        );
-
-
+        document.getElementById("filtroMaterial");
 
 
 
@@ -246,11 +228,9 @@ function crearFiltros(ejercicios) {
 
         selectRegion.innerHTML += `
 
-
-            <option value="${region}">
-                ${region}
-            </option>
-
+        <option value="${region}">
+            ${region}
+        </option>
 
         `;
 
@@ -266,17 +246,14 @@ function crearFiltros(ejercicios) {
 
         selectMaterial.innerHTML += `
 
-
-            <option value="${material}">
-                ${material}
-            </option>
-
+        <option value="${material}">
+            ${material}
+        </option>
 
         `;
 
 
     });
-
 
 
 
@@ -288,7 +265,6 @@ function crearFiltros(ejercicios) {
         "input",
         aplicarFiltros
     );
-
 
 
 
@@ -305,17 +281,13 @@ function crearFiltros(ejercicios) {
     );
 
 
-
 }
 
 
 
 
 
-
-
 function aplicarFiltros() {
-
 
 
     const texto =
@@ -326,7 +298,6 @@ function aplicarFiltros() {
 
 
 
-
     const region =
         document
         .getElementById("filtroRegion")
@@ -334,12 +305,10 @@ function aplicarFiltros() {
 
 
 
-
     const material =
         document
         .getElementById("filtroMaterial")
         .value;
-
 
 
 
@@ -378,7 +347,6 @@ function aplicarFiltros() {
                     ejercicio.material === material
                 )
 
-
             );
 
 
@@ -386,14 +354,10 @@ function aplicarFiltros() {
 
 
 
-
-
     mostrarEjercicios(resultado);
 
 
-
 }
-
 
 
 
@@ -406,9 +370,7 @@ function aplicarFiltros() {
 // PLAN PACIENTE
 // ==============================
 
-
 function añadirEjercicio(id) {
-
 
 
     const ejercicio =
@@ -423,8 +385,6 @@ function añadirEjercicio(id) {
 
 
 
-
-
     const existe =
         planPaciente.some(
             e => e.id == id
@@ -432,32 +392,22 @@ function añadirEjercicio(id) {
 
 
 
-
-
     if (!existe) {
-
 
 
         planPaciente.push({
 
-
             id: ejercicio.id,
-
 
             ejercicio: ejercicio,
 
-
             series: 3,
-
 
             tipo: "repeticiones",
 
-
             cantidad: 10,
 
-
             notas: ""
-
 
         });
 
@@ -466,20 +416,15 @@ function añadirEjercicio(id) {
 
 
 
-
-
     guardarPlan();
-
 
 
     mostrarPlan();
 
 
-
     mostrarEjercicios(
         ejerciciosGlobal
     );
-
 
 
 }
@@ -500,11 +445,8 @@ function mostrarPlan() {
         );
 
 
-
     if (!contenedor)
         return;
-
-
 
 
 
@@ -512,24 +454,17 @@ function mostrarPlan() {
 
 
 
-
-
     planPaciente.forEach(item => {
 
 
 
-
         const bloque =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
 
 
         bloque.className =
             "plan-item";
-
-
 
 
 
@@ -544,70 +479,55 @@ function mostrarPlan() {
 
         <label>
 
-            Series:
+        Series:
 
-            <input 
-            type="number"
-            value="${item.series}"
-            onchange="
-            actualizarCampo(
-            ${item.id},
-            'series',
-            this.value
-            )">
+        <input 
+        type="number"
+        value="${item.series}"
+        onchange="
+        actualizarCampo(
+        ${item.id},
+        'series',
+        this.value
+        )">
 
         </label>
 
 
 
 
+
         <label>
 
+        Tipo:
 
-            Tipo:
-
-
-            <select 
-            onchange="
-            actualizarCampo(
-            ${item.id},
-            'tipo',
-            this.value
-            )">
+        <select 
+        onchange="
+        actualizarCampo(
+        ${item.id},
+        'tipo',
+        this.value
+        )">
 
 
-                <option 
-                value="repeticiones"
-                ${
-                item.tipo === "repeticiones"
-                ? "selected"
-                : ""
-                }>
+            <option value="repeticiones"
+            ${item.tipo === "repeticiones" ? "selected" : ""}>
 
-                    Repeticiones
+                Repeticiones
 
-                </option>
+            </option>
 
 
 
+            <option value="segundos"
+            ${item.tipo === "segundos" ? "selected" : ""}>
 
-                <option 
-                value="segundos"
-                ${
-                item.tipo === "segundos"
-                ? "selected"
-                : ""
-                }>
+                Segundos
 
-                    Segundos
-
-                </option>
+            </option>
 
 
-
-            </select>
-
-
+        </select>
 
         </label>
 
@@ -618,28 +538,25 @@ function mostrarPlan() {
 
         <label>
 
-
-            ${
+        ${
             item.tipo === "segundos"
             ? "Segundos:"
             : "Repeticiones:"
-            }
+        }
 
 
-
-            <input 
-            type="number"
-            value="${item.cantidad}"
-            onchange="
-            actualizarCampo(
-            ${item.id},
-            'cantidad',
-            this.value
-            )">
+        <input
+        type="number"
+        value="${item.cantidad}"
+        onchange="
+        actualizarCampo(
+        ${item.id},
+        'cantidad',
+        this.value
+        )">
 
 
         </label>
-
 
 
 
@@ -648,19 +565,17 @@ function mostrarPlan() {
 
         <label>
 
+        Notas:
 
-            Notas:
 
-
-            <textarea
-            onchange="
-            actualizarCampo(
-            ${item.id},
-            'notas',
-            this.value
-            )"
-            >${item.notas}</textarea>
-
+        <textarea
+        onchange="
+        actualizarCampo(
+        ${item.id},
+        'notas',
+        this.value
+        )"
+        >${item.notas}</textarea>
 
 
         </label>
@@ -669,10 +584,7 @@ function mostrarPlan() {
 
 
 
-        <button
-        onclick="
-        eliminarEjercicio(${item.id})
-        ">
+        <button onclick="eliminarEjercicio(${item.id})">
 
             Eliminar
 
@@ -680,18 +592,13 @@ function mostrarPlan() {
 
 
 
-
         `;
-
-
 
 
 
         contenedor.appendChild(
             bloque
         );
-
-
 
 
     });
@@ -707,13 +614,7 @@ function mostrarPlan() {
 
 
 
-
-function actualizarCampo(
-    id,
-    campo,
-    valor
-) {
-
+function actualizarCampo(id, campo, valor) {
 
 
     const ejercicio =
@@ -729,25 +630,18 @@ function actualizarCampo(
 
 
 
-
     if (
         campo === "series" ||
         campo === "cantidad"
     ) {
 
-
         valor = Number(valor);
-
 
     }
 
 
 
-
-
     ejercicio[campo] = valor;
-
-
 
 
 
@@ -758,11 +652,7 @@ function actualizarCampo(
     mostrarPlan();
 
 
-
-
 }
-
-
 
 
 
@@ -793,10 +683,7 @@ function eliminarEjercicio(id) {
     );
 
 
-
 }
-
-
 
 
 
@@ -809,7 +696,7 @@ function nuevoPlan() {
 
     const confirmar =
         confirm(
-        "¿Seguro que quieres borrar el plan actual?"
+            "¿Seguro que quieres borrar el plan actual?"
         );
 
 
@@ -819,9 +706,19 @@ function nuevoPlan() {
 
 
 
-
-
     planPaciente = [];
+
+
+
+    datosPaciente = {
+
+        nombre: "",
+
+        fecha: "",
+
+        observaciones: ""
+
+    };
 
 
 
@@ -829,14 +726,132 @@ function nuevoPlan() {
 
 
 
-    mostrarPlan();
+    document.getElementById(
+        "nombrePaciente"
+    ).value = "";
 
+
+
+    document.getElementById(
+        "fechaPlan"
+    ).value = "";
+
+
+
+    document.getElementById(
+        "observacionesPaciente"
+    ).value = "";
+
+
+
+    mostrarPlan();
 
 
     mostrarEjercicios(
         ejerciciosGlobal
     );
 
+
+}
+
+
+
+
+
+
+
+
+// ==============================
+// DATOS PACIENTE
+// ==============================
+
+function configurarDatosPaciente() {
+
+
+    const nombre =
+        document.getElementById(
+            "nombrePaciente"
+        );
+
+
+
+    const fecha =
+        document.getElementById(
+            "fechaPlan"
+        );
+
+
+
+    const observaciones =
+        document.getElementById(
+            "observacionesPaciente"
+        );
+
+
+
+
+
+    nombre.value =
+        datosPaciente.nombre || "";
+
+
+
+    fecha.value =
+        datosPaciente.fecha || "";
+
+
+
+    observaciones.value =
+        datosPaciente.observaciones || "";
+
+
+
+
+
+
+    nombre.addEventListener(
+        "input",
+        () => {
+
+            datosPaciente.nombre =
+                nombre.value;
+
+            guardarPlan();
+
+        }
+    );
+
+
+
+
+
+    fecha.addEventListener(
+        "input",
+        () => {
+
+            datosPaciente.fecha =
+                fecha.value;
+
+            guardarPlan();
+
+        }
+    );
+
+
+
+
+
+    observaciones.addEventListener(
+        "input",
+        () => {
+
+            datosPaciente.observaciones =
+                observaciones.value;
+
+            guardarPlan();
+
+        }
+    );
 
 
 }
@@ -851,18 +866,18 @@ function nuevoPlan() {
 // LOCAL STORAGE
 // ==============================
 
-
 function guardarPlan() {
 
 
     localStorage.setItem(
-
         "planPaciente",
+        JSON.stringify(planPaciente)
+    );
 
-        JSON.stringify(
-            planPaciente
-        )
 
+    localStorage.setItem(
+        "datosPaciente",
+        JSON.stringify(datosPaciente)
     );
 
 
@@ -872,26 +887,40 @@ function guardarPlan() {
 
 
 
-
-
 function cargarPlan() {
 
 
-    const guardado =
+    const planGuardado =
         localStorage.getItem(
             "planPaciente"
         );
 
 
-
-    if (guardado) {
-
+    if (planGuardado) {
 
         planPaciente =
             JSON.parse(
-                guardado
+                planGuardado
             );
 
+    }
+
+
+
+
+    const datosGuardados =
+        localStorage.getItem(
+            "datosPaciente"
+        );
+
+
+
+    if (datosGuardados) {
+
+        datosPaciente =
+            JSON.parse(
+                datosGuardados
+            );
 
     }
 
@@ -907,8 +936,8 @@ function cargarPlan() {
 // INICIO
 // ==============================
 
-
 cargarPlan();
 
-
 cargarEjercicios();
+
+configurarDatosPaciente();
