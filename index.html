@@ -1,19 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>RehabPlan</title>
 
     <link rel="stylesheet" href="styles.css">
+
 </head>
+
+
 <body>
 
     <h1>RehabPlan</h1>
 
+
+    <div class="filtros">
+
+        <input 
+            type="text" 
+            id="buscador" 
+            placeholder="Buscar ejercicio..."
+        >
+
+
+        <select id="filtroRegion">
+
+            <option value="">
+                Todas las regiones
+            </option>
+
+        </select>
+
+
+        <select id="filtroMaterial">
+
+            <option value="">
+                Todos los materiales
+            </option>
+
+        </select>
+
+    </div>
+
+
     <div id="biblioteca"></div>
+
 
     <script src="script.js"></script>
 
 </body>
+
 </html>
