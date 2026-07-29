@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "nombre": "Puente de glúteos",
+    "nombre": "Puente de gluteos",
     "region": "lumbar",
     "objetivo": "fortalecer",
     "material": "ninguno",
@@ -9,7 +9,20 @@
     "youtube": "https://www.youtube.com/watch?v=TZBUBUrmA9g",
     "descripcion": "Ejercicio para fortalecer",
     "etiquetas": [
-      "Tonificación"
+      "Tonificaci?n"
+    ]
+  },
+  {
+    "id": 2,
+    "nombre": "Rotaci?n externa hombro",
+    "region": "hombro",
+    "objetivo": "fortalecer",
+    "material": "El?stico",
+    "imagen": "img/hombro/rotextbanda.png",
+    "youtube": "https://www.youtube.com/watch?v=wQdfeB80fqo",
+    "descripcion": "Ejercicio para fortalecer",
+    "etiquetas": [
+      "Prevenci?n"
     ]
   }
 ]
