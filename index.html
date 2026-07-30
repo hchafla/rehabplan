@@ -9,6 +9,10 @@
 
     <title>RehabPlan</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="styles.css">
 
 </head>
@@ -19,6 +23,8 @@
 
 <h1>RehabPlan</h1>
 
+<p class="subtitulo">Diseña planes de ejercicios personalizados y compártelos con tus pacientes.</p>
+
 
 
 <h2>Datos del paciente</h2>
@@ -28,7 +34,7 @@
 
 
     <label>
-        Nombre:
+        Nombre
 
         <input 
             type="text"
@@ -41,7 +47,7 @@
 
 
     <label>
-        Fecha:
+        Fecha
 
         <input 
             type="date"
@@ -53,7 +59,7 @@
 
 
     <label>
-        Observaciones generales:
+        Observaciones generales
 
         <textarea 
             id="observacionesPaciente"
@@ -68,12 +74,13 @@
 
 
 
-
 <h2>Biblioteca de ejercicios</h2>
 
 
 <div class="filtros">
 
+
+    <label class="visualmente-oculto" for="buscador">Buscar ejercicio</label>
 
     <input 
         type="text"
@@ -82,6 +89,8 @@
     >
 
 
+
+    <label class="visualmente-oculto" for="filtroRegion">Filtrar por región</label>
 
     <select id="filtroRegion">
 
@@ -92,6 +101,8 @@
     </select>
 
 
+
+    <label class="visualmente-oculto" for="filtroMaterial">Filtrar por material</label>
 
     <select id="filtroMaterial">
 
@@ -112,25 +123,24 @@
 
 
 
-
-
-
 <h2>Plan del paciente</h2>
 
 
-<button onclick="nuevoPlan()">
-    Nuevo plan
-</button>
+<div class="acciones-plan">
+
+    <button onclick="nuevoPlan()">
+        Nuevo plan
+    </button>
 
 
-<button onclick="generarPDF()">
-    Generar PDF
-</button>
+    <button class="primario" onclick="generarPDF()">
+        Generar PDF
+    </button>
 
+</div>
 
 
 <div id="planPaciente"></div>
-
 
 
 
