@@ -1177,13 +1177,14 @@ async function generarPDF() {
         const item = planPaciente[indice];
 
 
-        // Altura estimada del bloque completo (separador + número +
-        // imagen/QR + texto) para decidir si hace falta salto de
-        // página ANTES de empezar a dibujar.
-        const alturaBloque = 120;
+        // Altura real aproximada de una ficha compacta (sin notas
+        // largas): cabecera ~14mm + imagen/QR ~40mm + texto ~13mm +
+        // margen final. Con esta reserva entran 3 ejercicios por
+        // página en el caso normal.
+        const alturaBloque = 80;
 
 
-        if(y + alturaBloque > 275){
+        if(y + alturaBloque > 270){
 
             pdf.addPage();
 
@@ -1201,13 +1202,13 @@ async function generarPDF() {
 
         pdf.line(20, y, 190, y);
 
-        y += 8;
+        y += 5;
 
 
 
 
         // Número de ejercicio
-        pdf.setFontSize(10);
+        pdf.setFontSize(9);
 
         pdf.setTextColor(120);
 
@@ -1219,12 +1220,12 @@ async function generarPDF() {
 
         pdf.setTextColor(0);
 
-        y += 6;
+        y += 4;
 
 
 
 
-        pdf.setFontSize(15);
+        pdf.setFontSize(13);
 
 
 
@@ -1255,8 +1256,8 @@ try {
         "JPEG",
         20,
         inicioImagenY,
-        50,
-        50
+        38,
+        38
     );
 
 
@@ -1274,14 +1275,14 @@ try {
 
 
         // Columna izquierda: continúa el flujo de texto debajo de la imagen
-        y = inicioImagenY + 60;
+        let yColumnaIzquierda = inicioImagenY + 38;
 
-        y += 8;
-
-
+        yColumnaIzquierda += 4;
 
 
-        pdf.setFontSize(12);
+
+
+        pdf.setFontSize(11);
 
 
 
@@ -1312,12 +1313,12 @@ try {
         pdf.text(
             pauta,
             20,
-            y
+            yColumnaIzquierda
         );
 
 
 
-        y += 8;
+        yColumnaIzquierda += 5;
 
 
 
@@ -1331,14 +1332,14 @@ try {
             pdf.text(
                 `Notas: ${item.notas}`,
                 20,
-                y,
+                yColumnaIzquierda,
                 {
-                    maxWidth:170
+                    maxWidth:100
                 }
             );
 
 
-            y += 10;
+            yColumnaIzquierda += 7;
 
 
         }
@@ -1359,15 +1360,19 @@ try {
 
 
 
+            pdf.setFontSize(9);
+
             pdf.text(
                 "Vídeo del ejercicio:",
-                130,
+                135,
                 inicioImagenY
             );
 
+            pdf.setFontSize(11);
 
 
-            const qrY = inicioImagenY + 5;
+
+            const qrY = inicioImagenY + 4;
 
 
 
@@ -1421,16 +1426,16 @@ try {
                     "PNG",
                     155,
                     qrY,
-                    35,
-                    35
+                    30,
+                    30
                 );
 
 
                 pdf.link(
                     150,
-                    qrY + 38,
-                    45,
-                    12,
+                    qrY + 32,
+                    40,
+                    7,
                     {
                         url:item.ejercicio.youtube
                     }
@@ -1440,11 +1445,11 @@ try {
                 pdf.text(
                     "Ver vídeo",
                     155,
-                    qrY + 45
+                    qrY + 37
                 );
 
 
-                finColumnaDerecha = qrY + 45 + 5;
+                finColumnaDerecha = qrY + 37 + 3;
 
 
             } else {
@@ -1452,22 +1457,22 @@ try {
 
                 // El QR falló: no bloqueamos el resto del PDF, dejamos
                 // el enlace como texto para que el plan siga siendo útil.
-                pdf.setFontSize(10);
+                pdf.setFontSize(9);
 
                 pdf.text(
                     "No se pudo generar el código QR.",
-                    130,
-                    qrY + 10
+                    135,
+                    qrY + 6
                 );
 
-                pdf.setFontSize(12);
+                pdf.setFontSize(11);
 
 
                 pdf.link(
-                    130,
-                    qrY + 14,
-                    60,
-                    8,
+                    135,
+                    qrY + 9,
+                    55,
+                    7,
                     {
                         url:item.ejercicio.youtube
                     }
@@ -1476,12 +1481,12 @@ try {
 
                 pdf.text(
                     "Ver vídeo (enlace)",
-                    130,
-                    qrY + 20
+                    135,
+                    qrY + 14
                 );
 
 
-                finColumnaDerecha = qrY + 25;
+                finColumnaDerecha = qrY + 17;
 
 
             }
@@ -1493,8 +1498,9 @@ try {
 
 
         // La siguiente ficha empieza debajo de lo más alto entre
-        // la columna izquierda (texto) y la derecha (QR + enlace).
-        y = Math.max(y, finColumnaDerecha) + 10;
+        // la columna izquierda (texto) y la derecha (QR + enlace),
+        // con un pequeño margen antes del separador siguiente.
+        y = Math.max(yColumnaIzquierda, finColumnaDerecha) + 6;
 
 
     }
