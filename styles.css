@@ -1,32 +1,526 @@
-body{
-    font-family:Arial,sans-serif;
-    margin:30px;
+/* ==============================
+   RehabPlan · Sistema de diseño
+   ============================== */
+
+:root {
+
+    /* Color */
+    --bg: #F5F7F5;
+    --surface: #FFFFFF;
+    --surface-alt: #EDF2F0;
+    --border: #DCE3DF;
+    --border-strong: #BFCBC6;
+
+    --ink: #1C2B27;
+    --ink-soft: #5B6B65;
+    --ink-faint: #8A9A94;
+
+    --brand: #2B6358;
+    --brand-dark: #1E4A42;
+    --brand-soft: #E4EEEC;
+
+    --accent: #B9790F;
+    --accent-dark: #93600B;
+    --accent-soft: #F6E9D2;
+
+    --danger: #B23B3B;
+    --danger-soft: #F6E3E1;
+
+    /* Tipografía */
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+    /* Espaciado */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+
+    --shadow-card: 0 1px 2px rgba(28, 43, 39, 0.06), 0 1px 1px rgba(28, 43, 39, 0.04);
+    --shadow-card-hover: 0 6px 16px rgba(28, 43, 39, 0.10), 0 2px 4px rgba(28, 43, 39, 0.06);
 }
 
-#biblioteca{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
-    gap:20px;
+
+/* ==============================
+   Base
+   ============================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--ink);
+    margin: 0;
+    padding: 32px 40px 80px;
+    line-height: 1.5;
+}
+
+h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 2.1rem;
+    color: var(--brand-dark);
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+}
+
+h1 + .subtitulo {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin: 0 0 32px;
+}
+
+h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.4rem;
+    color: var(--ink);
+    margin: 40px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+h2:first-of-type {
+    margin-top: 0;
+}
+
+.eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+}
+
+a {
+    color: var(--brand);
+}
+
+button {
+    font-family: var(--font-body);
+    cursor: pointer;
+}
+
+/* Foco visible para navegación por teclado */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+}
+
+
+/* ==============================
+   Datos del paciente
+   ============================== */
+
+.datos-paciente {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    gap: 16px 24px;
+    box-shadow: var(--shadow-card);
+}
+
+.datos-paciente label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+}
+
+.datos-paciente input,
+.datos-paciente textarea {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--ink);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    background: var(--bg);
+}
+
+.datos-paciente textarea {
+    resize: vertical;
+    min-height: 42px;
+    font-family: var(--font-body);
+}
+
+.datos-paciente input:focus,
+.datos-paciente textarea:focus {
+    border-color: var(--brand);
+    background: var(--surface);
+}
+
+
+/* ==============================
+   Filtros
+   ============================== */
+
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filtros input,
+.filtros select {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    background: var(--surface);
+    color: var(--ink);
+}
+
+.filtros input {
+    flex: 1 1 220px;
+}
+
+.filtros select {
+    flex: 0 1 180px;
+}
+
+.visualmente-oculto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+
+/* ==============================
+   Biblioteca de ejercicios
+   ============================== */
+
+#biblioteca {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
 }
 
 .card {
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 15px;
-    background: white;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+}
+
+.card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    background: var(--surface-alt);
 }
 
 .card h3 {
-    margin-top: 10px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin: 12px 0 8px;
+    color: var(--ink);
 }
 
-.card a {
-    display: inline-block;
-    margin-top: 10px;
+.card .etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
 }
 
-.card img{
-    width:100%;
-    aspect-ratio:1;
-    object-fit:cover;
+.card .etiqueta {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--brand-dark);
+}
+
+.card .etiqueta.material {
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+}
+
+.card p.descripcion {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    margin: 0 0 12px;
+    flex-grow: 1;
+}
+
+.card .acciones {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.card a.ver-video {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--brand);
+}
+
+.card a.ver-video:hover {
+    text-decoration: underline;
+}
+
+.card button.btn-anadir {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--brand);
+    background: var(--brand);
+    color: white;
+    transition: background 0.15s ease;
+}
+
+.card button.btn-anadir:hover {
+    background: var(--brand-dark);
+    border-color: var(--brand-dark);
+}
+
+.card button.btn-anadir.anadido {
+    background: var(--surface);
+    color: var(--brand-dark);
+    border: 1px solid var(--brand);
+}
+
+.card button.btn-anadir.anadido:hover {
+    background: var(--brand-soft);
+}
+
+
+/* Estado vacío (sin resultados / sin ejercicios en el plan) */
+
+.estado-vacio {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+}
+
+.estado-vacio .titulo {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+
+/* ==============================
+   Plan del paciente
+   ============================== */
+
+.acciones-plan {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.acciones-plan button {
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink);
+}
+
+.acciones-plan button.primario {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.acciones-plan button.primario:hover {
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+}
+
+.acciones-plan button:not(.primario):hover {
+    background: var(--surface-alt);
+}
+
+#planPaciente {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.plan-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--brand);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    box-shadow: var(--shadow-card);
+}
+
+.plan-item h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin: 0 0 12px;
+}
+
+.plan-item .campos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 20px;
+    align-items: flex-end;
+    margin-bottom: 12px;
+}
+
+.plan-item label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+}
+
+.plan-item input[type="number"],
+.plan-item select {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    width: 90px;
+    background: var(--bg);
+    color: var(--ink);
+}
+
+.plan-item select {
+    width: auto;
+}
+
+.plan-item label.notas {
+    flex: 1 1 100%;
+}
+
+.plan-item textarea {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+    width: 100%;
+    min-height: 40px;
+    resize: vertical;
+    background: var(--bg);
+    color: var(--ink);
+}
+
+/* La "etiqueta de dosificación": el elemento distintivo de la app */
+.dosis {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+    margin-bottom: 12px;
+}
+
+.plan-item .eliminar {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 4px 0;
+}
+
+.plan-item .eliminar:hover {
+    text-decoration: underline;
+}
+
+
+/* ==============================
+   Responsive
+   ============================== */
+
+@media (max-width: 720px) {
+
+    body {
+        padding: 20px 16px 64px;
+    }
+
+    h1 {
+        font-size: 1.7rem;
+    }
+
+    .datos-paciente {
+        grid-template-columns: 1fr;
+    }
+
+    .filtros {
+        flex-direction: column;
+    }
+
+    .filtros input,
+    .filtros select {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    #biblioteca {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 14px;
+    }
+
+    .acciones-plan {
+        flex-direction: column;
+    }
+
+    .plan-item .campos {
+        gap: 10px 14px;
+    }
+
 }
