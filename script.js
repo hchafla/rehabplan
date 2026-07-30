@@ -84,6 +84,25 @@ function mostrarEjercicios(ejercicios) {
 
 
 
+    if (ejercicios.length === 0) {
+
+
+        contenedor.innerHTML = `
+
+        <div class="estado-vacio">
+            <div class="titulo">No hay ejercicios que coincidan</div>
+            <p>Prueba a cambiar la búsqueda o quitar algún filtro.</p>
+        </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+
     ejercicios.forEach(ejercicio => {
 
 
@@ -115,41 +134,43 @@ function mostrarEjercicios(ejercicios) {
         </h3>
 
 
-        <p>
-            <strong>Región:</strong>
-            ${ejercicio.region}
-        </p>
+        <div class="etiquetas">
+            <span class="etiqueta region">${ejercicio.region}</span>
+            <span class="etiqueta material">${ejercicio.material}</span>
+        </div>
 
 
-        <p>
-            <strong>Material:</strong>
-            ${ejercicio.material}
-        </p>
-
-
-        <p>
+        <p class="descripcion">
             ${ejercicio.descripcion}
         </p>
 
 
-        <a 
-        href="${ejercicio.youtube}"
-        target="_blank">
+        <div class="acciones">
 
-            Ver vídeo
+            <a 
+            class="ver-video"
+            href="${ejercicio.youtube}"
+            target="_blank">
 
-        </a>
+                Ver vídeo
+
+            </a>
 
 
-        <button onclick="añadirEjercicio(${ejercicio.id})">
+            <button
+            class="btn-anadir${añadido ? " anadido" : ""}"
+            aria-pressed="${añadido}"
+            onclick="añadirEjercicio(${ejercicio.id})">
 
-            ${
-                añadido
-                ? "✓ Añadido"
-                : "Añadir al plan"
-            }
+                ${
+                    añadido
+                    ? "✓ Añadido"
+                    : "Añadir al plan"
+                }
 
-        </button>
+            </button>
+
+        </div>
 
 
         `;
@@ -426,6 +447,25 @@ function mostrarPlan() {
 
 
 
+    if (planPaciente.length === 0) {
+
+
+        contenedor.innerHTML = `
+
+        <div class="estado-vacio">
+            <div class="titulo">Aún no hay ejercicios en el plan</div>
+            <p>Añade ejercicios desde la biblioteca de arriba para empezar.</p>
+        </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+
     planPaciente.forEach(item => {
 
 
@@ -442,6 +482,13 @@ function mostrarPlan() {
 
 
 
+        const textoDosis =
+            item.tipo === "segundos"
+            ? `${item.series} series × ${item.cantidad} s`
+            : `${item.series} series × ${item.cantidad} rep`;
+
+
+
         bloque.innerHTML = `
 
 
@@ -450,10 +497,17 @@ function mostrarPlan() {
         </h3>
 
 
+        <div class="dosis">
+            ${textoDosis}
+        </div>
+
+
+        <div class="campos">
+
 
         <label>
 
-            Series:
+            Series
 
             <input 
             type="number"
@@ -469,11 +523,9 @@ function mostrarPlan() {
 
 
 
-
-
         <label>
 
-            Tipo:
+            Tipo
 
             <select 
             onchange="
@@ -510,14 +562,12 @@ function mostrarPlan() {
 
 
 
-
-
         <label>
 
             ${
                 item.tipo === "segundos"
-                ? "Segundos:"
-                : "Repeticiones:"
+                ? "Segundos"
+                : "Repeticiones"
             }
 
 
@@ -535,13 +585,13 @@ function mostrarPlan() {
         </label>
 
 
+        </div>
 
 
 
-        <label>
+        <label class="notas">
 
-            Notas:
-
+            Notas
 
             <textarea
             onchange="
@@ -556,12 +606,11 @@ function mostrarPlan() {
 
 
 
-
-
         <button 
+        class="eliminar"
         onclick="eliminarEjercicio(${item.id})">
 
-            Eliminar
+            Eliminar del plan
 
         </button>
 
