@@ -117,6 +117,57 @@ textarea:focus-visible {
 
 
 /* ==============================
+   Layout de dos columnas
+   ============================== */
+
+.tabs-movil {
+    display: none;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+}
+
+.panel-header {
+    flex: 0 0 auto;
+}
+
+.panel-header h2 {
+    margin-top: 0;
+}
+
+.panel-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* Barra de scroll discreta dentro de cada panel */
+.panel-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.panel-scroll::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 999px;
+}
+
+
+/* ==============================
    Datos del paciente
    ============================== */
 
@@ -486,7 +537,7 @@ textarea:focus-visible {
    Responsive
    ============================== */
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
 
     body {
         padding: 20px 16px 64px;
@@ -521,6 +572,62 @@ textarea:focus-visible {
 
     .plan-item .campos {
         gap: 10px 14px;
+    }
+
+
+    /* En móvil, el scroll independiente por columnas se sustituye
+       por pestañas: se ve un panel entero por vez, con el scroll
+       normal de la página. */
+
+    .tabs-movil {
+        display: flex;
+        gap: 8px;
+        margin: 20px 0 16px;
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        padding: 10px 0;
+        z-index: 10;
+    }
+
+    .tabs-movil .tab {
+        flex: 1;
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 10px 12px;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-sm);
+        background: var(--surface);
+        color: var(--ink-soft);
+    }
+
+    .tabs-movil .tab.activa {
+        background: var(--brand);
+        border-color: var(--brand);
+        color: white;
+    }
+
+    .layout {
+        display: block;
+    }
+
+    .panel {
+        position: static;
+        max-height: none;
+        display: none;
+    }
+
+    .panel-scroll {
+        overflow-y: visible;
+    }
+
+    .layout.pestana-biblioteca .panel-biblioteca {
+        display: flex;
+    }
+
+    .layout.pestana-plan .panel-plan {
+        display: flex;
     }
 
 }
