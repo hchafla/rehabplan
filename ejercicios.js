@@ -801,6 +801,88 @@ function eliminarEjercicio(id) {
 // NUEVO PLAN
 // ==============================
 
+// ==============================
+// GUARDAR COMO PLANTILLA
+// ==============================
+
+function obtenerPlantillas() {
+
+    const guardadas =
+        localStorage.getItem("plantillas");
+
+    return guardadas ? JSON.parse(guardadas) : [];
+
+}
+
+
+function guardarPlantillas(plantillas) {
+
+    localStorage.setItem(
+        "plantillas",
+        JSON.stringify(plantillas)
+    );
+
+}
+
+
+function guardarComoPlantilla() {
+
+
+    if (planPaciente.length === 0) {
+
+        alert(
+            "No hay ejercicios en el plan para guardar como plantilla."
+        );
+
+        return;
+
+    }
+
+
+
+    const nombrePlantilla =
+        prompt(
+            'Nombre de la plantilla (ej. "Rodilla LCA - Fase 1"):'
+        );
+
+
+    if (!nombrePlantilla || !nombrePlantilla.trim())
+        return;
+
+
+
+    const plantillas =
+        obtenerPlantillas();
+
+
+    plantillas.push({
+
+        id: Date.now(),
+
+        nombre: nombrePlantilla.trim(),
+
+        // Copia profunda: la plantilla queda congelada tal cual
+        // está el plan ahora, sin quedar enlazada a planPaciente.
+        ejercicios: JSON.parse(
+            JSON.stringify(planPaciente)
+        )
+
+    });
+
+
+    guardarPlantillas(plantillas);
+
+
+    alert(
+        `Plantilla "${nombrePlantilla.trim()}" guardada. La verás en la sección Plantillas.`
+    );
+
+
+}
+
+
+
+
 function nuevoPlan() {
 
 
