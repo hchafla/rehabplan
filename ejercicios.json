@@ -2,10 +2,10 @@
   {
     "id": 1,
     "nombre": "Puente de gluteos",
-    "region": "Lumbar",
-    "objetivo": "fortalecer",
+    "region": "Pelvis-cadera",
+    "objetivo": "Fortalecimiento",
     "material": "Ninguno",
-    "imagen": "/img/lumbar/puente-gluteos.webp",
+    "imagen": "/img/espalda/puente-gluteos.webp",
     "youtube": "https://www.youtube.com/watch?v=wACebloZ1Nk&pp=ygUXcHVlbnRlIGRlIGdsdXRlb3MgcHJvZXQ%3D",
     "descripcion": "Acostado boca arriba con las rodillas flexionadas y los pies apoyados, eleva la pelvis hasta alinear hombros, caderas y rodillas. Desciende de forma controlada y repite el movimiento.",
     "etiquetas": [
@@ -14,15 +14,156 @@
   },
   {
     "id": 2,
-    "nombre": "Rotación externa hombro",
-    "region": "Hombro",
-    "objetivo": "fortalecer",
-    "material": "Elástico",
-    "imagen": "/img/hombro/rotextbanda.webp",
-    "youtube": "https://www.youtube.com/watch?v=wQdfeB80fqo",
-    "descripcion": "Ejercicio para fortalecer",
+    "nombre": "Gato-Camello",
+    "region": "Espalda",
+    "objetivo": "Movilidad",
+    "material": "Ninguno",
+    "imagen": "/img/espalda/gato-camello.webp",
+    "youtube": "https://www.youtube.com/watch?v=XMwfguNY5bw&pp=ygURZXN0aXJhbWllbnRvIGdhdG8%3D",
+    "descripcion": "En cuadrupedia, alterna lentamente la flexión y la extensión de la columna, acompañando el movimiento con la pelvis y la cabeza.",
     "etiquetas": [
-      "Prevención"
+      "Movilidad"
     ]
+  },
+  {
+    "id": 3,
+    "nombre": "Rotación lumbar tumbado",
+    "region": "Espalda",
+    "objetivo": "Movilidad",
+    "material": "Ninguno",
+    "imagen": "/img/espalda/rotacion-lumbar-tumbado.webp",
+    "youtube": "https://www.youtube.com/watch?v=WLssvI6fheg&pp=ygUXcm90YWNpb24gbHVtYmFyIHR1bWJhZG8%3D",
+    "descripcion": "Acostado boca arriba con las rodillas flexionadas, deja caer ambas piernas hacia un lado manteniendo los hombros apoyados en el suelo. Repite hacia el lado contrario.",
+    "etiquetas": [
+      "Movilidad"
+    ]
+  },
+  {
+    "id": 4,
+    "nombre": "Abducción de cadera en decúbito lateral",
+    "region": "Pelvis-cadera",
+    "objetivo": "Fortalecimiento",
+    "material": "Ninguno",
+    "imagen": "/img/pelvis-cadera/abduccion-cadera-decubito-lateral.webp",
+    "youtube": "https://www.youtube.com/shorts/dX4cn6N0vgs",
+    "descripcion": "Acostado de lado con la pierna inferior flexionada para mayor estabilidad, eleva la pierna superior manteniendo la rodilla extendida y el pie orientado al frente. Desciende lentamente y repite el movimiento.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 5,
+    "nombre": "Descenso de pie en 90/90",
+    "region": "Core",
+    "objetivo": "Control motor",
+    "material": "Ninguno",
+    "imagen": "/img/core/descenso-pie-90-90.webp",
+    "youtube": "https://www.youtube.com/watch?v=jGX3bxjv5Eg&pp=ygUvQmFqYWRhIGFsdGVybmEgZGUgdW5hIHBpZXJuYSBmbGV4aW9uYWRhIGVuIDkwwro%3D",
+    "descripcion": "Acostado boca arriba con caderas y rodillas flexionadas a 90°, desciende lentamente un pie hacia el suelo sin modificar el ángulo de la rodilla ni mover la pelvis. Vuelve a la posición inicial y alterna las piernas.",
+    "etiquetas": [
+      "Movilidad"
+    ]
+  },
+  {
+    "id": 6,
+    "nombre": "Bird Dog",
+    "region": "Core",
+    "objetivo": "Control motor",
+    "material": "Ninguno",
+    "imagen": "/img/core/bird-dog.webp",
+    "youtube": "https://www.youtube.com/shorts/Tjo5oYHoS8M",
+    "descripcion": "En cuadrupedia, eleva simultáneamente un brazo y la pierna contraria hasta alinearlos con el tronco, manteniendo la pelvis y la columna estables. Alterna ambos lados de forma controlada.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 7,
+    "nombre": "Patada de glúteo en cuadrupedia",
+    "region": "Pelvis-cadera",
+    "objetivo": "Fortalecimiento",
+    "material": "Ninguno",
+    "imagen": "/img/pelvis-cadera/patada-gluteo-cuadrupedia.webp",
+    "youtube": "https://www.youtube.com/shorts/du6Va1m4MVE",
+    "descripcion": "En cuadrupedia, eleva una pierna hacia atrás manteniendo la rodilla flexionada a 90°, sin mover la pelvis ni arquear la zona lumbar. Regresa lentamente y alterna las piernas.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 8,
+    "nombre": "Plancha con apoyo de rodillas",
+    "region": "Core",
+    "objetivo": "Fortalecimiento",
+    "material": "Ninguno",
+    "imagen": "/img/core/plancha-apoyo-rodillas.webp",
+    "youtube": "https://www.youtube.com/shorts/VM7W8J0Dx3Y",
+    "descripcion": "Apóyate sobre los antebrazos y las rodillas, manteniendo el cuerpo alineado desde los hombros hasta las rodillas. Activa el abdomen y evita que la pelvis se hunda o se eleve.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 9,
+    "nombre": "Media sentadilla con apoyo",
+    "region": "Rodilla",
+    "objetivo": "Fortalecimiento",
+    "material": "Silla",
+    "imagen": "/img/rodilla/media-sentadilla-apoyo.webp",
+    "youtube": "https://youtu.be/JyIOXegsi98?si=Ai1anSdufNmJoZnt&t=18",
+    "descripcion": "De pie sujetándose a un apoyo estable, flexiona lentamente las rodillas hasta realizar una media sentadilla y vuelve a la posición inicial de forma controlada.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 10,
+    "nombre": "Estiramiento de glúteo",
+    "region": "Pelvis-cadera",
+    "objetivo": "Estiramiento",
+    "material": "Ninguno",
+    "imagen": "/img/pelvis-cadera/estiramiento-gluteo.webp",
+    "youtube": "https://www.youtube.com/shorts/-Q6-y0t7b4k",
+    "descripcion": "Acostado boca arriba, cruza un tobillo sobre la rodilla contraria y acerca la pierna hacia el pecho hasta notar el estiramiento en el glúteo. Mantén la posición y repite con el otro lado.",
+    "etiquetas": [
+      "Estiramiento"
+    ]
+  },
+  {
+    "id": 11,
+    "nombre": "Estiramiento de isquiotibiales en supino",
+    "region": "Pelvis-cadera",
+    "objetivo": "Estiramiento",
+    "material": "Ninguno",
+    "imagen": "/img/pelvis-cadera/estiramiento-isquiotibiales-supino.webp",
+    "youtube": "https://www.youtube.com/watch?v=nNKNwaUIXfw&pp=ygUjZXN0aXJhbWllbnRvIGlzcXVpb3RpYmlhbGVzIHR1bWJhZG8%3D",
+    "descripcion": "Acostado boca arriba, eleva una pierna manteniendo la rodilla extendida y acércala suavemente hacia el tronco hasta notar el estiramiento en la parte posterior del muslo. Mantén la otra pierna apoyada en el suelo.",
+    "etiquetas": [
+      "Estiramiento"
+    ]
+  },
+  {
+    "id": 12,
+    "nombre": "Rotación lumbar mantenida",
+    "region": "Espalda",
+    "objetivo": "Estiramiento",
+    "material": "Ninguno",
+    "imagen": "/img/espalda/rotacion-lumbar-mantenida.webp",
+    "youtube": "https://www.youtube.com/watch?v=9Y3FQM6RLxo&pp=ygUccm90YWNpb24gbHVtYmFyIGVzdGlyYW1pZW50bw%3D%3D",
+    "descripcion": "Acostado boca arriba con las rodillas flexionadas y los pies apoyados en el suelo, deja caer lentamente ambas rodillas juntas hacia un lado hasta notar un estiramiento suave en la espalda. Mantén la posición y repite hacia el lado contrario.",
+    "etiquetas": [
+      "Estiramiento"
+    ]
+  },
+  {
+    "id": 13,
+    "nombre": "",
+    "region": "",
+    "objetivo": "",
+    "material": "",
+    "imagen": "",
+    "youtube": "",
+    "descripcion": "",
+    "etiquetas": []
   }
 ]
