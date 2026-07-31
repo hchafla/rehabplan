@@ -21,190 +21,86 @@
 <body>
 
 
-<h1>RehabPlan</h1>
+<div class="portada-cabecera">
 
-<p class="subtitulo">Diseña planes de ejercicios personalizados y compártelos con tus pacientes.</p>
+    <h1>RehabPlan</h1>
 
-
-
-<h2>Datos del paciente</h2>
-
-
-<div class="datos-paciente">
-
-
-    <label>
-        Nombre
-
-        <input 
-            type="text"
-            id="nombrePaciente"
-            placeholder="Nombre del paciente"
-        >
-
-    </label>
-
-
-
-    <label>
-        Fecha
-
-        <input 
-            type="date"
-            id="fechaPlan"
-        >
-
-    </label>
-
-
-
-    <label>
-        Observaciones generales
-
-        <textarea 
-            id="observacionesPaciente"
-            placeholder="Observaciones del plan..."
-        ></textarea>
-
-    </label>
-
+    <p class="subtitulo">La caja de herramientas del fisioterapeuta</p>
 
 </div>
 
 
+<div class="modulos">
 
 
-<!-- Pestañas: solo visibles en móvil (ver media query en styles.css) -->
-<div class="tabs-movil">
+    <a class="modulo" href="ejercicios.html">
 
-    <button 
-    type="button"
-    class="tab activa"
-    id="tabBiblioteca"
-    onclick="mostrarPestanaMovil('biblioteca')">
+        <span class="icono">📚</span>
 
-        Biblioteca
+        <span class="titulo">Ejercicios</span>
 
-    </button>
+        <span class="descripcion">Crear planes personalizados.</span>
 
-
-    <button 
-    type="button"
-    class="tab"
-    id="tabPlan"
-    onclick="mostrarPestanaMovil('plan')">
-
-        Mi plan <span id="contadorPlanTab">(0)</span>
-
-    </button>
-
-</div>
+    </a>
 
 
 
+    <a class="modulo proximamente" href="#" onclick="return false;">
 
-<div class="layout pestana-biblioteca" id="layout">
+        <span class="icono">⭐</span>
 
+        <span class="titulo">Plantillas</span>
 
-    <section class="panel panel-biblioteca">
+        <span class="descripcion">Protocolos frecuentes.</span>
 
-        <div class="panel-header">
+        <span class="etiqueta-proximamente">Próximamente</span>
 
-            <h2>Biblioteca de ejercicios</h2>
-
-            <div class="filtros">
-
-
-                <label class="visualmente-oculto" for="buscador">Buscar ejercicio</label>
-
-                <input 
-                    type="text"
-                    id="buscador"
-                    placeholder="Buscar ejercicio..."
-                >
+    </a>
 
 
 
-                <label class="visualmente-oculto" for="filtroRegion">Filtrar por región</label>
+    <a class="modulo proximamente" href="#" onclick="return false;">
 
-                <select id="filtroRegion">
+        <span class="icono">📋</span>
 
-                    <option value="">
-                        Todas las regiones
-                    </option>
+        <span class="titulo">Valoraciones</span>
 
-                </select>
+        <span class="descripcion">Escalas y pruebas funcionales.</span>
 
+        <span class="etiqueta-proximamente">Próximamente</span>
 
-
-                <label class="visualmente-oculto" for="filtroMaterial">Filtrar por material</label>
-
-                <select id="filtroMaterial">
-
-                    <option value="">
-                        Todos los materiales
-                    </option>
-
-                </select>
-
-
-            </div>
-
-        </div>
-
-
-        <div class="panel-scroll">
-
-            <div id="biblioteca"></div>
-
-        </div>
-
-    </section>
+    </a>
 
 
 
-    <section class="panel panel-plan">
+    <a class="modulo proximamente" href="#" onclick="return false;">
 
-        <div class="panel-header">
+        <span class="icono">🧩</span>
 
-            <h2>Plan del paciente</h2>
+        <span class="titulo">Clusters</span>
 
-            <div class="acciones-plan">
+        <span class="descripcion">Ayuda al diagnóstico.</span>
 
-                <button onclick="nuevoPlan()">
-                    Nuevo plan
-                </button>
+        <span class="etiqueta-proximamente">Próximamente</span>
 
-
-                <button class="primario" onclick="generarPDF()">
-                    Generar PDF
-                </button>
-
-            </div>
-
-        </div>
+    </a>
 
 
-        <div class="panel-scroll">
 
-            <div id="planPaciente"></div>
+    <a class="modulo proximamente" href="#" onclick="return false;">
 
-        </div>
+        <span class="icono">🧮</span>
 
-    </section>
+        <span class="titulo">Calculadoras</span>
+
+        <span class="descripcion">Herramientas clínicas.</span>
+
+        <span class="etiqueta-proximamente">Próximamente</span>
+
+    </a>
 
 
 </div>
-
-
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-
-<script src="script.js"></script>
 
 
 </body>
