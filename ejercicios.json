@@ -5,7 +5,7 @@
     "region": "Pelvis-cadera",
     "objetivo": "Fortalecimiento",
     "material": "Ninguno",
-    "imagen": "/img/espalda/puente-gluteos.webp",
+    "imagen": "/img/pelvis-cadera/puente-gluteos.webp",
     "youtube": "https://www.youtube.com/watch?v=wACebloZ1Nk&pp=ygUXcHVlbnRlIGRlIGdsdXRlb3MgcHJvZXQ%3D",
     "descripcion": "Acostado boca arriba con las rodillas flexionadas y los pies apoyados, eleva la pelvis hasta alinear hombros, caderas y rodillas. Desciende de forma controlada y repite el movimiento.",
     "etiquetas": [
@@ -157,13 +157,15 @@
   },
   {
     "id": 13,
-    "nombre": "",
-    "region": "",
-    "objetivo": "",
-    "material": "",
-    "imagen": "",
-    "youtube": "",
-    "descripcion": "",
-    "etiquetas": []
+    "nombre": "Rotación externa hombro",
+    "region": "Hombro",
+    "objetivo": "fortalecer",
+    "material": "Elástico",
+    "imagen": "/img/hombro/rotextbanda.webp",
+    "youtube": "https://www.youtube.com/watch?v=wQdfeB80fqo",
+    "descripcion": "Ejercicio para fortalecer",
+    "etiquetas": [
+      "Prevención"
+    ]
   }
 ]
