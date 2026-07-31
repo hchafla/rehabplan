@@ -564,13 +564,28 @@ function mostrarPlan() {
         bloque.innerHTML = `
 
 
-        <h3>
-            ${item.ejercicio.nombre}
-        </h3>
+        <div class="plan-item-cabecera">
+
+            <div class="plan-item-info">
+
+                <h3>
+                    ${item.ejercicio.nombre}
+                </h3>
 
 
-        <div class="dosis">
-            ${textoDosis}
+                <div class="dosis">
+                    ${textoDosis}
+                </div>
+
+            </div>
+
+
+            <img 
+            class="miniatura"
+            src="${BASE_URL}${item.ejercicio.imagen}"
+            alt=""
+            loading="lazy">
+
         </div>
 
 
