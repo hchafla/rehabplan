@@ -364,6 +364,62 @@ function aplicarFiltros() {
 
 
 // ==============================
+// PESTAÑAS MÓVIL
+// ==============================
+
+function mostrarPestanaMovil(pestana) {
+
+
+    const layout =
+        document.getElementById("layout");
+
+
+    const tabBiblioteca =
+        document.getElementById("tabBiblioteca");
+
+
+    const tabPlan =
+        document.getElementById("tabPlan");
+
+
+    if (!layout || !tabBiblioteca || !tabPlan)
+        return;
+
+
+
+    layout.classList.remove(
+        "pestana-biblioteca",
+        "pestana-plan"
+    );
+
+
+    layout.classList.add(
+        `pestana-${pestana}`
+    );
+
+
+
+    tabBiblioteca.classList.toggle(
+        "activa",
+        pestana === "biblioteca"
+    );
+
+
+    tabPlan.classList.toggle(
+        "activa",
+        pestana === "plan"
+    );
+
+
+    // Al cambiar de pestaña, subimos al principio del panel
+    // que se acaba de mostrar (por si veníamos con scroll).
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+
+}
+
+
+// ==============================
 // PLAN PACIENTE
 // ==============================
 
@@ -440,6 +496,22 @@ function mostrarPlan() {
 
     if (!contenedor)
         return;
+
+
+
+    // Contador de la pestaña "Mi plan" (solo visible en móvil)
+    const contadorTab =
+        document.getElementById(
+            "contadorPlanTab"
+        );
+
+
+    if (contadorTab) {
+
+        contadorTab.textContent =
+            `(${planPaciente.length})`;
+
+    }
 
 
 
