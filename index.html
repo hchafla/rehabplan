@@ -74,73 +74,127 @@
 
 
 
-<h2>Biblioteca de ejercicios</h2>
+<!-- Pestañas: solo visibles en móvil (ver media query en styles.css) -->
+<div class="tabs-movil">
 
+    <button 
+    type="button"
+    class="tab activa"
+    id="tabBiblioteca"
+    onclick="mostrarPestanaMovil('biblioteca')">
 
-<div class="filtros">
+        Biblioteca
 
-
-    <label class="visualmente-oculto" for="buscador">Buscar ejercicio</label>
-
-    <input 
-        type="text"
-        id="buscador"
-        placeholder="Buscar ejercicio..."
-    >
-
-
-
-    <label class="visualmente-oculto" for="filtroRegion">Filtrar por región</label>
-
-    <select id="filtroRegion">
-
-        <option value="">
-            Todas las regiones
-        </option>
-
-    </select>
-
-
-
-    <label class="visualmente-oculto" for="filtroMaterial">Filtrar por material</label>
-
-    <select id="filtroMaterial">
-
-        <option value="">
-            Todos los materiales
-        </option>
-
-    </select>
-
-
-</div>
-
-
-
-
-<div id="biblioteca"></div>
-
-
-
-
-<h2>Plan del paciente</h2>
-
-
-<div class="acciones-plan">
-
-    <button onclick="nuevoPlan()">
-        Nuevo plan
     </button>
 
 
-    <button class="primario" onclick="generarPDF()">
-        Generar PDF
+    <button 
+    type="button"
+    class="tab"
+    id="tabPlan"
+    onclick="mostrarPestanaMovil('plan')">
+
+        Mi plan <span id="contadorPlanTab">(0)</span>
+
     </button>
 
 </div>
 
 
-<div id="planPaciente"></div>
+
+
+<div class="layout pestana-biblioteca" id="layout">
+
+
+    <section class="panel panel-biblioteca">
+
+        <div class="panel-header">
+
+            <h2>Biblioteca de ejercicios</h2>
+
+            <div class="filtros">
+
+
+                <label class="visualmente-oculto" for="buscador">Buscar ejercicio</label>
+
+                <input 
+                    type="text"
+                    id="buscador"
+                    placeholder="Buscar ejercicio..."
+                >
+
+
+
+                <label class="visualmente-oculto" for="filtroRegion">Filtrar por región</label>
+
+                <select id="filtroRegion">
+
+                    <option value="">
+                        Todas las regiones
+                    </option>
+
+                </select>
+
+
+
+                <label class="visualmente-oculto" for="filtroMaterial">Filtrar por material</label>
+
+                <select id="filtroMaterial">
+
+                    <option value="">
+                        Todos los materiales
+                    </option>
+
+                </select>
+
+
+            </div>
+
+        </div>
+
+
+        <div class="panel-scroll">
+
+            <div id="biblioteca"></div>
+
+        </div>
+
+    </section>
+
+
+
+    <section class="panel panel-plan">
+
+        <div class="panel-header">
+
+            <h2>Plan del paciente</h2>
+
+            <div class="acciones-plan">
+
+                <button onclick="nuevoPlan()">
+                    Nuevo plan
+                </button>
+
+
+                <button class="primario" onclick="generarPDF()">
+                    Generar PDF
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="panel-scroll">
+
+            <div id="planPaciente"></div>
+
+        </div>
+
+    </section>
+
+
+</div>
 
 
 
