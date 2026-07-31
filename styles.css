@@ -116,6 +116,111 @@ textarea:focus-visible {
 }
 
 
+/* Enlace "volver a la portada" en las páginas de cada herramienta */
+.volver {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-decoration: none;
+    margin-bottom: 18px;
+}
+
+.volver:hover {
+    color: var(--brand);
+}
+
+
+/* ==============================
+   Portada (index.html)
+   ============================== */
+
+.portada-cabecera {
+    text-align: center;
+    max-width: 560px;
+    margin: 24px auto 40px;
+}
+
+.portada-cabecera h1 {
+    font-size: 2.4rem;
+}
+
+.portada-cabecera .subtitulo {
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+.modulos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.modulo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px 22px;
+    text-decoration: none;
+    color: var(--ink);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.modulo:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+}
+
+.modulo .icono {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.modulo .titulo {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.2rem;
+}
+
+.modulo .descripcion {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+}
+
+.modulo.proximamente {
+    cursor: default;
+    color: var(--ink-faint);
+    background: var(--surface-alt);
+}
+
+.modulo.proximamente:hover {
+    box-shadow: var(--shadow-card);
+    transform: none;
+}
+
+.modulo.proximamente .titulo {
+    color: var(--ink-soft);
+}
+
+.modulo.proximamente .etiqueta-proximamente {
+    align-self: flex-start;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--ink-soft);
+}
+
+
 /* ==============================
    Layout de dos columnas
    ============================== */
