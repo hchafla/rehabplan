@@ -157,6 +157,149 @@
   },
   {
     "id": 13,
+    "nombre": "Rotación cervical",
+    "region": "Cuello",
+    "objetivo": "Movilización",
+    "material": "Sin material",
+    "imagen": "/img/cuello/rotacion-cervical.webp",
+    "youtube": "https://www.youtube.com/watch?v=c2CfNzDEmKg&pp=ygUTcm90YWNpw7NuIGRlIGNhYmV6YQ%3D%3D",
+    "descripcion": "Gira lentamente la cabeza hacia un lado hasta donde resulte cómodo, sin mover los hombros. Vuelve al centro y repite hacia el otro lado.",
+    "etiquetas": [
+      "Movilidad"
+    ]
+  },
+  {
+    "id": 14,
+    "nombre": "Inclinación cervical",
+    "region": "Cuello",
+    "objetivo": "Movilización",
+    "material": "Sin material",
+    "imagen": "/img/cuello/inclinacion-cervical.webp",
+    "youtube": "https://www.youtube.com/shorts/PXSTao1Rj2c",
+    "descripcion": "Inclina lentamente la cabeza acercando la oreja hacia el hombro, sin elevar el hombro ni girar la cabeza. Vuelve al centro y repite hacia el otro lado.",
+    "etiquetas": [
+      "Movilidad"
+    ]
+  },
+  {
+    "id": 15,
+    "nombre": "Flexión cervical",
+    "region": "Cuello",
+    "objetivo": "Movilización",
+    "material": "Sin material",
+    "imagen": "/img/cuello/flexion-cervical.webp",
+    "youtube": "https://www.youtube.com/watch?v=GWdsHN6xvV8&pp=ygUYZmxleGlvbiBjZXJ2aWNhbCBzZW50YWRv",
+    "descripcion": "Inclina lentamente la cabeza hacia delante, llevando la barbilla hacia el pecho sin elevar los hombros. Vuelve a la posición inicial de forma controlada.",
+    "etiquetas": [
+      "Movilidad"
+    ]
+  },
+  {
+    "id": 16,
+    "nombre": "Extensión cervical",
+    "region": "Cuello",
+    "objetivo": "Movilización",
+    "material": "Sin material",
+    "imagen": "/img/cuello/extension-cervical.webp",
+    "youtube": "https://www.youtube.com/watch?v=PCKnBXQGBmU&pp=ygURZXh0ZW5zacOzbiBjdWVsbG8%3D",
+    "descripcion": "Inclina lentamente la cabeza hacia atrás mirando al techo, sin elevar los hombros ni arquear la espalda. Regresa a la posición inicial de forma controlada.",
+    "etiquetas": [
+      "Movilidad"
+    ]
+  },
+  {
+    "id": 17,
+    "nombre": "Extensión cervical isométrica",
+    "region": "Cuello",
+    "objetivo": "Fortalecimiento",
+    "material": "Sin material",
+    "imagen": "/img/cuello/extension-cervical-isometrica.webp",
+    "youtube": "https://www.youtube.com/watch?v=PxhRYA6lCEI&pp=ygUcZXh0ZW5zacOzbiBpc29tZXRyaWNhIGN1ZWxsbw%3D%3D",
+    "descripcion": "Coloca ambas manos detrás de la cabeza e intenta llevar la cabeza hacia atrás mientras las manos ofrecen resistencia, sin que se produzca movimiento.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 18,
+    "nombre": "Flexión cervical isométrica",
+    "region": "Cuello",
+    "objetivo": "Fortalecimiento",
+    "material": "Sin material",
+    "imagen": "/img/cuello/flexion-cervical-isometrica.webp",
+    "youtube": "https://www.youtube.com/watch?v=Kde8foWtKj0&pp=ygUZZmxleGlvbiBpc29tZXRyaWNhIGN1ZWxsbw%3D%3D",
+    "descripcion": "Coloca ambas manos sobre la frente e intenta flexionar la cabeza hacia delante mientras las manos ofrecen resistencia, sin que se produzca movimiento.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 19,
+    "nombre": "Retracción cervical isométrica",
+    "region": "Cuello",
+    "objetivo": "Fortalecimiento",
+    "material": "Sin material",
+    "imagen": "/img/cuello/retraccion-cervical-isometrica.webp",
+    "youtube": "https://www.youtube.com/shorts/sAMin7380c8",
+    "descripcion": "Lleva suavemente la barbilla hacia atrás, como si quisieras hacer una \"papada\".Mantén la cabeza erguida sin mover el cuello.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 20,
+    "nombre": "Estiramiento de trapecio superior",
+    "region": "Cuello",
+    "objetivo": "Estiramiento",
+    "material": "Sin material",
+    "imagen": "/img/cuello/estiramiento-trapecio-superior.webp",
+    "youtube": "https://www.youtube.com/shorts/mLQJuXdQShc",
+    "descripcion": "Inclina la cabeza hacia un lado ayudándote suavemente con la mano, manteniendo el hombro contrario relajado y descendido hasta notar el estiramiento.",
+    "etiquetas": [
+      "Estiramiento"
+    ]
+  },
+  {
+    "id": 21,
+    "nombre": "Estiramiento de elevador de la escápula",
+    "region": "Cuello",
+    "objetivo": "Estiramiento",
+    "material": "Sin material",
+    "imagen": "/img/cuello/estiramiento-elevador-escapula.webp",
+    "youtube": "https://www.youtube.com/watch?v=37QGH0Frtx4&pp=ygUoRXN0aXJhbWllbnRvIGRlIGVsZXZhZG9yIGRlIGxhIGVzY8OhcHVsYQ%3D%3D",
+    "descripcion": "Gira ligeramente la cabeza hacia el lado contrario y después flexiónala hacia delante, ayudándote suavemente con la mano hasta notar el estiramiento en la parte posterior y lateral del cuello.",
+    "etiquetas": [
+      "Estiramiento"
+    ]
+  },
+  {
+    "id": 22,
+    "nombre": "Estiramiento de escalenos",
+    "region": "Cuello",
+    "objetivo": "Estiramiento",
+    "material": "Sin material",
+    "imagen": "/img/cuello/estiramiento-escalenos.webp",
+    "youtube": "https://www.youtube.com/watch?v=gV5R7fsFFzQ&pp=ygUZRXN0aXJhbWllbnRvIGRlIGVzY2FsZW5vcw%3D%3D",
+    "descripcion": "Inclina la cabeza hacia un lado y ligeramente hacia atrás, ayudándote suavemente con la mano hasta notar el estiramiento en la parte lateral y anterior del cuello.",
+    "etiquetas": [
+      "Estiramiento"
+    ]
+  },
+  {
+    "id": 23,
+    "nombre": "Estiramiento de esternocleidomastoideo",
+    "region": "Cuello",
+    "objetivo": "Estiramiento",
+    "material": "Sin material",
+    "imagen": "/img/cuello/estiramiento-esternocleidomastoideo.webp",
+    "youtube": "https://www.youtube.com/watch?v=qktH-mAaG-k&pp=ygUpRXN0aXJhbWllbnRvIGVzdGVybm9jbGVpZG9tYXN0b2lkZW8gcHJvZXQ%3D",
+    "descripcion": "Sujeta suavemente la clavícula con ambas manos, gira la cabeza hacia el lado contrario y llévala ligeramente hacia atrás hasta notar el estiramiento en la parte anterior y lateral del cuello.",
+    "etiquetas": [
+      "Estiramiento"
+    ]
+  },
+  {
+    "id": 24,
     "nombre": "Rotación externa hombro",
     "region": "Hombro",
     "objetivo": "fortalecer",
