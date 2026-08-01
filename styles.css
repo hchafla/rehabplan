@@ -346,6 +346,15 @@ textarea:focus-visible {
     margin-top: 0;
 }
 
+/* Se activa mientras se arrastra una tarjeta de ejercicio por
+   encima (solo ocurre en escritorio, ver ejercicios.js). */
+.panel-plan.zona-soltar-activa {
+    outline: 2px dashed var(--brand);
+    outline-offset: -6px;
+    border-radius: var(--radius-lg);
+    background: var(--brand-soft);
+}
+
 .panel-scroll {
     flex: 1 1 auto;
     min-height: 0;
@@ -362,6 +371,51 @@ textarea:focus-visible {
     background: var(--border-strong);
     border-radius: 999px;
 }
+
+
+/* ==============================
+   Barra de selección de paciente
+   ============================== */
+
+.barra-pacientes {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.barra-pacientes label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+}
+
+.barra-pacientes select {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    padding: 8px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    min-width: 220px;
+}
+
+.barra-pacientes .eliminar-paciente {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 4px 0;
+}
+
+.barra-pacientes .eliminar-paciente:hover {
+    text-decoration: underline;
+}
+
+
 
 
 /* ==============================
@@ -474,12 +528,28 @@ textarea:focus-visible {
     padding: 16px;
     background: var(--surface);
     box-shadow: var(--shadow-card);
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 
 .card:hover {
     box-shadow: var(--shadow-card-hover);
     transform: translateY(-2px);
+}
+
+/* El cursor de "agarrar para arrastrar" solo tiene sentido con
+   ratón; en touch (móvil/tablet) no se aplica. */
+@media (hover: hover) and (pointer: fine) {
+
+    .card:active {
+        cursor: grabbing;
+    }
+
+}
+
+.card.en-plan {
+    border-color: var(--brand);
+    background: var(--brand-soft);
 }
 
 .card img {
@@ -511,13 +581,14 @@ textarea:focus-visible {
     letter-spacing: 0.02em;
     padding: 3px 9px;
     border-radius: 999px;
-    background: var(--brand-soft);
+    background: var(--surface);
     color: var(--brand-dark);
+    border: 1px solid var(--brand-soft);
 }
 
 .card .etiqueta.material {
-    background: var(--accent-soft);
     color: var(--accent-dark);
+    border-color: var(--accent-soft);
 }
 
 .card p.descripcion {
@@ -540,36 +611,23 @@ textarea:focus-visible {
     font-weight: 600;
     text-decoration: none;
     color: var(--brand);
+    /* Área de toque algo mayor que el texto, para que sea fácil
+       tocar el enlace sin activar el clic de la tarjeta entera. */
+    padding: 4px 0;
 }
 
 .card a.ver-video:hover {
     text-decoration: underline;
 }
 
-.card button.btn-anadir {
-    font-size: 0.85rem;
+.card .estado-plan {
+    font-size: 0.78rem;
     font-weight: 600;
-    padding: 8px 14px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--brand);
-    background: var(--brand);
-    color: white;
-    transition: background 0.15s ease;
+    color: var(--ink-faint);
 }
 
-.card button.btn-anadir:hover {
-    background: var(--brand-dark);
-    border-color: var(--brand-dark);
-}
-
-.card button.btn-anadir.anadido {
-    background: var(--surface);
+.card.en-plan .estado-plan {
     color: var(--brand-dark);
-    border: 1px solid var(--brand);
-}
-
-.card button.btn-anadir.anadido:hover {
-    background: var(--brand-soft);
 }
 
 
