@@ -28,6 +28,19 @@
 <p class="subtitulo">Diseña planes de ejercicios personalizados y compártelos con tus pacientes.</p>
 
 
+<div class="barra-pacientes">
+
+    <label for="selectorPaciente">Paciente</label>
+
+    <select id="selectorPaciente" onchange="cambiarPaciente(this.value)"></select>
+
+    <button class="eliminar-paciente" onclick="eliminarPacienteActivo()">
+        Eliminar este paciente
+    </button>
+
+</div>
+
+
 
 <h2>Datos del paciente</h2>
 
@@ -165,18 +178,19 @@
 
 
 
-    <section class="panel panel-plan">
+    <section 
+    class="panel panel-plan"
+    ondragover="permitirSoltar(event)"
+    ondragenter="resaltarZonaSoltar(event)"
+    ondragleave="quitarResaltadoZonaSoltar(event)"
+    ondrop="soltarEjercicio(event)">
+
 
         <div class="panel-header">
 
             <h2>Plan del paciente</h2>
 
             <div class="acciones-plan">
-
-                <button onclick="nuevoPlan()">
-                    Nuevo plan
-                </button>
-
 
                 <button onclick="guardarComoPlantilla()">
                     Guardar como plantilla
