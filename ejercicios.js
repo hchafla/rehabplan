@@ -135,12 +135,6 @@ function mostrarEjercicios(ejercicios) {
         );
 
 
-        // Arrastrar y soltar: solo tiene efecto real en escritorio
-        // (el navegador no dispara estos eventos con el dedo en
-        // móvil), así que no molesta ni rompe nada ahí.
-        tarjeta.setAttribute("draggable", "true");
-
-
         tarjeta.addEventListener(
             "click",
             () => alternarEjercicioEnPlan(ejercicio.id)
@@ -160,12 +154,6 @@ function mostrarEjercicios(ejercicios) {
                 }
 
             }
-        );
-
-
-        tarjeta.addEventListener(
-            "dragstart",
-            evento => arrastrarEjercicio(evento, ejercicio.id)
         );
 
 
@@ -580,112 +568,6 @@ function alternarEjercicioEnPlan(id) {
 
 
 // ==============================
-// ARRASTRAR Y SOLTAR (solo escritorio)
-// ==============================
-
-function arrastrarEjercicio(evento, id) {
-
-    evento.dataTransfer.setData("text/plain", String(id));
-
-    evento.dataTransfer.effectAllowed = "copy";
-
-}
-
-
-function permitirSoltar(evento) {
-
-    // Imprescindible: sin este preventDefault() el navegador no
-    // deja soltar nada encima del panel.
-    evento.preventDefault();
-
-}
-
-
-function resaltarZonaSoltar(evento) {
-
-    evento.currentTarget.classList.add("zona-soltar-activa");
-
-}
-
-
-function quitarResaltadoZonaSoltar(evento) {
-
-    evento.currentTarget.classList.remove("zona-soltar-activa");
-
-}
-
-
-function soltarEjercicio(evento) {
-
-
-    evento.preventDefault();
-
-    evento.currentTarget.classList.remove("zona-soltar-activa");
-
-
-
-    const id =
-        evento.dataTransfer.getData("text/plain");
-
-
-    if (!id)
-        return;
-
-
-
-    const yaEstaEnPlan =
-        planPaciente.some(
-            e => e.id == id
-        );
-
-
-    if (yaEstaEnPlan)
-        return;
-
-
-
-    const ejercicio =
-        ejerciciosGlobal.find(
-            e => e.id == id
-        );
-
-
-    if (!ejercicio)
-        return;
-
-
-
-    planPaciente.push({
-
-        id: ejercicio.id,
-
-        ejercicio: ejercicio,
-
-        series: 3,
-
-        tipo: "repeticiones",
-
-        cantidad: 10,
-
-        notas: ""
-
-    });
-
-
-
-    guardarPlan();
-
-
-    mostrarPlan();
-
-
-    refrescarBiblioteca();
-
-
-}
-
-
-// ==============================
 // MOSTRAR PLAN
 // ==============================
 
@@ -742,7 +624,7 @@ function mostrarPlan() {
 
 
 
-    planPaciente.forEach(item => {
+    planPaciente.forEach((item, indice) => {
 
 
 
@@ -764,11 +646,53 @@ function mostrarPlan() {
             : `${item.series} series × ${item.cantidad} rep`;
 
 
+        const esPrimero =
+            indice === 0;
+
+
+        const esUltimo =
+            indice === planPaciente.length - 1;
+
+
+        // Campo nuevo: si no existe en planes guardados antes de
+        // esta función, se trata como "no incluir" por defecto.
+        const incluirDescripcion =
+            item.incluirDescripcion === true;
+
+
 
         bloque.innerHTML = `
 
 
         <div class="plan-item-cabecera">
+
+            <div class="orden-controles">
+
+                <button 
+                class="mover"
+                type="button"
+                aria-label="Subir ${item.ejercicio.nombre}"
+                onclick="moverEjercicio(${item.id}, -1)"
+                ${esPrimero ? "disabled" : ""}>
+
+                    ▲
+
+                </button>
+
+
+                <button 
+                class="mover"
+                type="button"
+                aria-label="Bajar ${item.ejercicio.nombre}"
+                onclick="moverEjercicio(${item.id}, 1)"
+                ${esUltimo ? "disabled" : ""}>
+
+                    ▼
+
+                </button>
+
+            </div>
+
 
             <div class="plan-item-info">
 
@@ -880,6 +804,31 @@ function mostrarPlan() {
 
 
 
+        <p class="descripcion-plan">
+            ${item.ejercicio.descripcion}
+        </p>
+
+
+        <label class="interruptor-pdf">
+
+            <input
+            type="checkbox"
+            ${incluirDescripcion ? "checked" : ""}
+            onchange="
+            actualizarCampo(
+                ${item.id},
+                'incluirDescripcion',
+                this.checked
+            )">
+
+            <span class="interruptor-visual"></span>
+
+            Incluir esta descripción en el PDF
+
+        </label>
+
+
+
         <label class="notas">
 
             Notas
@@ -916,6 +865,52 @@ function mostrarPlan() {
 
 
     });
+
+
+}
+
+
+
+
+function moverEjercicio(id, direccion) {
+
+
+    const indice =
+        planPaciente.findIndex(
+            e => e.id == id
+        );
+
+
+    if (indice === -1)
+        return;
+
+
+    const nuevoIndice =
+        indice + direccion;
+
+
+    if (nuevoIndice < 0 || nuevoIndice >= planPaciente.length)
+        return;
+
+
+
+    const temporal =
+        planPaciente[indice];
+
+
+    planPaciente[indice] =
+        planPaciente[nuevoIndice];
+
+
+    planPaciente[nuevoIndice] =
+        temporal;
+
+
+
+    guardarPlan();
+
+
+    mostrarPlan();
 
 
 }
@@ -1002,6 +997,44 @@ function eliminarEjercicio(id) {
 // ==============================
 // NUEVO PLAN
 // ==============================
+
+// Vacía los ejercicios del paciente activo (por si el fisio se
+// equivoca o cambia de idea), SIN tocar el nombre/fecha/observaciones
+// ni afectar a otros pacientes guardados.
+function vaciarPlan() {
+
+
+    if (planPaciente.length === 0)
+        return;
+
+
+
+    const confirmar =
+        confirm(
+            "¿Seguro que quieres vaciar el plan? Se eliminarán todos los " +
+            "ejercicios añadidos. Los datos del paciente no se tocan."
+        );
+
+
+    if (!confirmar)
+        return;
+
+
+
+    planPaciente = [];
+
+
+    guardarPlan();
+
+
+    mostrarPlan();
+
+
+    refrescarBiblioteca();
+
+
+}
+
 
 // ==============================
 // GUARDAR COMO PLANTILLA
@@ -1909,11 +1942,36 @@ async function generarPDF() {
         const item = planPaciente[indice];
 
 
+        // Si este ejercicio lleva la descripción activada, calculamos
+        // de antemano cuántas líneas ocupará (con el ancho real que
+        // va a usar en el PDF), para reservar el espacio justo.
+        let lineasDescripcion = [];
+
+        if (item.incluirDescripcion && item.ejercicio.descripcion) {
+
+            pdf.setFontSize(9);
+
+            lineasDescripcion =
+                pdf.splitTextToSize(
+                    item.ejercicio.descripcion,
+                    170
+                );
+
+        }
+
+
+        const alturaDescripcion =
+            lineasDescripcion.length > 0
+            ? (lineasDescripcion.length * 4) + 8
+            : 0;
+
+
         // Altura real aproximada de una ficha compacta (sin notas
         // largas): cabecera ~14mm + imagen/QR ~40mm + texto ~13mm +
-        // margen final. Con esta reserva entran 3 ejercicios por
-        // página en el caso normal.
-        const alturaBloque = 80;
+        // margen final, más la descripción si toca incluirla. Con
+        // esta reserva entran 3 ejercicios por página en el caso
+        // normal (menos si llevan descripción larga).
+        const alturaBloque = 80 + alturaDescripcion;
 
 
         if(y + alturaBloque > 270){
@@ -2229,10 +2287,57 @@ try {
 
 
 
+        // Descripción completa del ejercicio (solo si el fisio activó
+        // el interruptor para este ejercicio en concreto). Va a ancho
+        // completo, debajo de las dos columnas.
+        let yTrasColumnas =
+            Math.max(yColumnaIzquierda, finColumnaDerecha);
+
+
+        if (lineasDescripcion.length > 0) {
+
+
+            yTrasColumnas += 4;
+
+
+            pdf.setFontSize(9);
+
+            pdf.setTextColor(90);
+
+
+            pdf.text(
+                "Descripción:",
+                20,
+                yTrasColumnas
+            );
+
+
+            yTrasColumnas += 4;
+
+
+            pdf.text(
+                lineasDescripcion,
+                20,
+                yTrasColumnas
+            );
+
+
+            pdf.setTextColor(0);
+
+
+            yTrasColumnas +=
+                lineasDescripcion.length * 4;
+
+
+        }
+
+
+
         // La siguiente ficha empieza debajo de lo más alto entre
-        // la columna izquierda (texto) y la derecha (QR + enlace),
-        // con un pequeño margen antes del separador siguiente.
-        y = Math.max(yColumnaIzquierda, finColumnaDerecha) + 6;
+        // la columna izquierda (texto), la derecha (QR + enlace) y
+        // la descripción (si se incluyó), con un pequeño margen
+        // antes del separador siguiente.
+        y = yTrasColumnas + 6;
 
 
     }
