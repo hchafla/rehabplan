@@ -346,15 +346,6 @@ textarea:focus-visible {
     margin-top: 0;
 }
 
-/* Se activa mientras se arrastra una tarjeta de ejercicio por
-   encima (solo ocurre en escritorio, ver ejercicios.js). */
-.panel-plan.zona-soltar-activa {
-    outline: 2px dashed var(--brand);
-    outline-offset: -6px;
-    border-radius: var(--radius-lg);
-    background: var(--brand-soft);
-}
-
 .panel-scroll {
     flex: 1 1 auto;
     min-height: 0;
@@ -537,16 +528,6 @@ textarea:focus-visible {
     transform: translateY(-2px);
 }
 
-/* El cursor de "agarrar para arrastrar" solo tiene sentido con
-   ratón; en touch (móvil/tablet) no se aplica. */
-@media (hover: hover) and (pointer: fine) {
-
-    .card:active {
-        cursor: grabbing;
-    }
-
-}
-
 .card.en-plan {
     border-color: var(--brand);
     background: var(--brand-soft);
@@ -593,9 +574,20 @@ textarea:focus-visible {
 
 .card p.descripcion {
     font-size: 0.88rem;
+    line-height: 1.4;
     color: var(--ink-soft);
     margin: 0 0 12px;
     flex-grow: 1;
+
+    /* Trunca a 3 líneas con puntos suspensivos y reserva siempre
+       ese mismo alto, tenga la descripción 1 línea o 10: así todas
+       las tarjetas de la biblioteca quedan a la misma altura. */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: calc(1.4em * 3);
 }
 
 .card .acciones {
@@ -709,6 +701,36 @@ textarea:focus-visible {
     margin-bottom: 12px;
 }
 
+.orden-controles {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex-shrink: 0;
+}
+
+.orden-controles .mover {
+    width: 26px;
+    height: 22px;
+    padding: 0;
+    line-height: 1;
+    font-size: 0.7rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink-soft);
+}
+
+.orden-controles .mover:hover:not(:disabled) {
+    background: var(--brand-soft);
+    color: var(--brand-dark);
+    border-color: var(--brand);
+}
+
+.orden-controles .mover:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
 .plan-item-info {
     flex: 1;
     min-width: 0;
@@ -777,6 +799,69 @@ textarea:focus-visible {
 
 .plan-item label.notas {
     flex: 1 1 100%;
+}
+
+.plan-item .descripcion-plan {
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    margin: 0 0 10px;
+}
+
+.interruptor-pdf {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    margin: 0 0 16px;
+    /* Sobrescribe el flex-direction:column que usan el resto de
+       labels del formulario del plan. */
+    flex-direction: row;
+}
+
+.interruptor-pdf input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.interruptor-visual {
+    position: relative;
+    width: 34px;
+    height: 20px;
+    flex-shrink: 0;
+    background: var(--border-strong);
+    border-radius: 999px;
+    transition: background 0.15s ease;
+}
+
+.interruptor-visual::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.15s ease;
+}
+
+.interruptor-pdf input:checked + .interruptor-visual {
+    background: var(--brand);
+}
+
+.interruptor-pdf input:checked + .interruptor-visual::before {
+    transform: translateX(14px);
+}
+
+.interruptor-pdf input:focus-visible + .interruptor-visual {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
 }
 
 .plan-item textarea {
