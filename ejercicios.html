@@ -178,12 +178,7 @@
 
 
 
-    <section 
-    class="panel panel-plan"
-    ondragover="permitirSoltar(event)"
-    ondragenter="resaltarZonaSoltar(event)"
-    ondragleave="quitarResaltadoZonaSoltar(event)"
-    ondrop="soltarEjercicio(event)">
+    <section class="panel panel-plan">
 
 
         <div class="panel-header">
@@ -191,6 +186,11 @@
             <h2>Plan del paciente</h2>
 
             <div class="acciones-plan">
+
+                <button onclick="vaciarPlan()">
+                    Nuevo plan
+                </button>
+
 
                 <button onclick="guardarComoPlantilla()">
                     Guardar como plantilla
