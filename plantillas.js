@@ -166,48 +166,53 @@ function usarPlantilla(id) {
 
 
 
-    // Si ya hay un plan en marcha, avisamos antes de sobrescribirlo:
-    // usar una plantilla sustituye el plan actual por completo.
-    const planGuardado =
-        localStorage.getItem("planPaciente");
+    // Usar una plantilla crea SIEMPRE un paciente nuevo con esos
+    // ejercicios — así nunca se corre el riesgo de pisar el plan
+    // de un paciente que ya estuviera en marcha.
+    const nuevoId = Date.now();
 
 
-    const planActual =
-        planGuardado ? JSON.parse(planGuardado) : [];
+    const pacientesGuardados =
+        localStorage.getItem("planesPacientes");
 
 
-    if (planActual.length > 0) {
+    const pacientes =
+        pacientesGuardados
+        ? JSON.parse(pacientesGuardados)
+        : [];
 
 
-        const confirmar =
-            confirm(
-                `Ya tienes un plan en marcha con ${planActual.length} ejercicio(s). ` +
-                `Si usas la plantilla "${plantilla.nombre}", se sustituirá por completo. ¿Continuar?`
-            );
+    pacientes.push({
 
+        id: nuevoId,
 
-        if (!confirmar)
-            return;
-
-    }
-
-
-
-    localStorage.setItem(
-        "planPaciente",
-        JSON.stringify(plantilla.ejercicios)
-    );
-
-
-    // Empezamos con los datos del paciente en blanco: la plantilla
-    // trae los ejercicios, no el nombre/fecha de un paciente anterior.
-    localStorage.setItem(
-        "datosPaciente",
-        JSON.stringify({
+        datosPaciente: {
+            titulo: "",
             nombre: "",
             fecha: "",
             observaciones: ""
-        })
+        },
+
+        // Copia profunda: la plantilla original no queda enlazada
+        // al plan del paciente que se va a editar ahora.
+        planPaciente: JSON.parse(
+            JSON.stringify(plantilla.ejercicios)
+        ),
+
+        actualizadoEn: Date.now()
+
+    });
+
+
+    localStorage.setItem(
+        "planesPacientes",
+        JSON.stringify(pacientes)
+    );
+
+
+    localStorage.setItem(
+        "pacienteActivoId",
+        String(nuevoId)
     );
 
 
