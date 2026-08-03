@@ -42,19 +42,68 @@
 
 
 
-<h2>Datos del paciente</h2>
+<div class="logo-clinica">
+
+    <img 
+        id="previsualizacionLogo" 
+        class="logo-preview" 
+        alt="Logo de la clínica"
+        style="display:none;"
+    >
+
+    <div class="logo-info">
+        <span class="logo-titulo">Logo de la clínica</span>
+        <span class="logo-ayuda">Aparece en la cabecera de los PDF que generes. Se guarda solo en este dispositivo.</span>
+    </div>
+
+    <div class="logo-acciones">
+
+        <label class="boton-archivo">
+            Cambiar logo
+            <input 
+                type="file" 
+                id="inputLogo" 
+                accept="image/*" 
+                class="visualmente-oculto"
+            >
+        </label>
+
+        <button type="button" id="quitarLogo" class="quitar-logo" style="display:none;">
+            Quitar
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<h2>Datos del plan</h2>
 
 
 <div class="datos-paciente">
 
 
+    <label class="campo-titulo">
+        Título del plan
+
+        <input 
+            type="text"
+            id="tituloPlan"
+            placeholder='Ej. "Tabla cervical" (opcional)'
+        >
+
+    </label>
+
+
+
     <label>
-        Nombre
+        Nombre del paciente
 
         <input 
             type="text"
             id="nombrePaciente"
-            placeholder="Nombre del paciente"
+            placeholder="Opcional: déjalo en blanco para una tabla genérica"
         >
 
     </label>
