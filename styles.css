@@ -410,6 +410,105 @@ textarea:focus-visible {
 
 
 /* ==============================
+   Logo de la clínica
+   ============================== */
+
+.logo-clinica {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-card);
+}
+
+.logo-clinica .logo-preview {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    padding: 4px;
+}
+
+.logo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.logo-titulo {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.logo-ayuda {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+}
+
+.logo-acciones {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.boton-archivo {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.boton-archivo:hover {
+    background: var(--surface-alt);
+}
+
+.quitar-logo {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 4px 0;
+    white-space: nowrap;
+}
+
+.quitar-logo:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+
+    .logo-clinica {
+        flex-wrap: wrap;
+    }
+
+    .logo-info {
+        flex: 1 1 100%;
+        order: 3;
+    }
+
+}
+
+
+
+
+/* ==============================
    Datos del paciente
    ============================== */
 
@@ -422,6 +521,18 @@ textarea:focus-visible {
     grid-template-columns: 1fr 1fr 2fr;
     gap: 16px 24px;
     box-shadow: var(--shadow-card);
+}
+
+.datos-paciente .campo-titulo {
+    grid-column: 1 / -1;
+}
+
+.datos-paciente .campo-titulo input {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ink);
+    padding: 10px 12px;
 }
 
 .datos-paciente label {
