@@ -2415,10 +2415,15 @@ async function generarPDF() {
         const pautaAnchoCapsula = Math.min(col1Ancho, pautaAnchoTexto + 7);
 
         pdf.setFillColor(...COLOR_PAUTA_BG);
-        pdf.roundedRect(col1X, pautaY, pautaAnchoCapsula, alturaPauta, alturaPauta / 2, alturaPauta / 2, "F");
+        pdf.roundedRect(col1X + 2, pautaY, pautaAnchoCapsula, alturaPauta, alturaPauta / 2, alturaPauta / 2, "F");
 
         pdf.setTextColor(...COLOR_PAUTA_TEXT);
-        pdf.text(pauta, col1X + pautaAnchoCapsula / 2, pautaY + alturaPauta / 2 + 1.1, { align: "center" });
+        pdf.text(
+    pauta,
+    col1X + 2 + pautaAnchoCapsula / 2,
+    pautaY + alturaPauta / 2 + 1.1,
+    { align: "center" }
+);
         pdf.setFont("helvetica", "normal");
         pdf.setTextColor(0, 0, 0);
 
