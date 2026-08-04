@@ -2330,7 +2330,7 @@ async function generarPDF() {
         // ajustan al ancho de la columna 2, donde ahora se muestran. ---
         let lineasNotas = [];
         if (item.notas) {
-            pdf.setFontSize(6.8);
+            pdf.setFontSize(8);
             lineasNotas = pdf.splitTextToSize(item.notas, col2Ancho - 4);
         }
 
