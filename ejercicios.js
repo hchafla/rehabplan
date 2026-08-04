@@ -2494,95 +2494,63 @@ pdf.setTextColor(0, 0, 0);
 
 
         // --- Columna 3: QR + "Ver vídeo", presentes pero discretos ---
-if (item.ejercicio.youtube) {
+        if (item.ejercicio.youtube) {
 
-    // Centrar todos los elementos de la columna
-    const qrX = col3X + (col3Ancho - qrTam) / 2;
+            pdf.setFontSize(6.5);
+            pdf.setTextColor(...COLOR_INK_TENUE);
+            pdf.text("VÍDEO DEL EJERCICIO", col3X, bodyTop, { maxWidth: col3Ancho });
+            pdf.setTextColor(0, 0, 0);
 
-    pdf.setFontSize(6.5);
-    pdf.setTextColor(...COLOR_INK_TENUE);
-    pdf.text(
-        "VÍDEO DEL EJERCICIO",
-        col3X + col3Ancho / 2,
-        bodyTop,
-        { align: "center", maxWidth: col3Ancho }
-    );
-    pdf.setTextColor(0, 0, 0);
+            const qrY = bodyTop + 5;
 
-    const qrY = bodyTop + 5;
+            const qrContainer = document.createElement("div");
+            new QRCode(qrContainer, { text: item.ejercicio.youtube, width: 120, height: 120 });
 
-    const qrContainer = document.createElement("div");
-    new QRCode(qrContainer, {
-        text: item.ejercicio.youtube,
-        width: 120,
-        height: 120
-    });
+            let qrImage = null;
+            try {
+                qrImage = await esperarQRListo(qrContainer);
+            } catch (error) {
+                console.error(`No se pudo generar el QR para "${item.ejercicio.nombre}":`, error);
+            }
 
-    let qrImage = null;
+            if (qrImage) {
+                pdf.addImage(qrImage, "PNG", col3X, qrY, qrTam, qrTam);
+            } else {
+                pdf.setDrawColor(...COLOR_BORDE_CARD);
+                pdf.setLineWidth(0.3);
+                pdf.rect(col3X, qrY, qrTam, qrTam, "S");
 
-    try {
-        qrImage = await esperarQRListo(qrContainer);
-    } catch (error) {
-        console.error(`No se pudo generar el QR para "${item.ejercicio.nombre}":`, error);
+                pdf.setFontSize(6.5);
+                pdf.setTextColor(...COLOR_INK_SUAVE);
+                pdf.text("QR no disponible", col3X + qrTam / 2, qrY + qrTam / 2,
+                    { align: "center", maxWidth: qrTam - 4 });
+                pdf.setTextColor(0, 0, 0);
+            }
+
+            // Botón "Ver vídeo": contorno fino, discreto — segunda prioridad visual
+            const botonY = qrY + qrTam + 3;
+            const botonAlto = 7;
+
+            pdf.setDrawColor(...COLOR_INK_TENUE);
+            pdf.setLineWidth(0.3);
+            pdf.roundedRect(col3X, botonY, col3Ancho, botonAlto, 3.5, 3.5, "S");
+
+            pdf.setFontSize(7.5);
+            pdf.setTextColor(...COLOR_MARCA_OSCURO);
+            pdf.text(
+                qrImage ? "Ver vídeo" : "Ver vídeo (enlace)",
+                col3X + col3Ancho / 2,
+                botonY + botonAlto / 2 + 1.2,
+                { align: "center" }
+            );
+            pdf.setTextColor(0, 0, 0);
+
+            pdf.link(col3X, botonY, col3Ancho, botonAlto, { url: item.ejercicio.youtube });
+        }
+
+        y += alturaCard + margenExterior;
     }
 
-    if (qrImage) {
-
-        pdf.addImage(qrImage, "PNG", qrX, qrY, qrTam, qrTam);
-
-    } else {
-
-        pdf.setDrawColor(...COLOR_BORDE_CARD);
-        pdf.setLineWidth(0.3);
-        pdf.rect(qrX, qrY, qrTam, qrTam, "S");
-
-        pdf.setFontSize(6.5);
-        pdf.setTextColor(...COLOR_INK_SUAVE);
-        pdf.text(
-            "QR no disponible",
-            qrX + qrTam / 2,
-            qrY + qrTam / 2,
-            { align: "center", maxWidth: qrTam - 4 }
-        );
-
-        pdf.setTextColor(0, 0, 0);
-    }
-
-    // Botón "Ver vídeo"
-    const botonY = qrY + qrTam + 3;
-    const botonAlto = 7;
-
-    pdf.setDrawColor(...COLOR_INK_TENUE);
-    pdf.setLineWidth(0.3);
-    pdf.roundedRect(
-        col3X,
-        botonY,
-        col3Ancho,
-        botonAlto,
-        3.5,
-        3.5,
-        "S"
-    );
-
-    pdf.setFontSize(7.5);
-    pdf.setTextColor(...COLOR_MARCA_OSCURO);
-    pdf.text(
-        qrImage ? "Ver vídeo" : "Ver vídeo (enlace)",
-        col3X + col3Ancho / 2,
-        botonY + botonAlto / 2 + 1.2,
-        { align: "center" }
-    );
-
-    pdf.setTextColor(0, 0, 0);
-
-    pdf.link(
-        col3X,
-        botonY,
-        col3Ancho,
-        botonAlto,
-        { url: item.ejercicio.youtube }
-    );
-}
 
     // ==============================
     // PIE DE PÁGINA — discreto: marca, línea fina, número de página
