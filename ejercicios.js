@@ -2395,17 +2395,24 @@ async function generarPDF() {
         const bodyTop = contentTop + alturaHeaderCard + gapHeaderCuerpo;
 
 
-        // --- Columna 1: imagen grande + cápsula de pauta ---
-        try {
-            const imagen = await cargarImagenPDF(`${BASE_URL}${item.ejercicio.imagen}`);
-            pdf.addImage(imagen, "JPEG", col1X, bodyTop, imgTam, imgTam);
-        } catch (error) {
-            console.error("No se pudo cargar imagen", error);
-        }
+       // --- Columna 1: imagen grande + cápsula de pauta ---
 
-        // Cápsula de pauta: "3 series · 12 rep"
+// Centrar la imagen dentro de la columna
+const imagenX = col1X + (col1Ancho - imgTam) / 2;
+
+try {
+    const imagen = await cargarImagenPDF(`${BASE_URL}${item.ejercicio.imagen}`);
+    pdf.addImage(imagen, "JPEG", imagenX, bodyTop, imgTam, imgTam);
+} catch (error) {
+    console.error("No se pudo cargar imagen", error);
+}
+
+
+// Cápsula de pauta
 let pauta = `${item.series} series · `;
-pauta += item.tipo === "segundos" ? `${item.cantidad} s` : `${item.cantidad} rep`;
+pauta += item.tipo === "segundos"
+    ? `${item.cantidad} s`
+    : `${item.cantidad} rep`;
 
 const pautaY = bodyTop + imgTam + gapImgPauta;
 
@@ -2415,8 +2422,8 @@ pdf.setFont("helvetica", "bold");
 const pautaAnchoTexto = pdf.getTextWidth(pauta);
 const pautaAnchoCapsula = Math.min(col1Ancho, pautaAnchoTexto + 7);
 
-// Centrar la cápsula bajo la imagen
-const pautaX = col1X + (imgTam - pautaAnchoCapsula) / 2;
+// Centrar la cápsula respecto a la imagen
+const pautaX = imagenX + (imgTam - pautaAnchoCapsula) / 2;
 
 pdf.setFillColor(...COLOR_PAUTA_BG);
 pdf.roundedRect(
