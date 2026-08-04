@@ -2127,254 +2127,150 @@ function esperarQRListo(qrContainer, maxEsperaMs = 3000) {
 
 async function generarPDF() {
 
-
     if (planPaciente.length === 0) {
-
-
-        alert(
-            "No hay ejercicios en el plan"
-        );
-
-
+        alert("No hay ejercicios en el plan");
         return;
-
     }
 
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
 
 
-
-    const { jsPDF } =
-        window.jspdf;
-
-
-
-    const pdf =
-        new jsPDF();
-
-
-
-    // Colores corporativos (los mismos tokens que usa la web)
+    // ==============================
+    // TOKENS DE COLOR (misma identidad de marca, mejor aprovechada)
+    // ==============================
     const COLOR_MARCA = [43, 99, 88];
     const COLOR_MARCA_OSCURO = [30, 74, 66];
     const COLOR_ACENTO = [185, 121, 15];
     const COLOR_INK = [28, 43, 39];
     const COLOR_INK_SUAVE = [91, 107, 101];
+    const COLOR_INK_TENUE = [140, 152, 147];
     const COLOR_BANDA_CLARA = [237, 244, 242];
-    const COLOR_BORDE_CARD = [223, 230, 227];
-    const COLOR_FONDO_CARD = [251, 252, 252];
-
-
+    const COLOR_BORDE_CARD = [228, 234, 231];
+    const COLOR_BORDE_SUAVE = [238, 242, 240];
+    const COLOR_FONDO_CARD = [253, 254, 253];
+    const COLOR_PAUTA_BG = [226, 240, 233];
+    const COLOR_PAUTA_TEXT = [24, 87, 66];
+    const COLOR_NOTA_BG = [247, 244, 237];
 
 
     // ==============================
-    // CABECERA (clara, compacta)
+    // CABECERA — documento clínico moderno, el blanco protagoniza
     // ==============================
 
-    const alturaBanda = 24;
+    const alturaBanda = 32;
 
+    // Elegimos no pintar una banda de color: el aire es el elemento
+    // de diseño. Solo una línea fina de marca separa cabecera y cuerpo.
+    pdf.setTextColor(...COLOR_INK_TENUE);
+    pdf.setFontSize(7.5);
+    pdf.setFont("helvetica", "normal");
+    pdf.text("PROGRAMA DE FISIOTERAPIA PERSONALIZADO", 20, 14);
 
-    pdf.setFillColor(...COLOR_BANDA_CLARA);
-
-    pdf.rect(0, 0, 210, alturaBanda, "F");
-
-
-    pdf.setDrawColor(...COLOR_MARCA);
-
-    pdf.setLineWidth(0.7);
-
-    pdf.line(0, alturaBanda, 210, alturaBanda);
-
-
-    pdf.setTextColor(...COLOR_INK_SUAVE);
-
-    pdf.setFontSize(8);
-
-    pdf.text(
-        "PROGRAMA DE FISIOTERAPIA PERSONALIZADO",
-        20,
-        10
-    );
-
-
-    pdf.setFontSize(17);
-
+    pdf.setFontSize(21);
     pdf.setFont("helvetica", "bold");
-
     pdf.setTextColor(...COLOR_MARCA_OSCURO);
-
 
     const tituloPlan =
         (datosPaciente.titulo && datosPaciente.titulo.trim())
         || "Plan de ejercicios";
 
-
-    pdf.text(tituloPlan, 20, 20);
-
-
+    pdf.text(tituloPlan, 20, 24);
     pdf.setFont("helvetica", "normal");
-
 
 
     // Logo de la clínica (si el fisio ha guardado uno). Se ajusta
     // dentro de una caja de 26x16mm manteniendo su proporción.
-    const logoGuardado =
-        localStorage.getItem("logoClinica");
-
+    const logoGuardado = localStorage.getItem("logoClinica");
 
     if (logoGuardado) {
-
         try {
-
             const cajaAncho = 26;
-
             const cajaAlto = 16;
-
-            const dimensiones =
-                await obtenerDimensionesImagen(logoGuardado);
-
+            const dimensiones = await obtenerDimensionesImagen(logoGuardado);
 
             let anchoLogo = cajaAncho;
-
-            let altoLogo =
-                (dimensiones.alto / dimensiones.ancho) * anchoLogo;
-
+            let altoLogo = (dimensiones.alto / dimensiones.ancho) * anchoLogo;
 
             if (altoLogo > cajaAlto) {
-
                 altoLogo = cajaAlto;
-
-                anchoLogo =
-                    (dimensiones.ancho / dimensiones.alto) * altoLogo;
-
+                anchoLogo = (dimensiones.ancho / dimensiones.alto) * altoLogo;
             }
 
-
             const xLogo = 190 - anchoLogo;
-
             const yLogo = (alturaBanda - altoLogo) / 2;
 
-
-            pdf.addImage(
-                logoGuardado,
-                "PNG",
-                xLogo,
-                yLogo,
-                anchoLogo,
-                altoLogo
-            );
-
+            pdf.addImage(logoGuardado, "PNG", xLogo, yLogo, anchoLogo, altoLogo);
 
         } catch (error) {
-
-            console.error(
-                "No se pudo añadir el logo al PDF:",
-                error
-            );
-
+            console.error("No se pudo añadir el logo al PDF:", error);
         }
-
     }
 
-
+    // Línea única de color corporativo: separa cabecera de contenido
+    pdf.setDrawColor(...COLOR_MARCA);
+    pdf.setLineWidth(0.6);
+    pdf.line(20, alturaBanda, 190, alturaBanda);
 
     pdf.setTextColor(0, 0, 0);
 
-
-    let y = alturaBanda + 6;
-
-
+    let y = alturaBanda + 11;
 
 
     // ==============================
-    // PACIENTE / FECHA / OBSERVACIONES (compacto)
+    // PACIENTE / FECHA / OBSERVACIONES — más aire, mismas dos columnas
     // ==============================
 
-    const hayNombre =
-        datosPaciente.nombre && datosPaciente.nombre.trim();
-
-    const hayFecha =
-        !!datosPaciente.fecha;
-
+    const hayNombre = datosPaciente.nombre && datosPaciente.nombre.trim();
+    const hayFecha = !!datosPaciente.fecha;
 
     if (hayNombre || hayFecha) {
 
-
         if (hayNombre) {
-
             pdf.setFontSize(7);
-
-            pdf.setTextColor(...COLOR_INK_SUAVE);
-
+            pdf.setTextColor(...COLOR_INK_TENUE);
             pdf.text("PACIENTE", 20, y);
 
-
-            pdf.setFontSize(10.5);
-
+            pdf.setFontSize(11);
+            pdf.setFont("helvetica", "bold");
             pdf.setTextColor(...COLOR_INK);
-
-            pdf.text(datosPaciente.nombre.trim(), 20, y + 4.5);
-
+            pdf.text(datosPaciente.nombre.trim(), 20, y + 5.5);
+            pdf.setFont("helvetica", "normal");
         }
-
 
         if (hayFecha) {
-
             pdf.setFontSize(7);
-
-            pdf.setTextColor(...COLOR_INK_SUAVE);
-
+            pdf.setTextColor(...COLOR_INK_TENUE);
             pdf.text("FECHA DE EMISIÓN", 120, y);
 
-
-            pdf.setFontSize(10.5);
-
+            pdf.setFontSize(11);
+            pdf.setFont("helvetica", "bold");
             pdf.setTextColor(...COLOR_INK);
-
-            pdf.text(formatearFechaBonita(datosPaciente.fecha), 120, y + 4.5);
-
+            pdf.text(formatearFechaBonita(datosPaciente.fecha), 120, y + 5.5);
+            pdf.setFont("helvetica", "normal");
         }
 
-
-        y += 10;
-
+        y += 13;
     }
 
-
-
     pdf.setTextColor(0, 0, 0);
-
 
     if (datosPaciente.observaciones) {
 
-
         pdf.setFontSize(7);
-
-        pdf.setTextColor(...COLOR_INK_SUAVE);
-
+        pdf.setTextColor(...COLOR_INK_TENUE);
         pdf.text("OBSERVACIONES", 20, y);
-
-        y += 4;
-
+        y += 5;
 
         pdf.setFontSize(9);
-
         pdf.setTextColor(...COLOR_INK);
-
-        const lineasObs =
-            pdf.splitTextToSize(datosPaciente.observaciones, 170);
-
+        const lineasObs = pdf.splitTextToSize(datosPaciente.observaciones, 170);
         pdf.text(lineasObs, 20, y);
-
-        y += lineasObs.length * 4 + 5;
-
+        y += lineasObs.length * 4.4 + 6;
     }
 
-
     pdf.setTextColor(0, 0, 0);
-
-    y += 2;
-
-
+    y += 3;
 
 
     // ==============================
@@ -2382,40 +2278,33 @@ async function generarPDF() {
     // ==============================
 
     const cardX = 20;
-
     const cardAncho = 170;
+    const padding = 6;
 
-    const padding = 5;
-
-
-    const col1Ancho = 34;
-
-    const col3Ancho = 34;
-
-    const gapCol = 4;
-
+    const col1Ancho = 40;
+    const col3Ancho = 28;
+    const gapCol = 5;
     const col1X = cardX + padding;
-
     const col2X = col1X + col1Ancho + gapCol;
-
-    const col2Ancho =
-        cardAncho - padding * 2 - col1Ancho - col3Ancho - gapCol * 2;
-
+    const col2Ancho = cardAncho - padding * 2 - col1Ancho - col3Ancho - gapCol * 2;
     const col3X = col2X + col2Ancho + gapCol;
 
+    const imgTam = 37;
+    const qrTam = 22;
 
-    const imgTam = 30;
+    const alturaHeaderCard = 9;
+    const gapHeaderCuerpo = 5;
+    const margenExterior = 8;
 
-    const qrTam = 26;
+    // Constantes de ritmo vertical dentro de la columna 1 (imagen, pauta, notas)
+    const gapImgPauta = 5;
+    const alturaPauta = 6.5;
+    const gapPautaNotas = 3;
+    const notaLineHeight = 3.4;
+    const notaPaddingV = 3;
 
-
-    const alturaHeaderCard = 8;
-
-    const gapHeaderCuerpo = 3;
-
-    const margenExterior = 6;
-
-
+    // Interlineado de la descripción (columna 2)
+    const descLineHeight = 4.8;
 
 
     // ==============================
@@ -2424,428 +2313,228 @@ async function generarPDF() {
 
     for (let indice = 0; indice < planPaciente.length; indice++) {
 
-
         const item = planPaciente[indice];
-
 
         // --- Precalcular altura de la descripción (si toca incluirla) ---
         let lineasDescripcion = [];
-
         if (item.incluirDescripcion && item.ejercicio.descripcion) {
-
             pdf.setFontSize(9);
-
-            lineasDescripcion =
-                pdf.splitTextToSize(
-                    item.ejercicio.descripcion,
-                    col2Ancho
-                );
-
+            lineasDescripcion = pdf.splitTextToSize(item.ejercicio.descripcion, col2Ancho);
         }
-
 
         // --- Precalcular altura de las notas (si las hay), para que
         // no se salgan del borde de la tarjeta cuando son largas. ---
         let lineasNotas = [];
-
         if (item.notas) {
-
-            pdf.setFontSize(7);
-
-            lineasNotas =
-                pdf.splitTextToSize(item.notas, col1Ancho);
-
+            pdf.setFontSize(6.8);
+            lineasNotas = pdf.splitTextToSize(item.notas, col1Ancho - 4);
         }
 
-
         const alturaCol1 =
-            imgTam + 2 + 4 +
-            (lineasNotas.length > 0 ? lineasNotas.length * 3.3 + 1 : 0);
-
+            imgTam + gapImgPauta + alturaPauta +
+            (lineasNotas.length > 0
+                ? gapPautaNotas + lineasNotas.length * notaLineHeight + notaPaddingV
+                : 0);
 
         const alturaCol3 =
             item.ejercicio.youtube
-            ? (4 + 1 + qrTam + 2 + 7)
+            ? (5 + qrTam + 3 + 7)
             : 0;
 
+        const alturaCol2 = lineasDescripcion.length * descLineHeight;
 
-        const alturaCol2 =
-            lineasDescripcion.length * 4;
-
-
-        const alturaColumnas =
-            Math.max(alturaCol1, alturaCol2, alturaCol3);
-
+        const alturaColumnas = Math.max(alturaCol1, alturaCol2, alturaCol3);
 
         const alturaCard =
             padding + alturaHeaderCard + gapHeaderCuerpo +
             alturaColumnas + padding;
 
-
         if (y + alturaCard + margenExterior > 270) {
-
             pdf.addPage();
-
             y = 20;
-
         }
 
 
-
-
-        // --- Fondo y borde de la tarjeta ---
+        // --- Fondo y borde de la tarjeta: fino, redondeado, sin sombra ---
         pdf.setFillColor(...COLOR_FONDO_CARD);
-
         pdf.setDrawColor(...COLOR_BORDE_CARD);
-
-        pdf.setLineWidth(0.4);
-
-        pdf.roundedRect(cardX, y, cardAncho, alturaCard, 2.5, 2.5, "FD");
-
+        pdf.setLineWidth(0.3);
+        pdf.roundedRect(cardX, y, cardAncho, alturaCard, 3, 3, "FD");
 
         const contentTop = y + padding;
 
 
-
-
         // --- Cabecera de la tarjeta: insignia + título ---
-        const radioInsignia = 4;
-
+        const radioInsignia = 3.8;
         const cxInsignia = cardX + padding + radioInsignia;
-
         const cyInsignia = contentTop + radioInsignia - 0.5;
 
-
         pdf.setFillColor(...COLOR_MARCA);
-
         pdf.circle(cxInsignia, cyInsignia, radioInsignia, "F");
 
-
-        pdf.setFontSize(8.5);
-
+        pdf.setFontSize(8);
         pdf.setTextColor(255, 255, 255);
-
         pdf.setFont("helvetica", "bold");
+        pdf.text(String(indice + 1), cxInsignia, cyInsignia + 1.1, { align: "center" });
 
-        pdf.text(
-            String(indice + 1),
-            cxInsignia,
-            cyInsignia + 1.2,
-            { align: "center" }
-        );
-
-        pdf.setFont("helvetica", "normal");
-
-
-        pdf.setFontSize(12.5);
-
+        pdf.setFontSize(13.5);
         pdf.setTextColor(...COLOR_INK);
-
         pdf.text(
             item.ejercicio.nombre,
-            cxInsignia + radioInsignia + 4,
+            cxInsignia + radioInsignia + 4.5,
             contentTop + 5
         );
-
+        pdf.setFont("helvetica", "normal");
 
         pdf.setTextColor(0, 0, 0);
 
-
-        const bodyTop =
-            contentTop + alturaHeaderCard + gapHeaderCuerpo;
+        const bodyTop = contentTop + alturaHeaderCard + gapHeaderCuerpo;
 
 
-
-
-        // --- Columna 1: imagen + dosis debajo ---
+        // --- Columna 1: imagen grande + cápsula de pauta + notas ---
         try {
-
-            const imagen = await cargarImagenPDF(
-                `${BASE_URL}${item.ejercicio.imagen}`
-            );
-
-
-            pdf.addImage(
-                imagen,
-                "JPEG",
-                col1X,
-                bodyTop,
-                imgTam,
-                imgTam
-            );
-
-
-        } catch(error){
-
-            console.error(
-                "No se pudo cargar imagen",
-                error
-            );
-
+            const imagen = await cargarImagenPDF(`${BASE_URL}${item.ejercicio.imagen}`);
+            pdf.addImage(imagen, "JPEG", col1X, bodyTop, imgTam, imgTam);
+        } catch (error) {
+            console.error("No se pudo cargar imagen", error);
         }
 
+        // Cápsula de pauta: "3 series · 12 rep" — el dato que más importa
+        let pauta = `${item.series} series · `;
+        pauta += item.tipo === "segundos" ? `${item.cantidad} s` : `${item.cantidad} rep`;
+
+        const pautaY = bodyTop + imgTam + gapImgPauta;
 
         pdf.setFontSize(8.5);
+        pdf.setFont("helvetica", "bold");
+        const pautaAnchoTexto = pdf.getTextWidth(pauta);
+        const pautaAnchoCapsula = Math.min(col1Ancho, pautaAnchoTexto + 7);
 
-        pdf.setTextColor(...COLOR_ACENTO);
+        pdf.setFillColor(...COLOR_PAUTA_BG);
+        pdf.roundedRect(col1X, pautaY, pautaAnchoCapsula, alturaPauta, alturaPauta / 2, alturaPauta / 2, "F");
 
-        let pauta =
-            `${item.series} series · `;
-
-        if (item.tipo === "segundos") {
-
-            pauta += `${item.cantidad} s`;
-
-        } else {
-
-            pauta += `${item.cantidad} rep`;
-
-        }
-
-        pdf.text(pauta, col1X, bodyTop + imgTam + 5);
-
-
+        pdf.setTextColor(...COLOR_PAUTA_TEXT);
+        pdf.text(pauta, col1X + pautaAnchoCapsula / 2, pautaY + alturaPauta / 2 + 1.1, { align: "center" });
+        pdf.setFont("helvetica", "normal");
         pdf.setTextColor(0, 0, 0);
 
-
+        // Notas: aviso clínico diferenciado (fondo suave + borde lateral fino)
         if (lineasNotas.length > 0) {
 
-            pdf.setFontSize(7);
+            const notaY = pautaY + alturaPauta + gapPautaNotas;
+            const notaAltura = lineasNotas.length * notaLineHeight + notaPaddingV;
 
+            pdf.setFillColor(...COLOR_NOTA_BG);
+            pdf.roundedRect(col1X, notaY, col1Ancho, notaAltura, 1.2, 1.2, "F");
+
+            pdf.setDrawColor(...COLOR_ACENTO);
+            pdf.setLineWidth(0.7);
+            pdf.line(col1X + 0.6, notaY + 0.6, col1X + 0.6, notaY + notaAltura - 0.6);
+
+            pdf.setFontSize(6.8);
             pdf.setTextColor(...COLOR_INK_SUAVE);
-
-            pdf.text(
-                lineasNotas,
-                col1X,
-                bodyTop + imgTam + 9
-            );
-
+            pdf.text(lineasNotas, col1X + 2.6, notaY + notaPaddingV / 2 + 2.2);
             pdf.setTextColor(0, 0, 0);
-
         }
 
 
-
-
-        // --- Columna 2: descripción, misma altura que imagen/QR ---
+        // --- Columna 2: descripción, con interlineado cómodo de leer ---
         if (lineasDescripcion.length > 0) {
-
             pdf.setFontSize(9);
-
             pdf.setTextColor(...COLOR_INK);
 
-            pdf.text(
-                lineasDescripcion,
-                col2X,
-                bodyTop + 3.5
-            );
+            let yDesc = bodyTop + 3.7;
+            for (const linea of lineasDescripcion) {
+                pdf.text(linea, col2X, yDesc);
+                yDesc += descLineHeight;
+            }
 
             pdf.setTextColor(0, 0, 0);
-
         }
 
 
-
-
-        // --- Columna 3: etiqueta + QR + botón "Ver vídeo" ---
+        // --- Columna 3: QR + "Ver vídeo", presentes pero discretos ---
         if (item.ejercicio.youtube) {
 
-
-            pdf.setFontSize(7);
-
-            pdf.setTextColor(...COLOR_INK_SUAVE);
-
-            pdf.text(
-                "VÍDEO DEL EJERCICIO",
-                col3X,
-                bodyTop,
-                { maxWidth: col3Ancho }
-            );
-
+            pdf.setFontSize(6.5);
+            pdf.setTextColor(...COLOR_INK_TENUE);
+            pdf.text("VÍDEO DEL EJERCICIO", col3X, bodyTop, { maxWidth: col3Ancho });
             pdf.setTextColor(0, 0, 0);
-
 
             const qrY = bodyTop + 5;
 
-
-            const qrContainer =
-                document.createElement("div");
-
-
-            new QRCode(
-                qrContainer,
-                {
-
-                    text: item.ejercicio.youtube,
-
-                    width: 120,
-
-                    height: 120
-
-                }
-            );
-
+            const qrContainer = document.createElement("div");
+            new QRCode(qrContainer, { text: item.ejercicio.youtube, width: 120, height: 120 });
 
             let qrImage = null;
-
-
             try {
-
-                qrImage =
-                    await esperarQRListo(qrContainer);
-
-            } catch(error) {
-
-                console.error(
-                    `No se pudo generar el QR para "${item.ejercicio.nombre}":`,
-                    error
-                );
-
+                qrImage = await esperarQRListo(qrContainer);
+            } catch (error) {
+                console.error(`No se pudo generar el QR para "${item.ejercicio.nombre}":`, error);
             }
-
-
 
             if (qrImage) {
-
-                pdf.addImage(
-                    qrImage,
-                    "PNG",
-                    col3X,
-                    qrY,
-                    qrTam,
-                    qrTam
-                );
-
+                pdf.addImage(qrImage, "PNG", col3X, qrY, qrTam, qrTam);
             } else {
-
-                // El QR falló: dejamos un hueco con aviso, sin
-                // romper el resto del PDF ni descuadrar la tarjeta.
                 pdf.setDrawColor(...COLOR_BORDE_CARD);
-
                 pdf.setLineWidth(0.3);
-
                 pdf.rect(col3X, qrY, qrTam, qrTam, "S");
 
-
                 pdf.setFontSize(6.5);
-
                 pdf.setTextColor(...COLOR_INK_SUAVE);
-
-                pdf.text(
-                    "QR no disponible",
-                    col3X + qrTam / 2,
-                    qrY + qrTam / 2,
-                    { align: "center", maxWidth: qrTam - 4 }
-                );
-
+                pdf.text("QR no disponible", col3X + qrTam / 2, qrY + qrTam / 2,
+                    { align: "center", maxWidth: qrTam - 4 });
                 pdf.setTextColor(0, 0, 0);
-
             }
 
-
-
-            // Botón "Ver vídeo" estilo anillo de foco (contorno redondeado)
-            const botonY = qrY + qrTam + 2;
-
+            // Botón "Ver vídeo": contorno fino, discreto — segunda prioridad visual
+            const botonY = qrY + qrTam + 3;
             const botonAlto = 7;
 
+            pdf.setDrawColor(...COLOR_INK_TENUE);
+            pdf.setLineWidth(0.3);
+            pdf.roundedRect(col3X, botonY, col3Ancho, botonAlto, 3.5, 3.5, "S");
 
-            pdf.setDrawColor(...COLOR_MARCA);
-
-            pdf.setLineWidth(0.5);
-
-            pdf.roundedRect(
-                col3X, botonY, col3Ancho, botonAlto,
-                3.5, 3.5, "S"
-            );
-
-
-            pdf.setFontSize(8);
-
+            pdf.setFontSize(7.5);
             pdf.setTextColor(...COLOR_MARCA_OSCURO);
-
             pdf.text(
                 qrImage ? "Ver vídeo" : "Ver vídeo (enlace)",
                 col3X + col3Ancho / 2,
-                botonY + botonAlto / 2 + 1.3,
+                botonY + botonAlto / 2 + 1.2,
                 { align: "center" }
             );
-
             pdf.setTextColor(0, 0, 0);
 
-
-            pdf.link(
-                col3X, botonY, col3Ancho, botonAlto,
-                { url: item.ejercicio.youtube }
-            );
-
-
+            pdf.link(col3X, botonY, col3Ancho, botonAlto, { url: item.ejercicio.youtube });
         }
 
-
-
-
         y += alturaCard + margenExterior;
-
-
     }
 
 
-
-
     // ==============================
-    // PIE DE PÁGINA
+    // PIE DE PÁGINA — discreto: marca, línea fina, número de página
     // ==============================
 
-    const totalPaginas =
-        pdf.internal.getNumberOfPages();
-
+    const totalPaginas = pdf.internal.getNumberOfPages();
 
     for (let pagina = 1; pagina <= totalPaginas; pagina++) {
 
-
         pdf.setPage(pagina);
 
-
-        pdf.setDrawColor(222);
-
+        pdf.setDrawColor(...COLOR_BORDE_SUAVE);
         pdf.setLineWidth(0.3);
-
         pdf.line(20, 283, 190, 283);
 
-
-        pdf.setFontSize(8);
-
-        pdf.setTextColor(...COLOR_INK_SUAVE);
-
-        pdf.text(
-            "RehabPlan — Programa de Fisioterapia y Ejercicio",
-            20,
-            290
-        );
-
-        pdf.text(
-            `Página ${pagina} de ${totalPaginas}`,
-            190,
-            290,
-            {
-                align: "right"
-            }
-        );
-
+        pdf.setFontSize(7.5);
+        pdf.setTextColor(...COLOR_INK_TENUE);
+        pdf.text("RehabPlan — Programa de Fisioterapia y Ejercicio", 20, 289);
+        pdf.text(`Página ${pagina} de ${totalPaginas}`, 190, 289, { align: "right" });
         pdf.setTextColor(0, 0, 0);
-
-
     }
 
 
-
-
-    pdf.save(
-        "plan-ejercicios.pdf"
-    );
-
-
+    pdf.save("plan-ejercicios.pdf");
 }
 
 
