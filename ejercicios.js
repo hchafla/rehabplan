@@ -2403,29 +2403,42 @@ async function generarPDF() {
             console.error("No se pudo cargar imagen", error);
         }
 
-        // Cápsula de pauta: "3 series · 12 rep" — el dato que más importa
-        let pauta = `${item.series} series · `;
-        pauta += item.tipo === "segundos" ? `${item.cantidad} s` : `${item.cantidad} rep`;
+        // Cápsula de pauta: "3 series · 12 rep"
+let pauta = `${item.series} series · `;
+pauta += item.tipo === "segundos" ? `${item.cantidad} s` : `${item.cantidad} rep`;
 
-        const pautaY = bodyTop + imgTam + gapImgPauta;
+const pautaY = bodyTop + imgTam + gapImgPauta;
 
-        pdf.setFontSize(8.5);
-        pdf.setFont("helvetica", "bold");
-        const pautaAnchoTexto = pdf.getTextWidth(pauta);
-        const pautaAnchoCapsula = Math.min(col1Ancho, pautaAnchoTexto + 7);
+pdf.setFontSize(8.5);
+pdf.setFont("helvetica", "bold");
 
-        pdf.setFillColor(...COLOR_PAUTA_BG);
-        pdf.roundedRect(col1X + 2, pautaY, pautaAnchoCapsula, alturaPauta, alturaPauta / 2, alturaPauta / 2, "F");
+const pautaAnchoTexto = pdf.getTextWidth(pauta);
+const pautaAnchoCapsula = Math.min(col1Ancho, pautaAnchoTexto + 7);
 
-        pdf.setTextColor(...COLOR_PAUTA_TEXT);
-        pdf.text(
+// Centrar la cápsula bajo la imagen
+const pautaX = col1X + (imgTam - pautaAnchoCapsula) / 2;
+
+pdf.setFillColor(...COLOR_PAUTA_BG);
+pdf.roundedRect(
+    pautaX,
+    pautaY,
+    pautaAnchoCapsula,
+    alturaPauta,
+    alturaPauta / 2,
+    alturaPauta / 2,
+    "F"
+);
+
+pdf.setTextColor(...COLOR_PAUTA_TEXT);
+pdf.text(
     pauta,
-    col1X + 2 + pautaAnchoCapsula / 2,
+    pautaX + pautaAnchoCapsula / 2,
     pautaY + alturaPauta / 2 + 1.1,
     { align: "center" }
 );
-        pdf.setFont("helvetica", "normal");
-        pdf.setTextColor(0, 0, 0);
+
+pdf.setFont("helvetica", "normal");
+pdf.setTextColor(0, 0, 0);
 
 
         // --- Columna 2: descripción, con interlineado cómodo de leer,
