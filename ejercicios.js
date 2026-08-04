@@ -2461,7 +2461,7 @@ async function generarPDF() {
             pdf.setLineWidth(0.7);
             pdf.line(col2X + 0.6, notaY + 0.6, col2X + 0.6, notaY + notaAltura - 0.6);
 
-            pdf.setFontSize(6.8);
+            pdf.setFontSize(8);
             pdf.setTextColor(...COLOR_INK_SUAVE);
             pdf.text(lineasNotas, col2X + 2.6, notaY + notaPaddingV / 2 + 2.2);
             pdf.setTextColor(0, 0, 0);
