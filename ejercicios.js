@@ -2296,10 +2296,13 @@ async function generarPDF() {
     const gapHeaderCuerpo = 5;
     const margenExterior = 8;
 
-    // Constantes de ritmo vertical dentro de la columna 1 (imagen, pauta, notas)
+    // Constantes de ritmo vertical dentro de la columna 1 (imagen, pauta)
     const gapImgPauta = 5;
     const alturaPauta = 6.5;
-    const gapPautaNotas = 3;
+
+    // Notas: ahora viven bajo la descripción (columna 2), aprovechando
+    // su espacio en vez de alargar la tarjeta por la columna de la imagen
+    const gapDescNotas = 4;
     const notaLineHeight = 3.4;
     const notaPaddingV = 3;
 
@@ -2323,25 +2326,26 @@ async function generarPDF() {
         }
 
         // --- Precalcular altura de las notas (si las hay), para que
-        // no se salgan del borde de la tarjeta cuando son largas. ---
+        // no se salgan del borde de la tarjeta cuando son largas. Se
+        // ajustan al ancho de la columna 2, donde ahora se muestran. ---
         let lineasNotas = [];
         if (item.notas) {
             pdf.setFontSize(6.8);
-            lineasNotas = pdf.splitTextToSize(item.notas, col1Ancho - 4);
+            lineasNotas = pdf.splitTextToSize(item.notas, col2Ancho - 4);
         }
 
-        const alturaCol1 =
-            imgTam + gapImgPauta + alturaPauta +
-            (lineasNotas.length > 0
-                ? gapPautaNotas + lineasNotas.length * notaLineHeight + notaPaddingV
-                : 0);
+        const alturaCol1 = imgTam + gapImgPauta + alturaPauta;
 
         const alturaCol3 =
             item.ejercicio.youtube
             ? (5 + qrTam + 3 + 7)
             : 0;
 
-        const alturaCol2 = lineasDescripcion.length * descLineHeight;
+        const alturaCol2 =
+            lineasDescripcion.length * descLineHeight +
+            (lineasNotas.length > 0
+                ? gapDescNotas + lineasNotas.length * notaLineHeight + notaPaddingV
+                : 0);
 
         const alturaColumnas = Math.max(alturaCol1, alturaCol2, alturaCol3);
 
@@ -2391,7 +2395,7 @@ async function generarPDF() {
         const bodyTop = contentTop + alturaHeaderCard + gapHeaderCuerpo;
 
 
-        // --- Columna 1: imagen grande + cápsula de pauta + notas ---
+        // --- Columna 1: imagen grande + cápsula de pauta ---
         try {
             const imagen = await cargarImagenPDF(`${BASE_URL}${item.ejercicio.imagen}`);
             pdf.addImage(imagen, "JPEG", col1X, bodyTop, imgTam, imgTam);
@@ -2418,27 +2422,14 @@ async function generarPDF() {
         pdf.setFont("helvetica", "normal");
         pdf.setTextColor(0, 0, 0);
 
-        // Notas: aviso clínico diferenciado (fondo suave + borde lateral fino)
-        if (lineasNotas.length > 0) {
 
-            const notaY = pautaY + alturaPauta + gapPautaNotas;
-            const notaAltura = lineasNotas.length * notaLineHeight + notaPaddingV;
+        // --- Columna 2: descripción, con interlineado cómodo de leer,
+        // seguida de las notas (si las hay) justo debajo ---
+        const alturaBloqueDescripcion =
+            lineasDescripcion.length > 0
+            ? 3.7 + lineasDescripcion.length * descLineHeight
+            : 0;
 
-            pdf.setFillColor(...COLOR_NOTA_BG);
-            pdf.roundedRect(col1X, notaY, col1Ancho, notaAltura, 1.2, 1.2, "F");
-
-            pdf.setDrawColor(...COLOR_ACENTO);
-            pdf.setLineWidth(0.7);
-            pdf.line(col1X + 0.6, notaY + 0.6, col1X + 0.6, notaY + notaAltura - 0.6);
-
-            pdf.setFontSize(6.8);
-            pdf.setTextColor(...COLOR_INK_SUAVE);
-            pdf.text(lineasNotas, col1X + 2.6, notaY + notaPaddingV / 2 + 2.2);
-            pdf.setTextColor(0, 0, 0);
-        }
-
-
-        // --- Columna 2: descripción, con interlineado cómodo de leer ---
         if (lineasDescripcion.length > 0) {
             pdf.setFontSize(9);
             pdf.setTextColor(...COLOR_INK);
@@ -2449,6 +2440,30 @@ async function generarPDF() {
                 yDesc += descLineHeight;
             }
 
+            pdf.setTextColor(0, 0, 0);
+        }
+
+
+        // Notas: aviso clínico diferenciado (fondo suave + borde lateral
+        // fino), aprovechando el espacio libre bajo la descripción
+        if (lineasNotas.length > 0) {
+
+            const notaY =
+                bodyTop + alturaBloqueDescripcion +
+                (lineasDescripcion.length > 0 ? gapDescNotas : 0);
+
+            const notaAltura = lineasNotas.length * notaLineHeight + notaPaddingV;
+
+            pdf.setFillColor(...COLOR_NOTA_BG);
+            pdf.roundedRect(col2X, notaY, col2Ancho, notaAltura, 1.2, 1.2, "F");
+
+            pdf.setDrawColor(...COLOR_ACENTO);
+            pdf.setLineWidth(0.7);
+            pdf.line(col2X + 0.6, notaY + 0.6, col2X + 0.6, notaY + notaAltura - 0.6);
+
+            pdf.setFontSize(6.8);
+            pdf.setTextColor(...COLOR_INK_SUAVE);
+            pdf.text(lineasNotas, col2X + 2.6, notaY + notaPaddingV / 2 + 2.2);
             pdf.setTextColor(0, 0, 0);
         }
 
