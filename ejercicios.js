@@ -2165,7 +2165,7 @@ async function generarPDF() {
     pdf.setTextColor(...COLOR_INK_TENUE);
     pdf.setFontSize(7.5);
     pdf.setFont("helvetica", "normal");
-    pdf.text("PROGRAMA DE FISIOTERAPIA PERSONALIZADO", 20, 14);
+    pdf.text("REHABPLAN", 20, 14);
 
     pdf.setFontSize(21);
     pdf.setFont("helvetica", "bold");
@@ -2528,7 +2528,7 @@ async function generarPDF() {
 
         pdf.setFontSize(7.5);
         pdf.setTextColor(...COLOR_INK_TENUE);
-        pdf.text("RehabPlan — Programa de Fisioterapia y Ejercicio", 20, 289);
+        pdf.text("RehabPlan", 20, 289);
         pdf.text(`Página ${pagina} de ${totalPaginas}`, 190, 289, { align: "right" });
         pdf.setTextColor(0, 0, 0);
     }
