@@ -2493,28 +2493,35 @@ pdf.setTextColor(0, 0, 0);
         }
 
 
-        // --- Columna 3: QR + "Ver vídeo", presentes pero discretos ---
+        // --- Columna 3: QR + botón de vídeo ---
 if (item.ejercicio.youtube) {
 
-    // Centrar el QR dentro de la columna
-    const qrX = col3X + (col3Ancho - qrTam) / 2;
+    // Eje central de toda la columna
+    const centroCol3 = col3X + col3Ancho / 2;
 
+    // Medidas
+    const qrY = bodyTop + 5;
+    const qrX = centroCol3 - qrTam / 2;
+
+    const botonAncho = 24;
+    const botonAlto = 7;
+    const botonX = centroCol3 - botonAncho / 2;
+    const botonY = qrY + qrTam + 3;
+
+    // Título
     pdf.setFontSize(6.5);
     pdf.setTextColor(...COLOR_INK_TENUE);
     pdf.text(
         "VÍDEO DEL EJERCICIO",
-        col3X + col3Ancho / 2,
+        centroCol3,
         bodyTop,
-        {
-            align: "center",
-            maxWidth: col3Ancho
-        }
+        { align: "center" }
     );
     pdf.setTextColor(0, 0, 0);
 
-    const qrY = bodyTop + 5;
-
+    // Generar QR
     const qrContainer = document.createElement("div");
+
     new QRCode(qrContainer, {
         text: item.ejercicio.youtube,
         width: 120,
@@ -2531,36 +2538,45 @@ if (item.ejercicio.youtube) {
 
     if (qrImage) {
 
-        pdf.addImage(qrImage, "PNG", qrX, qrY, qrTam, qrTam);
+        pdf.addImage(
+            qrImage,
+            "PNG",
+            qrX,
+            qrY,
+            qrTam,
+            qrTam
+        );
 
     } else {
 
         pdf.setDrawColor(...COLOR_BORDE_CARD);
         pdf.setLineWidth(0.3);
-        pdf.rect(qrX, qrY, qrTam, qrTam, "S");
+
+        pdf.rect(
+            qrX,
+            qrY,
+            qrTam,
+            qrTam,
+            "S"
+        );
 
         pdf.setFontSize(6.5);
         pdf.setTextColor(...COLOR_INK_SUAVE);
+
         pdf.text(
             "QR no disponible",
-            qrX + qrTam / 2,
+            centroCol3,
             qrY + qrTam / 2,
-            {
-                align: "center",
-                maxWidth: qrTam - 4
-            }
+            { align: "center" }
         );
+
         pdf.setTextColor(0, 0, 0);
     }
 
-    // Botón centrado bajo el QR
-    const botonAncho = qrTam;
-    const botonX = qrX;
-    const botonY = qrY + qrTam + 3;
-    const botonAlto = 7;
-
+    // Botón
     pdf.setDrawColor(...COLOR_INK_TENUE);
     pdf.setLineWidth(0.3);
+
     pdf.roundedRect(
         botonX,
         botonY,
@@ -2573,13 +2589,12 @@ if (item.ejercicio.youtube) {
 
     pdf.setFontSize(7.5);
     pdf.setTextColor(...COLOR_MARCA_OSCURO);
+
     pdf.text(
         "Ver vídeo",
-        botonX + botonAncho / 2,
+        centroCol3,
         botonY + botonAlto / 2 + 1.2,
-        {
-            align: "center"
-        }
+        { align: "center" }
     );
 
     pdf.setTextColor(0, 0, 0);
@@ -2589,9 +2604,7 @@ if (item.ejercicio.youtube) {
         botonY,
         botonAncho,
         botonAlto,
-        {
-            url: item.ejercicio.youtube
-        }
+        { url: item.ejercicio.youtube }
     );
 }
 
