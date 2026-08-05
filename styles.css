@@ -368,7 +368,7 @@ textarea:focus-visible {
    Barra de selección de paciente
    ============================== */
 
-.barra-pacientes {
+.barra-plan {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -376,13 +376,13 @@ textarea:focus-visible {
     margin-bottom: 24px;
 }
 
-.barra-pacientes label {
+.barra-plan label {
     font-size: 0.8rem;
     font-weight: 600;
     color: var(--ink-soft);
 }
 
-.barra-pacientes select {
+.barra-plan select {
     font-family: var(--font-body);
     font-size: 0.9rem;
     padding: 8px 10px;
@@ -393,8 +393,8 @@ textarea:focus-visible {
     min-width: 220px;
 }
 
-.barra-pacientes .eliminar-paciente,
-.barra-pacientes .eliminar-plan {
+.barra-plan .eliminar-paciente,
+.barra-plan .eliminar-plan {
     background: none;
     border: none;
     color: var(--danger);
@@ -403,8 +403,8 @@ textarea:focus-visible {
     padding: 4px 0;
 }
 
-.barra-pacientes .eliminar-paciente:hover,
-.barra-pacientes .eliminar-plan:hover {
+.barra-plan .eliminar-paciente:hover,
+.barra-plan .eliminar-plan:hover {
     text-decoration: underline;
 }
 
@@ -418,8 +418,8 @@ textarea:focus-visible {
     gap: 10px;
 }
 
-.barra-pacientes .nuevo-paciente,
-.barra-pacientes .nuevo-plan {
+.barra-plan .nuevo-paciente,
+.barra-plan .nuevo-plan {
     font-size: 0.82rem;
     font-weight: 600;
     padding: 7px 12px;
@@ -430,8 +430,8 @@ textarea:focus-visible {
     white-space: nowrap;
 }
 
-.barra-pacientes .nuevo-paciente:hover,
-.barra-pacientes .nuevo-plan:hover {
+.barra-plan .nuevo-paciente:hover,
+.barra-plan .nuevo-plan:hover {
     background: var(--brand);
     color: white;
 }
@@ -451,7 +451,7 @@ textarea:focus-visible {
 
 @media (max-width: 900px) {
 
-    .barra-pacientes {
+    .barra-plan {
         align-items: stretch;
     }
 
@@ -459,7 +459,7 @@ textarea:focus-visible {
         flex: 1 1 100%;
     }
 
-    .barra-pacientes select {
+    .barra-plan select {
         min-width: 0;
         flex: 1 1 160px;
     }
@@ -576,22 +576,22 @@ textarea:focus-visible {
    Datos del paciente
    ============================== */
 
-.datos-paciente {
+.datos-plan {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 20px 24px;
     display: grid;
-    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-columns: 1fr 2fr;
     gap: 16px 24px;
     box-shadow: var(--shadow-card);
 }
 
-.datos-paciente .campo-titulo {
+.datos-plan .campo-titulo {
     grid-column: 1 / -1;
 }
 
-.datos-paciente .campo-titulo input {
+.datos-plan .campo-titulo input {
     font-family: var(--font-display);
     font-size: 1.15rem;
     font-weight: 500;
@@ -599,7 +599,12 @@ textarea:focus-visible {
     padding: 10px 12px;
 }
 
-.datos-paciente label {
+.campo-obligatorio {
+    color: var(--accent-dark);
+    font-weight: 700;
+}
+
+.datos-plan label {
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -608,8 +613,8 @@ textarea:focus-visible {
     color: var(--ink-soft);
 }
 
-.datos-paciente input,
-.datos-paciente textarea {
+.datos-plan input,
+.datos-plan textarea {
     font-family: var(--font-body);
     font-size: 0.95rem;
     font-weight: 400;
@@ -620,14 +625,14 @@ textarea:focus-visible {
     background: var(--bg);
 }
 
-.datos-paciente textarea {
+.datos-plan textarea {
     resize: vertical;
     min-height: 42px;
     font-family: var(--font-body);
 }
 
-.datos-paciente input:focus,
-.datos-paciente textarea:focus {
+.datos-plan input:focus,
+.datos-plan textarea:focus {
     border-color: var(--brand);
     background: var(--surface);
 }
@@ -1096,7 +1101,7 @@ textarea:focus-visible {
         font-size: 1.7rem;
     }
 
-    .datos-paciente {
+    .datos-plan {
         grid-template-columns: 1fr;
     }
 
