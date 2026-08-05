@@ -30,13 +30,41 @@
 
 <div class="barra-pacientes">
 
-    <label for="selectorPaciente">Paciente</label>
+    <div class="grupo-selector">
 
-    <select id="selectorPaciente" onchange="cambiarPaciente(this.value)"></select>
+        <label for="selectorPaciente">Paciente</label>
 
-    <button class="eliminar-paciente" onclick="eliminarPacienteActivo()">
-        Eliminar este paciente
-    </button>
+        <select id="selectorPaciente" onchange="cambiarPaciente(this.value)"></select>
+
+        <button type="button" class="nuevo-paciente" onclick="nuevoPaciente()">
+            + Nuevo paciente
+        </button>
+
+        <button type="button" class="eliminar-paciente" onclick="eliminarPacienteActivo()">
+            Eliminar este paciente
+        </button>
+
+    </div>
+
+
+    <div class="grupo-selector">
+
+        <label for="selectorPlan">Plan</label>
+
+        <select id="selectorPlan" onchange="cambiarPlan(this.value)"></select>
+
+        <button type="button" class="nuevo-plan" onclick="nuevoPlan()">
+            + Nuevo plan
+        </button>
+
+        <button type="button" class="eliminar-plan" onclick="eliminarPlanActivo()">
+            Eliminar este plan
+        </button>
+
+    </div>
+
+
+    <span id="estadoPlan" class="estado-plan"></span>
 
 </div>
 
@@ -236,8 +264,13 @@
 
             <div class="acciones-plan">
 
+                <button class="primario" onclick="guardarPlanActual()">
+                    Guardar plan
+                </button>
+
+
                 <button onclick="vaciarPlan()">
-                    Nuevo plan
+                    Vaciar plan
                 </button>
 
 
