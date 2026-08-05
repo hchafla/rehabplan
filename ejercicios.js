@@ -1729,6 +1729,45 @@ function configurarDatosPlan() {
 
 function cargarPlan() {
 
+    // Si venimos de "Usar plantilla" en plantillas.html, ese borrador
+    // manda: se carga tal cual (sin paciente, sin plan guardado
+    // asociado — es nuevo) y se ignora cualquier plan que estuviera
+    // abierto antes.
+    const pendiente =
+        localStorage.getItem("borradorDesdePlantilla");
+
+    if (pendiente) {
+
+        localStorage.removeItem("borradorDesdePlantilla");
+
+        const datos = JSON.parse(pendiente);
+
+        planActivoId = null;
+        pacienteAsignadoId = null;
+
+        localStorage.removeItem("planActivoId");
+        localStorage.removeItem("pacienteAsignadoId");
+
+        datosPlan.nombre = datos.nombre || "";
+        datosPlan.fecha = "";
+        datosPlan.observaciones = "";
+
+        planPaciente = datos.ejercicios || [];
+
+        // Es un borrador nuevo sin guardar: que quede claro en el
+        // indicador y que avise si se intenta salir sin guardarlo.
+        cambiosSinGuardar = true;
+
+        actualizarCamposDatosPlan();
+        mostrarSelectorPlanes();
+        mostrarSelectorPacienteAsignado();
+        actualizarEstadoGuardado();
+
+        return;
+
+    }
+
+
     const idPlanGuardado =
         localStorage.getItem("planActivoId");
 
