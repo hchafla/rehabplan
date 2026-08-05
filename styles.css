@@ -393,7 +393,8 @@ textarea:focus-visible {
     min-width: 220px;
 }
 
-.barra-pacientes .eliminar-paciente {
+.barra-pacientes .eliminar-paciente,
+.barra-pacientes .eliminar-plan {
     background: none;
     border: none;
     color: var(--danger);
@@ -402,8 +403,71 @@ textarea:focus-visible {
     padding: 4px 0;
 }
 
-.barra-pacientes .eliminar-paciente:hover {
+.barra-pacientes .eliminar-paciente:hover,
+.barra-pacientes .eliminar-plan:hover {
     text-decoration: underline;
+}
+
+/* Cada grupo (paciente / plan) agrupa su etiqueta, su desplegable
+   y sus dos acciones, para que quede claro que "crear nuevo" y
+   "eliminar" pertenecen a ESE selector y no al otro. */
+.grupo-selector {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.barra-pacientes .nuevo-paciente,
+.barra-pacientes .nuevo-plan {
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--brand);
+    background: var(--brand-soft);
+    color: var(--brand-dark);
+    white-space: nowrap;
+}
+
+.barra-pacientes .nuevo-paciente:hover,
+.barra-pacientes .nuevo-plan:hover {
+    background: var(--brand);
+    color: white;
+}
+
+/* Indicador "Guardado" / "Cambios sin guardar" junto a los selectores */
+.estado-plan {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink-faint);
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.estado-plan.sin-guardar {
+    color: var(--accent-dark);
+}
+
+@media (max-width: 900px) {
+
+    .barra-pacientes {
+        align-items: stretch;
+    }
+
+    .grupo-selector {
+        flex: 1 1 100%;
+    }
+
+    .barra-pacientes select {
+        min-width: 0;
+        flex: 1 1 160px;
+    }
+
+    .estado-plan {
+        margin-left: 0;
+    }
+
 }
 
 
