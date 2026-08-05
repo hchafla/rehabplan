@@ -28,30 +28,13 @@
 <p class="subtitulo">Diseña planes de ejercicios personalizados y compártelos con tus pacientes.</p>
 
 
-<div class="barra-pacientes">
+<div class="barra-plan">
 
     <div class="grupo-selector">
 
-        <label for="selectorPaciente">Paciente</label>
+        <label for="selectorPlanes">Abrir un plan guardado</label>
 
-        <select id="selectorPaciente" onchange="cambiarPaciente(this.value)"></select>
-
-        <button type="button" class="nuevo-paciente" onclick="nuevoPaciente()">
-            + Nuevo paciente
-        </button>
-
-        <button type="button" class="eliminar-paciente" onclick="eliminarPacienteActivo()">
-            Eliminar este paciente
-        </button>
-
-    </div>
-
-
-    <div class="grupo-selector">
-
-        <label for="selectorPlan">Plan</label>
-
-        <select id="selectorPlan" onchange="cambiarPlan(this.value)"></select>
+        <select id="selectorPlanes" onchange="cambiarPlan(this.value)"></select>
 
         <button type="button" class="nuevo-plan" onclick="nuevoPlan()">
             + Nuevo plan
@@ -59,6 +42,23 @@
 
         <button type="button" class="eliminar-plan" onclick="eliminarPlanActivo()">
             Eliminar este plan
+        </button>
+
+    </div>
+
+
+    <div class="grupo-selector">
+
+        <label for="selectorPacienteAsignado">Paciente asignado</label>
+
+        <select id="selectorPacienteAsignado" onchange="cambiarPacienteAsignado(this.value)"></select>
+
+        <button type="button" class="nuevo-paciente" onclick="nuevoPacienteAsignado()">
+            + Nuevo paciente
+        </button>
+
+        <button type="button" class="eliminar-paciente" onclick="eliminarPacienteAsignado()">
+            Eliminar paciente (y sus planes)
         </button>
 
     </div>
@@ -109,29 +109,16 @@
 <h2>Datos del plan</h2>
 
 
-<div class="datos-paciente">
+<div class="datos-plan">
 
 
     <label class="campo-titulo">
-        Título del plan
+        Nombre del plan <span class="campo-obligatorio" title="Obligatorio para guardar">*</span>
 
         <input 
             type="text"
             id="tituloPlan"
-            placeholder='Ej. "Tabla cervical" (opcional)'
-        >
-
-    </label>
-
-
-
-    <label>
-        Nombre del paciente
-
-        <input 
-            type="text"
-            id="nombrePaciente"
-            placeholder="Opcional: déjalo en blanco para una tabla genérica"
+            placeholder='Ej. "Tendinitis Aquiles"'
         >
 
     </label>
@@ -260,7 +247,7 @@
 
         <div class="panel-header">
 
-            <h2>Plan del paciente</h2>
+            <h2>Plan</h2>
 
             <div class="acciones-plan">
 
