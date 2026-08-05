@@ -166,55 +166,22 @@ function usarPlantilla(id) {
 
 
 
-    // Usar una plantilla crea SIEMPRE un paciente nuevo con esos
-    // ejercicios — así nunca se corre el riesgo de pisar el plan
-    // de un paciente que ya estuviera en marcha.
-    const nuevoId = Date.now();
-
-
-    const pacientesGuardados =
-        localStorage.getItem("planesPacientes");
-
-
-    const pacientes =
-        pacientesGuardados
-        ? JSON.parse(pacientesGuardados)
-        : [];
-
-
-    pacientes.push({
-
-        id: nuevoId,
-
-        datosPaciente: {
-            titulo: "",
-            nombre: "",
-            fecha: "",
-            observaciones: ""
-        },
-
-        // Copia profunda: la plantilla original no queda enlazada
-        // al plan del paciente que se va a editar ahora.
-        planPaciente: JSON.parse(
-            JSON.stringify(plantilla.ejercicios)
-        ),
-
-        actualizadoEn: Date.now()
-
-    });
-
-
+    // Dejamos el borrador "a la espera" en una clave aparte, y es
+    // ejercicios.js quien lo recoge al cargar (ver cargarPlan()).
+    // Así el constructor sigue siendo el único sitio que decide cómo
+    // se compone el borrador — aquí solo entregamos el encargo.
+    //
+    // Copia profunda: la plantilla original no debe quedar enlazada
+    // al borrador que se va a editar ahora.
     localStorage.setItem(
-        "planesPacientes",
-        JSON.stringify(pacientes)
+        "borradorDesdePlantilla",
+        JSON.stringify({
+            nombre: plantilla.nombre,
+            ejercicios: JSON.parse(
+                JSON.stringify(plantilla.ejercicios)
+            )
+        })
     );
-
-
-    localStorage.setItem(
-        "pacienteActivoId",
-        String(nuevoId)
-    );
-
 
 
     window.location.href = "ejercicios.html";
