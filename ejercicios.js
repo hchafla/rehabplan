@@ -3,23 +3,14 @@ const BASE_URL = "/rehabplan";
 
 let ejerciciosGlobal = [];
 
-// planPaciente / datosPaciente representan el BORRADOR que se está
-// editando ahora mismo en pantalla. No se escribe a localStorage
-// hasta que el usuario pulsa "Guardar plan" (ver guardarPlanActual).
+// planPaciente es el array de ejercicios del BORRADOR que se está
+// editando ahora mismo en pantalla (el nombre es heredado; hoy un
+// plan no tiene por qué pertenecer a ningún paciente). El resto de
+// datos del borrador (nombre del plan, fecha, observaciones y a qué
+// paciente está asignado, si acaso) vive en datosPlan / pacienteAsignadoId,
+// definidos más abajo. Nada de esto se escribe a localStorage hasta
+// que el usuario pulsa "Guardar plan" (ver guardarPlanActual).
 let planPaciente = [];
-
-
-let datosPaciente = {
-
-    titulo: "",
-
-    nombre: "",
-
-    fecha: "",
-
-    observaciones: ""
-
-};
 
 
 // true si el borrador tiene cambios que todavía no se han guardado
@@ -1008,22 +999,24 @@ function eliminarEjercicio(id) {
 // VACIAR PLAN (borrador actual)
 // ==============================
 
-// Vacía el BORRADOR que se está construyendo ahora mismo: título,
-// fecha, observaciones y ejercicios. Nunca toca nada ya guardado en
-// localStorage, ni aunque el borrador viniera de abrir un plan
-// guardado — eso es a propósito, así "vaciar" jamás puede borrar un
-// plan histórico por accidente. Si se quiere borrar un plan guardado
-// de verdad, es la acción "Eliminar plan" (eliminarPlanActivo), que
-// es un botón aparte.
+// Vacía TODO lo que hay en pantalla ahora mismo: nombre, fecha,
+// observaciones, ejercicios y la asignación a paciente. Nunca toca
+// nada ya guardado en localStorage, ni aunque el borrador viniera de
+// abrir un plan guardado — eso es a propósito, así "vaciar" jamás
+// puede borrar un plan histórico por accidente. Se confirma siempre
+// que haya algo visible que perder, esté guardado o no: a diferencia
+// de "Nuevo plan" (que es navegar a otra cosa y no pierde nada si lo
+// de ahora ya está guardado), aquí se borra el lienzo delante de ti.
 function vaciarPlan() {
 
 
     const hayAlgoQueVaciar =
         planPaciente.length > 0 ||
         cambiosSinGuardar ||
-        (datosPaciente.titulo && datosPaciente.titulo.trim()) ||
-        datosPaciente.fecha ||
-        (datosPaciente.observaciones && datosPaciente.observaciones.trim());
+        (datosPlan.nombre && datosPlan.nombre.trim()) ||
+        datosPlan.fecha ||
+        (datosPlan.observaciones && datosPlan.observaciones.trim()) ||
+        pacienteAsignadoId;
 
 
     if (!hayAlgoQueVaciar)
@@ -1033,9 +1026,9 @@ function vaciarPlan() {
 
     const confirmar =
         confirm(
-            "¿Seguro que quieres vaciar el plan? Se perderá lo que hay " +
-            "en pantalla (título, fecha, observaciones y ejercicios). " +
-            "Los planes ya guardados de este paciente no se tocan."
+            "¿Seguro que quieres vaciar el plan? Se perderá lo que hay en " +
+            "pantalla (nombre, fecha, observaciones, ejercicios y la " +
+            "asignación a paciente). Ningún plan ya guardado se toca."
         );
 
 
@@ -1044,27 +1037,7 @@ function vaciarPlan() {
 
 
 
-    planPaciente = [];
-
-    datosPaciente.titulo = "";
-    datosPaciente.fecha = "";
-    datosPaciente.observaciones = "";
-
-    // Al vaciar, el borrador deja de estar "atado" al plan guardado
-    // del que partiera: si luego se guarda, se crea un plan nuevo en
-    // vez de sobrescribir el original.
-    planActivoId = null;
-
-    cambiosSinGuardar = false;
-
-
-    actualizarCamposDatosPaciente();
-
-    mostrarPlan();
-
-    refrescarBiblioteca();
-
-    mostrarSelectorPlanes();
+    reiniciarBorrador();
 
 
 }
@@ -1153,30 +1126,48 @@ function guardarComoPlantilla() {
 
 
 // ==============================
-// PACIENTE ACTIVO / PLAN ACTIVO
+// PLAN ACTIVO / PACIENTE ASIGNADO
 // ==============================
 
-// pacienteActivoId: qué paciente está seleccionado. null = ninguno.
-// planActivoId: qué plan GUARDADO está cargado en el borrador.
-// null = el borrador es nuevo, todavía no se ha guardado como plan.
-let pacienteActivoId = null;
+// El BORRADOR es lo único que existe por defecto al entrar: no hace
+// falta paciente ni nombre para empezar a añadir ejercicios.
+//
+// planActivoId:     id del plan YA GUARDADO que se está editando.
+//                    null = borrador nuevo, todavía no guardado.
+// pacienteAsignadoId: id del paciente asignado a este borrador.
+//                    null = sin asignar (válido y normal).
 let planActivoId = null;
+let pacienteAsignadoId = null;
 
 
-// Copia en los <input>/<select> del sidebar los valores actuales
-// de datosPaciente. Se usa cada vez que cambiamos de paciente, de
-// plan, o vaciamos el borrador.
-function actualizarCamposDatosPaciente() {
+// Datos del PLAN (no del paciente — la asignación a paciente es
+// aparte, ver pacienteAsignadoId). "nombre" es obligatorio para
+// poder guardar el plan.
+let datosPlan = {
 
-    const titulo = document.getElementById("tituloPlan");
-    const nombre = document.getElementById("nombrePaciente");
+    nombre: "",
+
+    fecha: "",
+
+    observaciones: ""
+
+};
+
+
+// Copia en los <input> del formulario los valores actuales de
+// datosPlan, y en el selector de asignación el paciente actual.
+function actualizarCamposDatosPlan() {
+
+    const nombre = document.getElementById("tituloPlan");
     const fecha = document.getElementById("fechaPlan");
     const observaciones = document.getElementById("observacionesPaciente");
 
-    if (titulo) titulo.value = datosPaciente.titulo || "";
-    if (nombre) nombre.value = datosPaciente.nombre || "";
-    if (fecha) fecha.value = datosPaciente.fecha || "";
-    if (observaciones) observaciones.value = datosPaciente.observaciones || "";
+    if (nombre) nombre.value = datosPlan.nombre || "";
+    if (fecha) fecha.value = datosPlan.fecha || "";
+    if (observaciones) observaciones.value = datosPlan.observaciones || "";
+
+    const selectorAsignado = document.getElementById("selectorPacienteAsignado");
+    if (selectorAsignado) selectorAsignado.value = pacienteAsignadoId || "";
 
 }
 
@@ -1197,9 +1188,10 @@ function confirmarDescartarCambios() {
 }
 
 
-// Marca el borrador como modificado y refresca la vista. Se llama
-// desde cualquier edición: campos del paciente/plan, añadir o quitar
-// ejercicios, reordenar, cambiar series/repeticiones/notas...
+// Marca el borrador como modificado y refresca el indicador. Se
+// llama desde cualquier edición: campos del plan, asignar/quitar
+// paciente, añadir o quitar ejercicios, reordenar, cambiar
+// series/repeticiones/notas...
 function marcarCambioEnBorrador() {
 
     cambiosSinGuardar = true;
@@ -1209,9 +1201,8 @@ function marcarCambioEnBorrador() {
 }
 
 
-// Actualiza un indicador de texto opcional (id="estadoPlan") si existe
-// en el HTML, tipo "Cambios sin guardar" / "Guardado". No es obligatorio
-// tenerlo en la página; si no existe el elemento, no pasa nada.
+// Indicador de texto opcional (id="estadoPlan"): "Cambios sin
+// guardar" / "Guardado".
 function actualizarEstadoGuardado() {
 
     const estado = document.getElementById("estadoPlan");
@@ -1230,12 +1221,55 @@ function actualizarEstadoGuardado() {
 }
 
 
+// Vuelve a dejar el borrador completamente en blanco: sin plan
+// guardado asociado, sin paciente asignado, sin ejercicios. Lo usan
+// tanto vaciarPlan() como nuevoPlan() — ver cada una para cuándo
+// piden confirmación y con qué mensaje.
+function reiniciarBorrador() {
+
+    planActivoId = null;
+    pacienteAsignadoId = null;
+
+    localStorage.removeItem("planActivoId");
+    localStorage.removeItem("pacienteAsignadoId");
+
+    datosPlan = {
+        nombre: "",
+        fecha: "",
+        observaciones: ""
+    };
+
+    planPaciente = [];
+    cambiosSinGuardar = false;
+
+    actualizarCamposDatosPlan();
+    mostrarPlan();
+    refrescarBiblioteca();
+    mostrarSelectorPlanes();
+    mostrarSelectorPacienteAsignado();
+    actualizarEstadoGuardado();
+
+}
+
+
+// Empieza un borrador en blanco. A diferencia de vaciarPlan(), esto
+// es "ir a trabajar en otra cosa": si lo que había en pantalla ya
+// estaba guardado, no hay nada que perder y no se pregunta nada.
+function nuevoPlan() {
+
+    if (!confirmarDescartarCambios())
+        return;
+
+    reiniciarBorrador();
+
+}
+
+
 // ==============================
 // LOCAL STORAGE — PACIENTES
 // ==============================
-// Un paciente solo guarda su nombre. El resto (título, fecha,
-// observaciones, ejercicios) vive en "planes", porque un mismo
-// paciente puede tener varios planes a lo largo del tiempo.
+// Un paciente solo guarda su nombre. Los planes son independientes:
+// pueden no tener paciente, y el mismo paciente puede tener varios.
 
 function obtenerPacientes() {
 
@@ -1271,235 +1305,21 @@ function guardarPlanes(planes) {
 }
 
 
-function obtenerPlanesDePaciente(pacienteId) {
-
-    return obtenerPlanes()
-        .filter(p => p.pacienteId == pacienteId)
-        .sort((a, b) => b.actualizadoEn - a.actualizadoEn);
-
-}
-
-
 // ==============================
-// SELECTOR DE PACIENTES
-// ==============================
-
-function mostrarSelectorPacientes() {
-
-    const selector = document.getElementById("selectorPaciente");
-
-    if (!selector)
-        return;
-
-    const pacientes =
-        obtenerPacientes()
-        .slice()
-        .sort((a, b) => b.actualizadoEn - a.actualizadoEn);
-
-    if (pacientes.length === 0) {
-
-        selector.innerHTML =
-            `<option value="">Sin pacientes todavía</option>`;
-
-        selector.value = "";
-
-        return;
-
-    }
-
-    selector.innerHTML = pacientes.map(paciente => {
-
-        const etiqueta =
-            (paciente.nombre && paciente.nombre.trim())
-            || "Paciente sin nombre";
-
-        const seleccionado =
-            paciente.id == pacienteActivoId ? "selected" : "";
-
-        return `<option value="${paciente.id}" ${seleccionado}>${etiqueta}</option>`;
-
-    }).join("");
-
-    if (pacienteActivoId) {
-        selector.value = pacienteActivoId;
-    }
-
-}
-
-
-// Crea un paciente nuevo (solo pide el nombre) y lo deja activo con
-// un borrador de plan en blanco. Acción separada del selector, para
-// no mezclar "elegir uno existente" con "crear uno nuevo".
-function nuevoPaciente() {
-
-    if (!confirmarDescartarCambios())
-        return;
-
-    const nombre = prompt("Nombre del nuevo paciente:");
-
-    if (!nombre || !nombre.trim())
-        return;
-
-    const paciente = {
-        id: Date.now(),
-        nombre: nombre.trim(),
-        actualizadoEn: Date.now()
-    };
-
-    const pacientes = obtenerPacientes();
-    pacientes.push(paciente);
-    guardarPacientes(pacientes);
-
-    pacienteActivoId = paciente.id;
-    planActivoId = null;
-
-    localStorage.setItem("pacienteActivoId", String(pacienteActivoId));
-    localStorage.removeItem("planActivoId");
-
-    datosPaciente = {
-        titulo: "",
-        nombre: paciente.nombre,
-        fecha: "",
-        observaciones: ""
-    };
-
-    planPaciente = [];
-    cambiosSinGuardar = false;
-
-    actualizarCamposDatosPaciente();
-    mostrarPlan();
-    refrescarBiblioteca();
-    mostrarSelectorPacientes();
-    mostrarSelectorPlanes();
-    actualizarEstadoGuardado();
-
-}
-
-
-function cambiarPaciente(id) {
-
-    if (!id)
-        return;
-
-    if (id == pacienteActivoId)
-        return;
-
-    if (!confirmarDescartarCambios()) {
-        mostrarSelectorPacientes();
-        return;
-    }
-
-    const paciente =
-        obtenerPacientes().find(p => p.id == id);
-
-    if (!paciente)
-        return;
-
-    pacienteActivoId = paciente.id;
-    planActivoId = null;
-
-    localStorage.setItem("pacienteActivoId", String(pacienteActivoId));
-    localStorage.removeItem("planActivoId");
-
-    datosPaciente = {
-        titulo: "",
-        nombre: paciente.nombre,
-        fecha: "",
-        observaciones: ""
-    };
-
-    planPaciente = [];
-    cambiosSinGuardar = false;
-
-    actualizarCamposDatosPaciente();
-    mostrarPlan();
-    refrescarBiblioteca();
-    mostrarSelectorPlanes();
-    actualizarEstadoGuardado();
-
-}
-
-
-// Elimina el paciente activo Y todos sus planes guardados (no solo
-// el que estuviera abierto). No se puede deshacer.
-function eliminarPacienteActivo() {
-
-    if (!pacienteActivoId) {
-
-        alert("No hay ningún paciente seleccionado para eliminar.");
-        return;
-
-    }
-
-    const confirmar = confirm(
-        "¿Seguro que quieres eliminar este paciente y TODOS sus planes " +
-        "guardados? No se puede deshacer."
-    );
-
-    if (!confirmar)
-        return;
-
-    const pacientes =
-        obtenerPacientes().filter(p => p.id != pacienteActivoId);
-
-    guardarPacientes(pacientes);
-
-    const planes =
-        obtenerPlanes().filter(p => p.pacienteId != pacienteActivoId);
-
-    guardarPlanes(planes);
-
-    localStorage.removeItem("pacienteActivoId");
-    localStorage.removeItem("planActivoId");
-
-    pacienteActivoId = null;
-    planActivoId = null;
-
-    datosPaciente = {
-        titulo: "",
-        nombre: "",
-        fecha: "",
-        observaciones: ""
-    };
-
-    planPaciente = [];
-    cambiosSinGuardar = false;
-
-    actualizarCamposDatosPaciente();
-    mostrarPlan();
-    refrescarBiblioteca();
-    mostrarSelectorPacientes();
-    mostrarSelectorPlanes();
-    actualizarEstadoGuardado();
-
-}
-
-
-// ==============================
-// SELECTOR DE PLANES (del paciente activo)
+// SELECTOR DE PLANES (todos, agrupados por paciente)
 // ==============================
 
 function mostrarSelectorPlanes() {
 
-    const selector = document.getElementById("selectorPlan");
+    const selector = document.getElementById("selectorPlanes");
 
     if (!selector)
         return;
 
-    if (!pacienteActivoId) {
-
-        selector.innerHTML =
-            `<option value="">Elige un paciente primero</option>`;
-
-        selector.disabled = true;
-
-        return;
-
-    }
-
-    selector.disabled = false;
-
-    const planes = obtenerPlanesDePaciente(pacienteActivoId);
+    const planes =
+        obtenerPlanes()
+        .slice()
+        .sort((a, b) => b.actualizadoEn - a.actualizadoEn);
 
     if (planes.length === 0) {
 
@@ -1512,38 +1332,66 @@ function mostrarSelectorPlanes() {
 
     }
 
-    // Si el borrador actual no está atado a ningún plan guardado
-    // (planActivoId es null), lo indicamos como placeholder — pero
-    // NO es una opción seleccionable de "crear nuevo": eso vive en
-    // el botón "+ Nuevo plan", aparte, para no repetir la mezcla de
-    // "elegir existente" / "crear nuevo" en un mismo control.
-    const opcionBorrador =
-        !planActivoId
-        ? `<option value="" selected disabled>Borrador sin guardar</option>`
-        : "";
+    const pacientesPorId = {};
+    obtenerPacientes().forEach(p => { pacientesPorId[p.id] = p.nombre; });
 
-    const opcionesGuardadas = planes.map(plan => {
+    const etiquetaPlan = plan =>
+        (plan.nombre && plan.nombre.trim()) || "Plan sin nombre";
 
-        const etiqueta =
-            (plan.titulo && plan.titulo.trim())
-            || (plan.fecha ? `Plan del ${plan.fecha}` : "Plan sin título");
+    const opcion = plan => {
 
-        const seleccionado =
-            plan.id == planActivoId ? "selected" : "";
+        const seleccionado = plan.id == planActivoId ? "selected" : "";
 
-        return `<option value="${plan.id}" ${seleccionado}>${etiqueta}</option>`;
+        return `<option value="${plan.id}" ${seleccionado}>${etiquetaPlan(plan)}</option>`;
 
-    }).join("");
+    };
 
-    selector.innerHTML = opcionBorrador + opcionesGuardadas;
+    // "Sin asignar" primero, luego un grupo por paciente (orden
+    // alfabético), cada uno con sus planes ordenados por fecha de
+    // modificación reciente.
+    const sinAsignar = planes.filter(p => !p.pacienteId);
 
+    const porPaciente = {};
+    planes
+        .filter(p => p.pacienteId)
+        .forEach(p => {
+            if (!porPaciente[p.pacienteId]) porPaciente[p.pacienteId] = [];
+            porPaciente[p.pacienteId].push(p);
+        });
+
+    let html = "";
+
+    if (sinAsignar.length > 0) {
+        html += `<optgroup label="Sin asignar">`;
+        html += sinAsignar.map(opcion).join("");
+        html += `</optgroup>`;
+    }
+
+    Object.keys(porPaciente)
+        .sort((idA, idB) => {
+            const nombreA = pacientesPorId[idA] || "";
+            const nombreB = pacientesPorId[idB] || "";
+            return nombreA.localeCompare(nombreB, "es");
+        })
+        .forEach(idPaciente => {
+
+            const nombrePaciente =
+                pacientesPorId[idPaciente] || "Paciente eliminado";
+
+            html += `<optgroup label="${nombrePaciente}">`;
+            html += porPaciente[idPaciente].map(opcion).join("");
+            html += `</optgroup>`;
+
+        });
+
+    selector.innerHTML = html;
     selector.value = planActivoId || "";
 
 }
 
 
-// Abre un plan guardado del paciente activo en el borrador. Crear un
-// plan nuevo es una acción aparte: ver nuevoPlan().
+// Abre un plan guardado (de cualquier paciente, o sin asignar) en
+// el borrador.
 function cambiarPlan(id) {
 
     if (!id)
@@ -1557,20 +1405,27 @@ function cambiarPlan(id) {
         return;
     }
 
-    const plan =
-        obtenerPlanes().find(
-            p => p.id == id && p.pacienteId == pacienteActivoId
-        );
+    const plan = obtenerPlanes().find(p => p.id == id);
 
     if (!plan)
         return;
 
     planActivoId = plan.id;
+    pacienteAsignadoId = plan.pacienteId || null;
+
     localStorage.setItem("planActivoId", String(planActivoId));
 
-    datosPaciente.titulo = plan.titulo || "";
-    datosPaciente.fecha = plan.fecha || "";
-    datosPaciente.observaciones = plan.observaciones || "";
+    if (pacienteAsignadoId) {
+        localStorage.setItem("pacienteAsignadoId", String(pacienteAsignadoId));
+    } else {
+        localStorage.removeItem("pacienteAsignadoId");
+    }
+
+    datosPlan = {
+        nombre: plan.nombre || "",
+        fecha: plan.fecha || "",
+        observaciones: plan.observaciones || ""
+    };
 
     // Copia profunda: editar el borrador no debe tocar lo guardado
     // hasta que se pulse "Guardar plan".
@@ -1578,45 +1433,11 @@ function cambiarPlan(id) {
 
     cambiosSinGuardar = false;
 
-    actualizarCamposDatosPaciente();
+    actualizarCamposDatosPlan();
     mostrarPlan();
     refrescarBiblioteca();
     mostrarSelectorPlanes();
-    actualizarEstadoGuardado();
-
-}
-
-
-// Empieza un borrador de plan en blanco para el paciente activo,
-// sin tocar sus planes ya guardados.
-function nuevoPlan() {
-
-    if (!pacienteActivoId) {
-
-        alert("Elige o crea primero un paciente.");
-        return;
-
-    }
-
-    if (!confirmarDescartarCambios()) {
-        mostrarSelectorPlanes();
-        return;
-    }
-
-    planActivoId = null;
-    localStorage.removeItem("planActivoId");
-
-    datosPaciente.titulo = "";
-    datosPaciente.fecha = "";
-    datosPaciente.observaciones = "";
-
-    planPaciente = [];
-    cambiosSinGuardar = false;
-
-    actualizarCamposDatosPaciente();
-    mostrarPlan();
-    refrescarBiblioteca();
-    mostrarSelectorPlanes();
+    mostrarSelectorPacienteAsignado();
     actualizarEstadoGuardado();
 
 }
@@ -1624,35 +1445,29 @@ function nuevoPlan() {
 
 // Guarda explícitamente el borrador actual: crea un plan nuevo la
 // primera vez, o sobrescribe el mismo plan si ya se había guardado
-// antes (planActivoId). También sincroniza el nombre del paciente
-// por si se editó en el campo "nombre" del borrador.
+// antes (planActivoId). El nombre es obligatorio; el paciente no.
 function guardarPlanActual() {
 
-    if (!pacienteActivoId) {
+    const campoNombre = document.getElementById("tituloPlan");
 
-        alert("Elige o crea primero un paciente antes de guardar.");
+    if (!datosPlan.nombre || !datosPlan.nombre.trim()) {
+
+        alert("Ponle un nombre al plan antes de guardarlo (por ejemplo, \"Tendinitis Aquiles\").");
+
+        if (campoNombre) campoNombre.focus();
+
         return;
 
-    }
-
-    // Sincronizar nombre del paciente si se cambió en el borrador.
-    const pacientes = obtenerPacientes();
-    const indicePaciente = pacientes.findIndex(p => p.id == pacienteActivoId);
-
-    if (indicePaciente !== -1 && datosPaciente.nombre && datosPaciente.nombre.trim()) {
-        pacientes[indicePaciente].nombre = datosPaciente.nombre.trim();
-        pacientes[indicePaciente].actualizadoEn = Date.now();
-        guardarPacientes(pacientes);
     }
 
     const planes = obtenerPlanes();
 
     const registro = {
         id: planActivoId || Date.now(),
-        pacienteId: pacienteActivoId,
-        titulo: datosPaciente.titulo || "",
-        fecha: datosPaciente.fecha || "",
-        observaciones: datosPaciente.observaciones || "",
+        nombre: datosPlan.nombre.trim(),
+        pacienteId: pacienteAsignadoId || null,
+        fecha: datosPlan.fecha || "",
+        observaciones: datosPlan.observaciones || "",
         ejercicios: planPaciente,
         actualizadoEn: Date.now()
     };
@@ -1672,16 +1487,17 @@ function guardarPlanActual() {
 
     cambiosSinGuardar = false;
 
-    mostrarSelectorPacientes();
     mostrarSelectorPlanes();
     actualizarEstadoGuardado();
+
+    alert(`Plan "${registro.nombre}" guardado.`);
 
 }
 
 
 // Elimina de localStorage el plan guardado que está abierto ahora
-// mismo (distinto de "vaciar", que solo limpia el borrador en
-// pantalla sin borrar nada guardado).
+// mismo. No toca al paciente asignado (si lo hubiera): solo
+// desaparece este plan concreto.
 function eliminarPlanActivo() {
 
     if (!planActivoId) {
@@ -1703,41 +1519,136 @@ function eliminarPlanActivo() {
 
     guardarPlanes(planes);
 
-    planActivoId = null;
-    localStorage.removeItem("planActivoId");
-
-    datosPaciente.titulo = "";
-    datosPaciente.fecha = "";
-    datosPaciente.observaciones = "";
-
-    planPaciente = [];
-    cambiosSinGuardar = false;
-
-    actualizarCamposDatosPaciente();
-    mostrarPlan();
-    refrescarBiblioteca();
-    mostrarSelectorPlanes();
-    actualizarEstadoGuardado();
+    reiniciarBorrador();
 
 }
 
 
 // ==============================
-// DATOS PACIENTE (campos del borrador)
+// PACIENTE ASIGNADO AL BORRADOR
 // ==============================
 
-function configurarDatosPaciente() {
+function mostrarSelectorPacienteAsignado() {
+
+    const selector = document.getElementById("selectorPacienteAsignado");
+
+    if (!selector)
+        return;
+
+    const pacientes =
+        obtenerPacientes()
+        .slice()
+        .sort((a, b) => (a.nombre || "").localeCompare(b.nombre || "", "es"));
+
+    const opciones =
+        pacientes.map(paciente => {
+
+            const seleccionado =
+                paciente.id == pacienteAsignadoId ? "selected" : "";
+
+            return `<option value="${paciente.id}" ${seleccionado}>${paciente.nombre}</option>`;
+
+        }).join("");
+
+    selector.innerHTML =
+        `<option value="">Sin asignar</option>` + opciones;
+
+    selector.value = pacienteAsignadoId || "";
+
+}
 
 
-    const titulo =
-        document.getElementById(
-            "tituloPlan"
-        );
+// Cambia a qué paciente está asignado el borrador. No guarda nada
+// en localStorage por sí solo — como cualquier otro campo del
+// borrador, hace falta pulsar "Guardar plan" para que quede fijado.
+function cambiarPacienteAsignado(id) {
+
+    pacienteAsignadoId = id || null;
+
+    marcarCambioEnBorrador();
+
+}
+
+
+// Crea un paciente nuevo (solo pide el nombre) y lo deja asignado
+// al borrador actual. Crear el paciente en sí es inmediato — es una
+// ficha ligera — pero que quede fijado en ESTE plan sigue
+// requiriendo "Guardar plan", igual que cualquier otro cambio.
+function nuevoPacienteAsignado() {
+
+    const nombre = prompt("Nombre del nuevo paciente:");
+
+    if (!nombre || !nombre.trim())
+        return;
+
+    const paciente = {
+        id: Date.now(),
+        nombre: nombre.trim(),
+        actualizadoEn: Date.now()
+    };
+
+    const pacientes = obtenerPacientes();
+    pacientes.push(paciente);
+    guardarPacientes(pacientes);
+
+    pacienteAsignadoId = paciente.id;
+
+    mostrarSelectorPacienteAsignado();
+    marcarCambioEnBorrador();
+
+}
+
+
+// Elimina el paciente asignado al borrador Y TODOS sus planes
+// guardados (no solo el que estuviera abierto). No se puede
+// deshacer. Si el plan abierto ahora mismo era uno de los borrados,
+// el borrador se reinicia entero.
+function eliminarPacienteAsignado() {
+
+    if (!pacienteAsignadoId) {
+
+        alert("El borrador actual no tiene ningún paciente asignado.");
+        return;
+
+    }
+
+    const confirmar = confirm(
+        "¿Seguro que quieres eliminar este paciente y TODOS sus planes " +
+        "guardados? No se puede deshacer."
+    );
+
+    if (!confirmar)
+        return;
+
+    const idEliminado = pacienteAsignadoId;
+
+    const pacientes =
+        obtenerPacientes().filter(p => p.id != idEliminado);
+
+    guardarPacientes(pacientes);
+
+    const planesRestantes =
+        obtenerPlanes().filter(p => p.pacienteId != idEliminado);
+
+    guardarPlanes(planesRestantes);
+
+    // El plan que estuviera abierto pertenecía a este paciente (es
+    // el mismo borrador), así que también acaba de desaparecer.
+    reiniciarBorrador();
+
+}
+
+
+// ==============================
+// DATOS DEL PLAN (campos del borrador)
+// ==============================
+
+function configurarDatosPlan() {
 
 
     const nombre =
         document.getElementById(
-            "nombrePaciente"
+            "tituloPlan"
         );
 
 
@@ -1754,28 +1665,14 @@ function configurarDatosPaciente() {
 
 
 
-    actualizarCamposDatosPaciente();
-
-
-    titulo.addEventListener(
-        "input",
-        () => {
-
-            datosPaciente.titulo =
-                titulo.value;
-
-            marcarCambioEnBorrador();
-
-        }
-    );
-
+    actualizarCamposDatosPlan();
 
 
     nombre.addEventListener(
         "input",
         () => {
 
-            datosPaciente.nombre =
+            datosPlan.nombre =
                 nombre.value;
 
             marcarCambioEnBorrador();
@@ -1790,7 +1687,7 @@ function configurarDatosPaciente() {
         "input",
         () => {
 
-            datosPaciente.fecha =
+            datosPlan.fecha =
                 fecha.value;
 
             marcarCambioEnBorrador();
@@ -1805,7 +1702,7 @@ function configurarDatosPaciente() {
         "input",
         () => {
 
-            datosPaciente.observaciones =
+            datosPlan.observaciones =
                 observaciones.value;
 
             marcarCambioEnBorrador();
@@ -1832,65 +1729,41 @@ function configurarDatosPaciente() {
 
 function cargarPlan() {
 
-    const idPacienteGuardado =
-        localStorage.getItem("pacienteActivoId");
-
     const idPlanGuardado =
         localStorage.getItem("planActivoId");
 
-    if (idPacienteGuardado) {
+    if (idPlanGuardado) {
 
-        const paciente =
-            obtenerPacientes().find(
-                p => p.id == idPacienteGuardado
+        const plan =
+            obtenerPlanes().find(
+                p => p.id == idPlanGuardado
             );
 
-        if (paciente) {
+        if (plan) {
 
-            pacienteActivoId = paciente.id;
-            datosPaciente.nombre = paciente.nombre;
+            planActivoId = plan.id;
+            pacienteAsignadoId = plan.pacienteId || null;
 
-            if (idPlanGuardado) {
+            datosPlan.nombre = plan.nombre || "";
+            datosPlan.fecha = plan.fecha || "";
+            datosPlan.observaciones = plan.observaciones || "";
 
-                const plan =
-                    obtenerPlanes().find(
-                        p => p.id == idPlanGuardado && p.pacienteId == pacienteActivoId
-                    );
-
-                if (plan) {
-
-                    planActivoId = plan.id;
-                    datosPaciente.titulo = plan.titulo || "";
-                    datosPaciente.fecha = plan.fecha || "";
-                    datosPaciente.observaciones = plan.observaciones || "";
-                    planPaciente = plan.ejercicios || [];
-
-                }
-
-            }
+            planPaciente = plan.ejercicios || [];
 
         }
 
     }
 
 
-    actualizarCamposDatosPaciente();
-
-    mostrarSelectorPacientes();
+    actualizarCamposDatosPlan();
 
     mostrarSelectorPlanes();
+
+    mostrarSelectorPacienteAsignado();
 
     actualizarEstadoGuardado();
 
 }
-
-
-
-
-
-
-
-
 // ==============================
 // LOGO DE LA CLÍNICA
 // ==============================
@@ -2368,7 +2241,7 @@ async function generarPDF() {
     pdf.setTextColor(...COLOR_MARCA_OSCURO);
 
     const tituloPlan =
-        (datosPaciente.titulo && datosPaciente.titulo.trim())
+        (datosPlan.nombre && datosPlan.nombre.trim())
         || "Plan de ejercicios";
 
     pdf.text(tituloPlan, 20, 24);
@@ -2417,8 +2290,13 @@ async function generarPDF() {
     // PACIENTE / FECHA / OBSERVACIONES — más aire, mismas dos columnas
     // ==============================
 
-    const hayNombre = datosPaciente.nombre && datosPaciente.nombre.trim();
-    const hayFecha = !!datosPaciente.fecha;
+    const nombrePacienteAsignado =
+        pacienteAsignadoId
+        ? (obtenerPacientes().find(p => p.id == pacienteAsignadoId) || {}).nombre
+        : "";
+
+    const hayNombre = !!(nombrePacienteAsignado && nombrePacienteAsignado.trim());
+    const hayFecha = !!datosPlan.fecha;
 
     if (hayNombre || hayFecha) {
 
@@ -2430,7 +2308,7 @@ async function generarPDF() {
             pdf.setFontSize(11);
             pdf.setFont("helvetica", "bold");
             pdf.setTextColor(...COLOR_INK);
-            pdf.text(datosPaciente.nombre.trim(), 20, y + 5.5);
+            pdf.text(nombrePacienteAsignado.trim(), 20, y + 5.5);
             pdf.setFont("helvetica", "normal");
         }
 
@@ -2442,7 +2320,7 @@ async function generarPDF() {
             pdf.setFontSize(11);
             pdf.setFont("helvetica", "bold");
             pdf.setTextColor(...COLOR_INK);
-            pdf.text(formatearFechaBonita(datosPaciente.fecha), 120, y + 5.5);
+            pdf.text(formatearFechaBonita(datosPlan.fecha), 120, y + 5.5);
             pdf.setFont("helvetica", "normal");
         }
 
@@ -2451,7 +2329,7 @@ async function generarPDF() {
 
     pdf.setTextColor(0, 0, 0);
 
-    if (datosPaciente.observaciones) {
+    if (datosPlan.observaciones) {
 
         pdf.setFontSize(7);
         pdf.setTextColor(...COLOR_INK_TENUE);
@@ -2460,7 +2338,7 @@ async function generarPDF() {
 
         pdf.setFontSize(9);
         pdf.setTextColor(...COLOR_INK);
-        const lineasObs = pdf.splitTextToSize(datosPaciente.observaciones, 170);
+        const lineasObs = pdf.splitTextToSize(datosPlan.observaciones, 170);
         pdf.text(lineasObs, 20, y);
         y += lineasObs.length * 4.4 + 6;
     }
@@ -2848,7 +2726,7 @@ cargarPlan();
 
 cargarEjercicios();
 
-configurarDatosPaciente();
+configurarDatosPlan();
 
 configurarLogoClinica();
 
