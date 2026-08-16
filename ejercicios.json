@@ -301,7 +301,7 @@
   {
     "id": 24,
     "nombre": "Masaje con hielo para la fascia plantar",
-    "region": "Tobillo y pie",
+    "region": "Tobillo-pie",
     "objetivo": "Automasaje",
     "material": "Hielo",
     "imagen": "/img/tobillo-y-pie/masaje-fascia-plantar-hielo.webp",
@@ -314,7 +314,7 @@
   {
     "id": 25,
     "nombre": "Masaje de la fascia plantar con pelota",
-    "region": "Tobillo y pie",
+    "region": "Tobillo-pie",
     "objetivo": "Automasaje",
     "material": "Pelota",
     "imagen": "/img/tobillo-y-pie/masaje-fascia-plantar-pelota.webp",
@@ -327,7 +327,7 @@
   {
     "id": 26,
     "nombre": "Elevación de talones de pie",
-    "region": "Tobillo y pie",
+    "region": "Tobillo-pie",
     "objetivo": "Fortalecimiento",
     "material": "Sin material",
     "imagen": "/img/tobillo-y-pie/elevacion-de-talones-de-pie.webp",
@@ -340,7 +340,7 @@
   {
     "id": 27,
     "nombre": "Estiramiento de la fascia plantar",
-    "region": "Tobillo y pie",
+    "region": "Tobillo-pie",
     "objetivo": "Estiramiento",
     "material": "Silla",
     "imagen": "/img/tobillo-pie/estiramiento-fascia-plantar-sentado.webp",
@@ -353,7 +353,7 @@
   {
     "id": 28,
     "nombre": "Estiramiento de la fascia plantar de pie",
-    "region": "Tobillo y pie",
+    "region": "Tobillo-pie",
     "objetivo": "Estiramiento",
     "material": "Sin material",
     "imagen": "/img/tobillo-pie/estiramiento-fascia-plantar-de-pie.webp",
@@ -366,7 +366,7 @@
   {
     "id": 29,
     "nombre": "Estiramiento de gemelo de pie",
-    "region": "Tobillo y pie",
+    "region": "Tobillo-pie",
     "objetivo": "Estiramiento",
     "material": "Sin material",
     "imagen": "/img/tobillo-pie/estiramiento-gemelo-de-pie.webp",
@@ -379,7 +379,7 @@
   {
     "id": 30,
     "nombre": "Arrugar una toalla con los dedos del pie",
-    "region": "Tobillo y pie",
+    "region": "Tobillo-pie",
     "objetivo": "Fortalecimiento",
     "material": "Toalla",
     "imagen": "/img/tobillo-pie/arrugar-toalla-con-dedos-del-pie.webp",
