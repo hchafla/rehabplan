@@ -1,0 +1,213 @@
+{
+  "id": "hombro-doloroso",
+  "nombre": "Hombro doloroso - Tendinopatías de hombro",
+  "fuente": "Protocolo de actuación SCS · Hombro doloroso / Tendinopatías de hombro (Atención Primaria)",
+
+  "objetivos": {
+    "fuente": "protocolo",
+    "general": [
+      "Devolver al hombro su funcionalidad, readaptando al paciente lo antes posible a la vida activa."
+    ],
+    "especificos": [
+      "Disminuir el dolor.",
+      "Reducir la inflamación.",
+      "Mejorar/normalizar la movilidad, mejorando el balance articular.",
+      "Recuperar el tono, la fuerza y la potencia muscular: reequilibración muscular.",
+      "Corregir las posturas antiálgicas.",
+      "Reeducar el ritmo escápulo-humeral.",
+      "Prevenir la discapacidad, conservando la independencia del usuario.",
+      "Fomentar la responsabilidad del usuario en el autocuidado.",
+      "Prevenir complicaciones y recidivas."
+    ]
+  },
+
+  "avisos": {
+    "fuente": "protocolo",
+    "criteriosInclusion": [
+      "Persistencia de clínica dolorosa tras haber realizado tratamiento previo durante 4-6 semanas."
+    ],
+    "criteriosExclusion": [
+      "Hombro doloroso postraumático.",
+      "Hombro doloroso de etiología extrínseca.",
+      "Capsulitis adhesiva (derivación a Rehabilitación)."
+    ],
+    "sesionesMaximas": 10
+  },
+
+  "motivo": {
+    "fuente": "editable",
+    "notaFuente": "El protocolo no establece una fórmula concreta para este campo. Estas frases son solo sugerencias editables, no un texto oficial del SCS.",
+    "frasesPredefinidas": [
+      "Acceso a HC del paciente como fisioterapeuta del C.S. [CENTRO].",
+      "Acceso a HC tras derivación de MAP por diagnóstico de [DIAGNÓSTICO].",
+      "Acceso a HC tras derivación de MAP para valoración fisioterapéutica de [MOTIVO]."
+    ]
+  },
+
+  "anamnesis": {
+    "fuente": "Estructura según protocolo SCS; la redacción de cada frase no es un texto oficial",
+    "secciones": [
+      {
+        "id": "historiaLesion",
+        "titulo": "Historia de la lesión",
+        "campos": [
+          { "id": "lesion_inicio", "tipo": "texto", "etiqueta": "Inicio" },
+          { "id": "lesion_mecanismo", "tipo": "texto", "etiqueta": "Mecanismo" },
+          { "id": "lesion_evolucion", "tipo": "texto", "etiqueta": "Evolución" },
+          { "id": "lesion_otros", "tipo": "texto", "etiqueta": "Otros datos relevantes" }
+        ]
+      },
+      {
+        "id": "historiaDolor",
+        "titulo": "Historia del dolor",
+        "campos": [
+          { "id": "dolor_descripcion", "tipo": "texto", "etiqueta": "Descripción" },
+          { "id": "dolor_intensidad", "tipo": "numero", "etiqueta": "Intensidad (EVA 0-10)", "min": 0, "max": 10 },
+          { "id": "dolor_localizacion", "tipo": "texto", "etiqueta": "Localización" },
+          { "id": "dolor_aparicion", "tipo": "texto", "etiqueta": "Aparición" },
+          { "id": "dolor_nocturno", "tipo": "tristate", "etiqueta": "Dolor nocturno" },
+          { "id": "dolor_agravantes", "tipo": "texto", "etiqueta": "Factores agravantes" },
+          { "id": "dolor_otros", "tipo": "texto", "etiqueta": "Otros factores relevantes" }
+        ]
+      },
+      {
+        "id": "historiaLaboral",
+        "titulo": "Historia laboral",
+        "campos": [
+          { "id": "laboral_tipo", "tipo": "texto", "etiqueta": "Tipo de trabajo" }
+        ]
+      },
+      {
+        "id": "historiaSociofamiliar",
+        "titulo": "Historia sociofamiliar",
+        "campos": [
+          { "id": "avd", "tipo": "texto", "etiqueta": "Actividades de la vida diaria" }
+        ]
+      },
+      {
+        "id": "deporteOcio",
+        "titulo": "Actividades deportivas y de ocio",
+        "campos": [
+          { "id": "deporte_ocio", "tipo": "texto", "etiqueta": "Actividades deportivas y de ocio" }
+        ]
+      }
+    ]
+  },
+
+  "exploracionFisica": {
+    "fuente": "Estructura según protocolo SCS",
+    "inspeccionPalpacion": {
+      "titulo": "Inspección y palpación",
+      "campos": [
+        { "id": "insp_postura", "tipo": "texto", "etiqueta": "Postura del hombro" },
+        { "id": "insp_inflamacion", "tipo": "tristate", "etiqueta": "Inflamación" },
+        { "id": "insp_dolor_palpacion", "tipo": "tristate", "etiqueta": "Dolor a la palpación" },
+        { "id": "insp_otros", "tipo": "texto", "etiqueta": "Otros hallazgos" }
+      ]
+    },
+    "movilidadArticular": {
+      "titulo": "Movilidad articular",
+      "notaFuente": "El protocolo no especifica goniometría ni categorías concretas. Esta clasificación funcional es una propuesta inicial y puede modificarse fácilmente desde este archivo de datos.",
+      "movimientos": [
+        {
+          "id": "mov_flexion",
+          "etiqueta": "Flexión de hombro",
+          "categorias": ["No valorado", "Limitación severa", "Limitación moderada", "Limitación leve", "Sin limitación"]
+        },
+        {
+          "id": "mov_abduccion",
+          "etiqueta": "Abducción de hombro",
+          "categorias": ["No valorado", "Limitación severa", "Limitación moderada", "Limitación leve", "Sin limitación"]
+        },
+        {
+          "id": "mov_rotacion_interna",
+          "etiqueta": "Rotación interna",
+          "categorias": ["No valorada", "Mano llega a región lumbar", "Mano llega a región dorsal", "Sin limitación funcional"]
+        },
+        {
+          "id": "mov_rotacion_externa",
+          "etiqueta": "Rotación externa",
+          "categorias": ["No valorada", "Mano llega a nuca", "No llega a nuca", "Sin limitación funcional"]
+        }
+      ]
+    },
+    "balanceMuscular": {
+      "titulo": "Balance muscular (escala de Daniels)",
+      "escala": [
+        { "valor": "0", "descripcion": "Ausencia de contracción" },
+        { "valor": "1", "descripcion": "Contracción visible o palpable sin movimiento" },
+        { "valor": "2", "descripcion": "Movimiento completo con la gravedad eliminada" },
+        { "valor": "3", "descripcion": "Movimiento completo contra la gravedad" },
+        { "valor": "4", "descripcion": "Movimiento contra resistencia moderada" },
+        { "valor": "5", "descripcion": "Fuerza muscular normal, movimiento contra resistencia máxima" }
+      ],
+      "movimientos": [
+        { "id": "fuerza_flexion", "etiqueta": "Flexión de hombro" },
+        { "id": "fuerza_abduccion", "etiqueta": "Abducción" },
+        { "id": "fuerza_rot_interna", "etiqueta": "Rotación interna" },
+        { "id": "fuerza_rot_externa", "etiqueta": "Rotación externa" }
+      ]
+    },
+    "actitudPostural": {
+      "titulo": "Actitud postural general",
+      "campo": { "id": "actitud_postural", "tipo": "texto", "etiqueta": "Actitud postural general" }
+    },
+    "sensibilidad": {
+      "titulo": "Sensibilidad",
+      "campo": { "id": "sensibilidad_estado", "tipo": "select", "etiqueta": "Sensibilidad", "opciones": ["Normal", "Alterada", "No valorada"] },
+      "campoObservaciones": { "id": "sensibilidad_obs", "tipo": "texto", "etiqueta": "Observaciones" }
+    },
+    "testsEspecificos": {
+      "titulo": "Tests específicos",
+      "fuente": "protocolo",
+      "tests": [
+        {
+          "id": "test_jobe",
+          "nombre": "Jobe",
+          "estructura": "Supraespinoso",
+          "ayuda": "Abducción de 90°, antepulsión de 30° y rotación interna máxima (pulgares hacia abajo); se aplica resistencia descendente sobre los brazos."
+        },
+        {
+          "id": "test_yergason",
+          "nombre": "Yergason",
+          "estructura": "Bíceps braquial (porción larga)",
+          "ayuda": "Brazo pegado al cuerpo, codo en flexión de 90° y mano en pronación; se resiste la flexo-supinación del codo y se valora el dolor en el canal bicipital."
+        },
+        {
+          "id": "test_neer",
+          "nombre": "Neer",
+          "estructura": "Síndrome subacromial",
+          "ayuda": "Se estabiliza la escápula y se realiza una abducción pasiva en rotación interna; es positivo si aparece dolor entre 70° y 120°."
+        },
+        {
+          "id": "test_gerber",
+          "nombre": "Gerber (lift-off test)",
+          "estructura": "Subescapular",
+          "ayuda": "Mano del paciente tras la espalda, en rotación interna; se retira la mano de la zona lumbar contra resistencia."
+        },
+        {
+          "id": "test_napoleon",
+          "nombre": "Napoleón",
+          "estructura": "Subescapular",
+          "ayuda": null
+        },
+        {
+          "id": "test_patte",
+          "nombre": "Patte",
+          "estructura": "Infraespinoso / redondo menor",
+          "ayuda": "90° de abducción, 30° de anteversión y codo en 90° apoyado sobre el antebrazo del explorador; se solicita rotación externa activa contra resistencia, comparando con el lado contrario."
+        }
+      ]
+    }
+  },
+
+  "planActuacion": {
+    "fuente": "editable",
+    "recomendaciones": [
+      { "id": "rec_scs", "texto": "Se entregan recomendaciones para su patología elaboradas por el SCS." }
+    ],
+    "tiposSesion": ["Individual", "Grupal"],
+    "frasesPredefinidas": [],
+    "_notaFuturo": "El protocolo también enumera opciones terapéuticas (electroterapia/termoterapia/crioterapia, vendaje neuromuscular, fibrolisis diacutánea, punción seca, cinesiterapia, terapia manual, ejercicio terapéutico, educación al paciente). No se han incluido todavía en el PLAN DE ACTUACIÓN porque no se pidieron explícitamente en esta primera versión; se pueden añadir aquí como checkboxes cuando se decida."
+  }
+}
