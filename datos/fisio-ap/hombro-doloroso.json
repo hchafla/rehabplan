@@ -36,113 +36,155 @@
 
   "motivo": {
     "fuente": "editable",
-    "notaFuente": "El protocolo no establece una fórmula concreta para este campo. Estas frases son solo sugerencias editables, no un texto oficial del SCS.",
-    "frasesPredefinidas": [
-      "Acceso a HC del paciente como fisioterapeuta del C.S. [CENTRO].",
-      "Acceso a HC tras derivación de MAP por diagnóstico de [DIAGNÓSTICO].",
-      "Acceso a HC tras derivación de MAP para valoración fisioterapéutica de [MOTIVO]."
+    "variables": [
+      { "id": "centro_salud", "etiqueta": "Centro de Salud", "placeholder": "Ej. Canalejas" },
+      { "id": "diagnostico_map", "etiqueta": "Diagnóstico MAP", "placeholder": "Ej. Tendinopatía supraespinoso" },
+      { "id": "motivo_valoracion", "etiqueta": "Motivo valoración", "placeholder": "Ej. Hombro doloroso derecho" }
+    ],
+    "plantillas": [
+      {
+        "id": "motivo_cs",
+        "etiqueta": "Acceso como fisioterapeuta del C.S.",
+        "plantilla": "Acceso a HC del paciente como fisioterapeuta del C.S. {centro_salud}."
+      },
+      {
+        "id": "motivo_map",
+        "etiqueta": "Tras derivación de MAP por [Diagnóstico]",
+        "plantilla": "Acceso a HC tras derivación de MAP por diagnóstico de {diagnostico_map}."
+      },
+      {
+        "id": "motivo_val",
+        "etiqueta": "Valoración fisioterapéutica por [Motivo]",
+        "plantilla": "Acceso a HC tras derivación de MAP para valoración fisioterapéutica de {motivo_valoracion}."
+      }
     ]
   },
 
   "anamnesis": {
-    "fuente": "Estructura según protocolo SCS; la redacción de cada frase no es un texto oficial",
     "secciones": [
       {
         "id": "historiaLesion",
         "titulo": "Historia de la lesión",
         "campos": [
-          { "id": "lesion_inicio", "tipo": "texto", "etiqueta": "Inicio" },
-          { "id": "lesion_mecanismo", "tipo": "texto", "etiqueta": "Mecanismo" },
-          { "id": "lesion_evolucion", "tipo": "texto", "etiqueta": "Evolución" },
-          { "id": "lesion_otros", "tipo": "texto", "etiqueta": "Otros datos relevantes" }
+          { "id": "lesion_inicio", "tipo": "texto", "etiqueta": "Inicio", "redaccion": "inicio {valor}" },
+          { "id": "lesion_mecanismo", "tipo": "texto", "etiqueta": "Mecanismo", "redaccion": "mecanismo: {valor}" },
+          { "id": "lesion_evolucion", "tipo": "texto", "etiqueta": "Evolución", "redaccion": "evolución {valor}" },
+          { "id": "lesion_otros", "tipo": "texto", "etiqueta": "Otros datos", "redaccion": "{valor}" }
         ]
       },
       {
         "id": "historiaDolor",
         "titulo": "Historia del dolor",
         "campos": [
-          { "id": "dolor_descripcion", "tipo": "texto", "etiqueta": "Descripción" },
-          { "id": "dolor_intensidad", "tipo": "numero", "etiqueta": "Intensidad (EVA 0-10)", "min": 0, "max": 10 },
-          { "id": "dolor_localizacion", "tipo": "texto", "etiqueta": "Localización" },
-          { "id": "dolor_aparicion", "tipo": "texto", "etiqueta": "Aparición" },
-          { "id": "dolor_nocturno", "tipo": "tristate", "etiqueta": "Dolor nocturno" },
-          { "id": "dolor_agravantes", "tipo": "texto", "etiqueta": "Factores agravantes" },
-          { "id": "dolor_otros", "tipo": "texto", "etiqueta": "Otros factores relevantes" }
+          { "id": "dolor_descripcion", "tipo": "texto", "etiqueta": "Descripción", "redaccion": "dolor {valor}" },
+          { "id": "dolor_intensidad", "tipo": "numero", "etiqueta": "EVA", "min": 0, "max": 10, "redaccion": "EVA {valor}/10" },
+          { "id": "dolor_localizacion", "tipo": "texto", "etiqueta": "Localización", "redaccion": "localizado en {valor}" },
+          { "id": "dolor_aparicion", "tipo": "texto", "etiqueta": "Aparición", "redaccion": "aparición {valor}" },
+          { 
+            "id": "dolor_nocturno", 
+            "tipo": "tristate", 
+            "etiqueta": "Dolor nocturno",
+            "redaccionAfirmativa": "presenta dolor nocturno",
+            "redaccionNegativa": "sin dolor nocturno"
+          },
+          { "id": "dolor_agravantes", "tipo": "texto", "etiqueta": "Agravantes", "redaccion": "agravantes: {valor}" },
+          { "id": "dolor_otros", "tipo": "texto", "etiqueta": "Otros", "redaccion": "{valor}" }
         ]
       },
       {
         "id": "historiaLaboral",
         "titulo": "Historia laboral",
         "campos": [
-          { "id": "laboral_tipo", "tipo": "texto", "etiqueta": "Tipo de trabajo" }
+          { "id": "laboral_tipo", "tipo": "texto", "etiqueta": "Profesión/Actividad", "redaccion": "profesión: {valor}" }
         ]
       },
       {
         "id": "historiaSociofamiliar",
-        "titulo": "Historia sociofamiliar",
+        "titulo": "Historia sociofamiliar / AVD",
         "campos": [
-          { "id": "avd", "tipo": "texto", "etiqueta": "Actividades de la vida diaria" }
+          { "id": "avd", "tipo": "texto", "etiqueta": "Repercusión en AVD", "redaccion": "repercusión en AVD: {valor}" }
         ]
       },
       {
         "id": "deporteOcio",
         "titulo": "Actividades deportivas y de ocio",
         "campos": [
-          { "id": "deporte_ocio", "tipo": "texto", "etiqueta": "Actividades deportivas y de ocio" }
+          { "id": "deporte_ocio", "tipo": "texto", "etiqueta": "Deporte/Ocio", "redaccion": "actividad deportiva/ocio: {valor}" }
         ]
       }
     ]
   },
 
   "exploracionFisica": {
-    "fuente": "Estructura según protocolo SCS",
     "inspeccionPalpacion": {
       "titulo": "Inspección y palpación",
       "campos": [
-        { "id": "insp_postura", "tipo": "texto", "etiqueta": "Postura del hombro" },
-        { "id": "insp_inflamacion", "tipo": "tristate", "etiqueta": "Inflamación" },
-        { "id": "insp_dolor_palpacion", "tipo": "tristate", "etiqueta": "Dolor a la palpación" },
-        { "id": "insp_otros", "tipo": "texto", "etiqueta": "Otros hallazgos" }
+        { "id": "insp_postura", "tipo": "texto", "etiqueta": "Postura", "redaccion": "postura: {valor}" },
+        { 
+          "id": "insp_inflamacion", 
+          "tipo": "tristate", 
+          "etiqueta": "Inflamación visual",
+          "redaccionAfirmativa": "inflamación visible",
+          "redaccionNegativa": "sin signos inflamatorios visibles"
+        },
+        { 
+          "id": "insp_dolor_palpacion", 
+          "tipo": "tristate", 
+          "etiqueta": "Dolor a la palpación",
+          "redaccionAfirmativa": "dolor a la palpación",
+          "redaccionNegativa": "palpación no dolorosa"
+        },
+        { "id": "insp_otros", "tipo": "texto", "etiqueta": "Otros hallazgos", "redaccion": "{valor}" }
       ]
     },
     "movilidadArticular": {
       "titulo": "Movilidad articular",
-      "notaFuente": "El protocolo no especifica goniometría ni categorías concretas. Esta clasificación funcional es una propuesta inicial y puede modificarse fácilmente desde este archivo de datos.",
       "movimientos": [
         {
           "id": "mov_flexion",
-          "etiqueta": "Flexión de hombro",
-          "categorias": ["No valorado", "Limitación severa", "Limitación moderada", "Limitación leve", "Sin limitación"]
+          "etiqueta": "Flexión",
+          "opciones": [
+            { "valor": "menos_90", "etiqueta": "<90°", "texto": "flexión limitada a <90°" },
+            { "valor": "90_150", "etiqueta": "90-150°", "texto": "flexión limitada a 90-150°" },
+            { "valor": "mas_150", "etiqueta": ">150°", "texto": "flexión >150°" },
+            { "valor": "sin_limitacion", "etiqueta": "Sin limitación", "texto": "flexión sin limitación funcional" }
+          ]
         },
         {
           "id": "mov_abduccion",
-          "etiqueta": "Abducción de hombro",
-          "categorias": ["No valorado", "Limitación severa", "Limitación moderada", "Limitación leve", "Sin limitación"]
+          "etiqueta": "Abducción",
+          "opciones": [
+            { "valor": "menos_90", "etiqueta": "<90°", "texto": "abducción limitada a <90°" },
+            { "valor": "90_150", "etiqueta": "90-150°", "texto": "abducción limitada a 90-150°" },
+            { "valor": "mas_150", "etiqueta": ">150°", "texto": "abducción >150°" },
+            { "valor": "sin_limitacion", "etiqueta": "Sin limitación", "texto": "abducción sin limitación funcional" }
+          ]
         },
         {
           "id": "mov_rotacion_interna",
           "etiqueta": "Rotación interna",
-          "categorias": ["No valorada", "Mano llega a región lumbar", "Mano llega a región dorsal", "Sin limitación funcional"]
+          "opciones": [
+            { "valor": "gluteo", "etiqueta": "Mano a glúteo", "texto": "rotación interna: mano llega a glúteo" },
+            { "valor": "lumbar", "etiqueta": "Mano a lumbar", "texto": "rotación interna: mano llega a región lumbar" },
+            { "valor": "dorsal", "etiqueta": "Mano a dorsal", "texto": "rotación interna: mano llega a región dorsal" },
+            { "valor": "sin_limitacion", "etiqueta": "Sin limitación", "texto": "rotación interna sin limitación funcional" }
+          ]
         },
         {
           "id": "mov_rotacion_externa",
           "etiqueta": "Rotación externa",
-          "categorias": ["No valorada", "Mano llega a nuca", "No llega a nuca", "Sin limitación funcional"]
+          "opciones": [
+            { "valor": "no_nuca", "etiqueta": "No llega a nuca", "texto": "rotación externa: no llega a nuca" },
+            { "valor": "nuca", "etiqueta": "Llega a nuca", "texto": "rotación externa: llega a nuca" },
+            { "valor": "sin_limitacion", "etiqueta": "Sin limitación", "texto": "rotación externa sin limitación funcional" }
+          ]
         }
       ]
     },
     "balanceMuscular": {
-      "titulo": "Balance muscular (escala de Daniels)",
-      "escala": [
-        { "valor": "0", "descripcion": "Ausencia de contracción" },
-        { "valor": "1", "descripcion": "Contracción visible o palpable sin movimiento" },
-        { "valor": "2", "descripcion": "Movimiento completo con la gravedad eliminada" },
-        { "valor": "3", "descripcion": "Movimiento completo contra la gravedad" },
-        { "valor": "4", "descripcion": "Movimiento contra resistencia moderada" },
-        { "valor": "5", "descripcion": "Fuerza muscular normal, movimiento contra resistencia máxima" }
-      ],
+      "titulo": "Balance muscular (Daniels)",
       "movimientos": [
-        { "id": "fuerza_flexion", "etiqueta": "Flexión de hombro" },
+        { "id": "fuerza_flexion", "etiqueta": "Flexión" },
         { "id": "fuerza_abduccion", "etiqueta": "Abducción" },
         { "id": "fuerza_rot_interna", "etiqueta": "Rotación interna" },
         { "id": "fuerza_rot_externa", "etiqueta": "Rotación externa" }
@@ -150,64 +192,51 @@
     },
     "actitudPostural": {
       "titulo": "Actitud postural general",
-      "campo": { "id": "actitud_postural", "tipo": "texto", "etiqueta": "Actitud postural general" }
+      "campo": { "id": "actitud_postural", "tipo": "texto", "etiqueta": "Actitud postural", "redaccion": "actitud postural: {valor}" }
     },
     "sensibilidad": {
       "titulo": "Sensibilidad",
-      "campo": { "id": "sensibilidad_estado", "tipo": "select", "etiqueta": "Sensibilidad", "opciones": ["Normal", "Alterada", "No valorada"] },
-      "campoObservaciones": { "id": "sensibilidad_obs", "tipo": "texto", "etiqueta": "Observaciones" }
+      "campo": { 
+        "id": "sensibilidad_estado", 
+        "tipo": "select", 
+        "etiqueta": "Sensibilidad",
+        "opciones": [
+          { "valor": "normal", "etiqueta": "Normal", "texto": "sensibilidad conservada" },
+          { "valor": "alterada", "etiqueta": "Alterada", "texto": "sensibilidad alterada" }
+        ]
+      },
+      "campoObservaciones": { "id": "sensibilidad_obs", "tipo": "texto", "etiqueta": "Detalles sensibilidad", "redaccion": "({valor})" }
     },
     "testsEspecificos": {
       "titulo": "Tests específicos",
-      "fuente": "protocolo",
       "tests": [
-        {
-          "id": "test_jobe",
-          "nombre": "Jobe",
-          "estructura": "Supraespinoso",
-          "ayuda": "Abducción de 90°, antepulsión de 30° y rotación interna máxima (pulgares hacia abajo); se aplica resistencia descendente sobre los brazos."
-        },
-        {
-          "id": "test_yergason",
-          "nombre": "Yergason",
-          "estructura": "Bíceps braquial (porción larga)",
-          "ayuda": "Brazo pegado al cuerpo, codo en flexión de 90° y mano en pronación; se resiste la flexo-supinación del codo y se valora el dolor en el canal bicipital."
-        },
-        {
-          "id": "test_neer",
-          "nombre": "Neer",
-          "estructura": "Síndrome subacromial",
-          "ayuda": "Se estabiliza la escápula y se realiza una abducción pasiva en rotación interna; es positivo si aparece dolor entre 70° y 120°."
-        },
-        {
-          "id": "test_gerber",
-          "nombre": "Gerber (lift-off test)",
-          "estructura": "Subescapular",
-          "ayuda": "Mano del paciente tras la espalda, en rotación interna; se retira la mano de la zona lumbar contra resistencia."
-        },
-        {
-          "id": "test_napoleon",
-          "nombre": "Napoleón",
-          "estructura": "Subescapular",
-          "ayuda": null
-        },
-        {
-          "id": "test_patte",
-          "nombre": "Patte",
-          "estructura": "Infraespinoso / redondo menor",
-          "ayuda": "90° de abducción, 30° de anteversión y codo en 90° apoyado sobre el antebrazo del explorador; se solicita rotación externa activa contra resistencia, comparando con el lado contrario."
-        }
+        { "id": "test_jobe", "nombre": "Jobe", "estructura": "Supraespinoso" },
+        { "id": "test_yergason", "nombre": "Yergason", "estructura": "Bíceps (porción larga)" },
+        { "id": "test_neer", "nombre": "Neer", "estructura": "Espacio subacromial" },
+        { "id": "test_gerber", "nombre": "Gerber", "estructura": "Subescapular" },
+        { "id": "test_napoleon", "nombre": "Napoleón", "estructura": "Subescapular" },
+        { "id": "test_patte", "nombre": "Patte", "estructura": "Infraespinoso / Redondo menor" }
       ]
     }
   },
 
   "planActuacion": {
-    "fuente": "editable",
-    "recomendaciones": [
-      { "id": "rec_scs", "texto": "Se entregan recomendaciones para su patología elaboradas por el SCS." }
+    "educacion": [
+      { "id": "rec_scs", "texto": "recomendaciones para tendinopatía de hombro editadas por el SCS", "etiqueta": "Recomendaciones SCS" },
+      { "id": "rec_autocuidado", "texto": "pautas de autocuidado y ergonomía articular", "etiqueta": "Educación para autocuidado" },
+      { "id": "rec_actividad", "texto": "modificación de actividad y dosificación de cargas", "etiqueta": "Modificación de actividad" }
     ],
-    "tiposSesion": ["Individual", "Grupal"],
-    "frasesPredefinidas": [],
-    "_notaFuturo": "El protocolo también enumera opciones terapéuticas (electroterapia/termoterapia/crioterapia, vendaje neuromuscular, fibrolisis diacutánea, punción seca, cinesiterapia, terapia manual, ejercicio terapéutico, educación al paciente). No se han incluido todavía en el PLAN DE ACTUACIÓN porque no se pidieron explícitamente en esta primera versión; se pueden añadir aquí como checkboxes cuando se decida."
+    "tratamiento": [
+      { "id": "trat_cinesi", "texto": "cinesiterapia", "etiqueta": "Cinesiterapia" },
+      { "id": "trat_ejercicio", "texto": "ejercicio terapéutico", "etiqueta": "Ejercicio terapéutico" },
+      { "id": "trat_tmanual", "texto": "terapia manual", "etiqueta": "Terapia manual" },
+      { "id": "trat_vnm", "texto": "vendaje neuromuscular", "etiqueta": "Vendaje neuromuscular" },
+      { "id": "trat_crio", "texto": "crioterapia", "etiqueta": "Crioterapia" },
+      { "id": "trat_termo", "texto": "termoterapia", "etiqueta": "Termoterapia" },
+      { "id": "trat_electro", "texto": "electroterapia", "etiqueta": "Electroterapia" },
+      { "id": "trat_fibrolisis", "texto": "fibrolisis diacutánea", "etiqueta": "Fibrolisis diacutánea" },
+      { "id": "trat_punción", "texto": "punción seca", "etiqueta": "Punción seca" }
+    ],
+    "tiposSesion": ["individual", "grupal", "valoración"]
   }
 }
