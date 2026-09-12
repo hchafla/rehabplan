@@ -1190,3 +1190,453 @@ textarea:focus-visible {
     }
 
 }
+
+
+/* ==============================
+   Fisio+AP
+   ============================== */
+
+.fisioap-cabecera {
+    max-width: 720px;
+    margin: 0 auto 20px;
+}
+
+.fisioap-cabecera h1 {
+    margin-bottom: 6px;
+}
+
+.fisioap-disclaimer {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    margin: 8px 0 0;
+    line-height: 1.5;
+}
+
+.fisioap-error {
+    max-width: 720px;
+    margin: 0 auto 20px;
+    background: var(--danger-soft);
+    border: 1px solid var(--danger);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    font-size: 0.88rem;
+    color: var(--ink);
+}
+
+.fisioap-error code {
+    font-family: var(--font-mono);
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+}
+
+.patologia-selector {
+    max-width: 720px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.patologia-selector label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+}
+
+.patologia-selector select {
+    flex: 1;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    padding: 9px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+}
+
+/* Avisos y objetivos: <details> compactos, visibles pero no intrusivos */
+
+.aviso-derivacion,
+.objetivos-box {
+    max-width: 720px;
+    margin: 0 auto 16px;
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+}
+
+.aviso-derivacion {
+    background: var(--danger-soft);
+    border: 1px solid var(--danger);
+}
+
+.objetivos-box {
+    background: var(--brand-soft);
+    border: 1px solid var(--brand);
+}
+
+.aviso-derivacion summary,
+.objetivos-box summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--ink);
+}
+
+.aviso-derivacion[open] summary,
+.objetivos-box[open] summary {
+    margin-bottom: 8px;
+}
+
+.aviso-subtitulo,
+.objetivos-subtitulo {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    margin: 10px 0 4px;
+}
+
+.aviso-contenido ul,
+.objetivos-contenido ul {
+    margin: 0 0 6px;
+    padding-left: 20px;
+    font-size: 0.88rem;
+    color: var(--ink);
+}
+
+.aviso-sesiones {
+    font-size: 0.85rem;
+    margin: 10px 0 0;
+}
+
+/* Navegación rápida entre las 4 secciones */
+
+.fisioap-nav {
+    max-width: 720px;
+    margin: 0 auto 28px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    padding: 10px 0;
+    z-index: 5;
+}
+
+.fisioap-nav a {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    padding: 6px 14px;
+}
+
+.fisioap-nav a:hover {
+    color: var(--brand-dark);
+    border-color: var(--brand);
+}
+
+/* Secciones 1-4 */
+
+.seccion-fisioap {
+    max-width: 720px;
+    margin: 0 auto 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-card);
+    scroll-margin-top: 60px;
+}
+
+.seccion-fisioap h2 {
+    margin-top: 0;
+}
+
+.subseccion {
+    margin-bottom: 22px;
+}
+
+.subseccion h3 {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    margin: 0 0 10px;
+}
+
+.campo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px 16px;
+}
+
+.campo-simple {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+}
+
+.campo-simple input[type="text"],
+.campo-simple input[type="number"],
+.campo-simple select {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--ink);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    background: var(--bg);
+}
+
+.campo-simple input:focus,
+.campo-simple select:focus {
+    border-color: var(--brand);
+    background: var(--surface);
+}
+
+.campo-tristate {
+    grid-column: span 1;
+}
+
+/* Grupos de botones: tri-state, categorías de movilidad, Daniels, tests */
+
+.grupo-botones {
+    margin-bottom: 10px;
+}
+
+.grupo-botones-etiqueta {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 5px;
+}
+
+.grupo-botones-fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.grupo-botones-fila button {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 11px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink-soft);
+}
+
+.grupo-botones-fila button:hover {
+    background: var(--surface-alt);
+}
+
+.grupo-botones-fila button.activo {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: white;
+}
+
+.grupo-daniels .grupo-botones-fila button {
+    min-width: 34px;
+    text-align: center;
+}
+
+.ayuda-daniels {
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+    line-height: 1.6;
+    margin: 0 0 14px;
+}
+
+/* Tests específicos */
+
+.test-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.test-fila:last-child {
+    border-bottom: none;
+}
+
+.test-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.test-nombre {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.test-info.con-ayuda .test-nombre {
+    cursor: help;
+    border-bottom: 1px dotted var(--ink-faint);
+}
+
+.test-estructura {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+}
+
+/* Frases predefinidas (MOTIVO) */
+
+.frases-predefinidas {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.chip-frase {
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-alt);
+    color: var(--ink);
+}
+
+.chip-frase:hover {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+}
+
+/* Checkboxes de recomendaciones (PLAN) */
+
+.checkbox-linea {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.88rem;
+    color: var(--ink);
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.checkbox-linea input {
+    margin-top: 3px;
+}
+
+/* Textos finales editables */
+
+.bloque-texto-final {
+    margin-top: 6px;
+}
+
+.cabecera-texto-final {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.campo-final-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+}
+
+.btn-regenerar {
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: none;
+    border: none;
+    color: var(--accent-dark);
+    padding: 2px 0;
+}
+
+.btn-regenerar:hover {
+    text-decoration: underline;
+}
+
+.texto-final,
+.campo-texto-libre {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--ink);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    background: var(--bg);
+    resize: vertical;
+}
+
+.texto-final:focus,
+.campo-texto-libre:focus {
+    border-color: var(--brand);
+    background: var(--surface);
+}
+
+.acciones-copia {
+    margin-top: 10px;
+}
+
+.btn-copiar {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: white;
+}
+
+.btn-copiar:hover {
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+}
+
+.btn-copiar.copiado {
+    background: var(--brand);
+    border-color: var(--brand);
+}
+
+@media (max-width: 900px) {
+
+    .fisioap-nav {
+        position: sticky;
+    }
+
+    .seccion-fisioap {
+        padding: 18px 16px;
+    }
+
+    .campo-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
