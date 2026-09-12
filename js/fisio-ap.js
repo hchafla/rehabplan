@@ -1,16 +1,6 @@
 /* ==============================================================
-   Fisio+AP — lógica de la aplicación
-   ==============================================================
-   Principios de este archivo (no tocar sin releer):
-   - Todo lo específico de una patología vive en datos/fisio-ap/*.json.
-     Este archivo NO debe contener nada de "hombro doloroso" en duro.
-   - Nunca se genera texto para un campo que el usuario no ha
-     rellenado o seleccionado explícitamente. Una casilla sin marcar
-     nunca se traduce en "no" ni en "normal".
-   - Los cuatro textos finales (MOTIVO, ANAMNESIS, EXPLORACIÓN FÍSICA,
-     PLAN DE ACTUACIÓN) son siempre editables a mano, y cada uno se
-     copia con un botón independiente.
-   ================================================================ */
+   Fisio+AP — Lógica de la aplicación
+   ============================================================== */
 
 (function () {
     'use strict';
@@ -18,23 +8,19 @@
     const RUTA_DATOS = 'datos/fisio-ap/';
 
     let listaPatologias = [];
-    let config = null;   // configuración de la patología activa
-    let estado = null;   // valores introducidos por el usuario en esta sesión
+    let config = null;   
+    let estado = null;   
 
     const el = (id) => document.getElementById(id);
 
     function estadoInicial() {
         return {
-            motivo: '',
+            motivo: { variables: {}, plantillaSeleccionada: null },
             anamnesis: { campos: {}, ultimoGenerado: '' },
             exploracion: { campos: {}, ultimoGenerado: '' },
-            plan: { campos: {}, ultimoGenerado: '' }
+            plan: { educacion: {}, tratamiento: {}, programacion: {}, ultimoGenerado: '' }
         };
     }
-
-    /* ==========================================================
-       Carga de datos
-       ========================================================== */
 
     async function iniciar() {
         try {
@@ -73,6 +59,7 @@
     }
 
     function renderTodo() {
+        renderHeaderInfo();
         renderAvisos();
         renderObjetivos();
         renderMotivo();
@@ -81,13 +68,13 @@
         renderPlan();
     }
 
-    /* ==========================================================
-       Utilidades de generación de texto
-       ========================================================== */
+    function renderHeaderInfo() {
+        const titulo = el('patologiaTitulo');
+        if (titulo) titulo.textContent = config.nombre;
+    }
 
-    // Une una lista de strings en español: "a, b y c"
     function unirConY(items) {
-        if (items.length === 0) return '';
+        if (!items || items.length === 0) return '';
         if (items.length === 1) return items[0];
         return items.slice(0, -1).join(', ') + ' y ' + items[items.length - 1];
     }
@@ -96,8 +83,14 @@
         return (valor || '').toString().trim();
     }
 
+    function escapeHTML(str) {
+        const d = document.createElement('div');
+        d.textContent = str || '';
+        return d.innerHTML;
+    }
+
     /* ==========================================================
-       AVISOS / CRITERIOS DE DERIVACIÓN
+       AVISOS Y CRITERIOS SEPARADOS
        ========================================================== */
 
     function renderAvisos() {
@@ -109,12 +102,14 @@
         const exclusion = (a.criteriosExclusion || []).map((t) => `<li>${escapeHTML(t)}</li>`).join('');
 
         cont.innerHTML = `
-            <details class="aviso-derivacion" open>
-                <summary>⚠️ Criterios de derivación / alarma</summary>
+            <details class="aviso-derivacion">
+                <summary>⚠️ Criterios de derivación y protocolo</summary>
                 <div class="aviso-contenido">
-                    ${inclusion ? `<p class="aviso-subtitulo">Criterios de inclusión</p><ul>${inclusion}</ul>` : ''}
-                    ${exclusion ? `<p class="aviso-subtitulo">Criterios de exclusión</p><ul>${exclusion}</ul>` : ''}
-                    ${a.sesionesMaximas ? `<p class="aviso-sesiones">Número máximo de sesiones: <strong>${a.sesionesMaximas}</strong>.</p>` : ''}
+                    <div class="grid-avisos">
+                        ${inclusion ? `<div><p class="aviso-subtitulo">Criterios de Inclusión</p><ul>${inclusion}</ul></div>` : ''}
+                        ${exclusion ? `<div><p class="aviso-subtitulo">Criterios de Exclusión (Derivar)</p><ul>${exclusion}</ul></div>` : ''}
+                    </div>
+                    ${a.sesionesMaximas ? `<p class="aviso-sesiones">ℹ️ Límite según protocolo: <strong>máximo ${a.sesionesMaximas} sesiones</strong>.</p>` : ''}
                 </div>
             </details>`;
     }
@@ -133,52 +128,79 @@
 
         cont.innerHTML = `
             <details class="objetivos-box">
-                <summary>Objetivos del protocolo</summary>
+                <summary>🎯 Objetivos del protocolo</summary>
                 <div class="objetivos-contenido">
-                    ${general ? `<p class="objetivos-subtitulo">Objetivo general</p><ul>${general}</ul>` : ''}
-                    ${especificos ? `<p class="objetivos-subtitulo">Objetivos específicos</p><ul>${especificos}</ul>` : ''}
+                    ${general ? `<p class="objetivos-subtitulo">General</p><ul>${general}</ul>` : ''}
+                    ${especificos ? `<p class="objetivos-subtitulo">Específicos</p><ul>${especificos}</ul>` : ''}
                     <div class="acciones-copia">
-                        <button type="button" class="btn-copiar" id="btnCopiarObjetivos">Copiar objetivos</button>
+                        <button type="button" class="btn-copiar" id="btnCopiarObjetivos">Copiar Objetivos</button>
                     </div>
                 </div>
             </details>`;
 
         el('btnCopiarObjetivos').addEventListener('click', (e) => {
             const texto = [
-                ...(o.general || []),
-                ...(o.especificos || [])
-            ].map((t) => '- ' + t).join('\n');
+                "OBJETIVOS DEL PROTOCOLO:",
+                ...(o.general || []).map(t => "• " + t),
+                ...(o.especificos || []).map(t => "• " + t)
+            ].join('\n');
             copiarTexto(texto, e.currentTarget);
         });
     }
 
-    function escapeHTML(str) {
-        const d = document.createElement('div');
-        d.textContent = str;
-        return d.innerHTML;
-    }
-
     /* ==========================================================
-       1. MOTIVO
+       1. MOTIVO DE ACCESO
        ========================================================== */
 
     function renderMotivo() {
-        const cont = el('motivoFrasesPredefinidas');
-        cont.innerHTML = '';
-        const frases = (config.motivo && config.motivo.frasesPredefinidas) || [];
-        frases.forEach((frase) => {
+        const contVars = el('motivoVariables');
+        const contBotones = el('motivoBotones');
+        contVars.innerHTML = '';
+        contBotones.innerHTML = '';
+
+        const m = config.motivo;
+        if (!m) return;
+
+        // Renderizar campos editables para las variables del motivo
+        (m.variables || []).forEach((v) => {
+            const wrap = document.createElement('label');
+            wrap.className = 'campo-simple';
+            wrap.innerHTML = `<span>${escapeHTML(v.etiqueta)}</span>
+                              <input type="text" id="var_${v.id}" placeholder="${escapeHTML(v.placeholder || '')}">`;
+            
+            const input = wrap.querySelector('input');
+            input.addEventListener('input', () => {
+                estado.motivo.variables[v.id] = input.value;
+                if (estado.motivo.plantillaSeleccionada) {
+                    aplicarPlantillaMotivo(estado.motivo.plantillaSeleccionada);
+                }
+            });
+            contVars.appendChild(wrap);
+        });
+
+        // Renderizar botones de plantillas
+        (m.plantillas || []).forEach((p) => {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'chip-frase';
-            btn.textContent = frase;
+            btn.textContent = p.etiqueta;
             btn.addEventListener('click', () => {
-                const campo = el('motivoTexto');
-                campo.value = campo.value.trim() ? campo.value.trim() + '\n' + frase : frase;
-                campo.focus();
+                estado.motivo.plantillaSeleccionada = p;
+                aplicarPlantillaMotivo(p);
             });
-            cont.appendChild(btn);
+            contBotones.appendChild(btn);
         });
+
         el('motivoTexto').value = '';
+    }
+
+    function aplicarPlantillaMotivo(plantillaObj) {
+        let texto = plantillaObj.plantilla;
+        (config.motivo.variables || []).forEach((v) => {
+            const val = limpio(estado.motivo.variables[v.id]) || `[${v.etiqueta.toUpperCase()}]`;
+            texto = texto.replace(new RegExp(`\\{${v.id}\\}`, 'g'), val);
+        });
+        el('motivoTexto').value = texto;
     }
 
     /* ==========================================================
@@ -210,28 +232,23 @@
         regenerarAnamnesis(true);
     }
 
-    function textoSeccionAnamnesis(seccion, campos) {
-        const partes = [];
-        seccion.campos.forEach((campo) => {
-            const valor = campos[campo.id];
-            const texto = formatearValorCampo(campo, valor);
-            if (texto) partes.push(texto);
-        });
-        if (partes.length === 0) return '';
-        // Sección de un único campo: no repetir el título de la sección.
-        if (seccion.campos.length === 1) {
-            return `${seccion.titulo}: ${partes[0]}.`;
-        }
-        return `${seccion.titulo}: ${partes.join('; ')}.`;
-    }
-
     function generarTextoAnamnesis() {
-        const partes = [];
+        const bloques = [];
+
         (config.anamnesis.secciones || []).forEach((seccion) => {
-            const t = textoSeccionAnamnesis(seccion, estado.anamnesis.campos);
-            if (t) partes.push(t);
+            const frasesSeccion = [];
+            seccion.campos.forEach((campo) => {
+                const val = estado.anamnesis.campos[campo.id];
+                const redaccion = formatearRedaccionCampo(campo, val);
+                if (redaccion) frasesSeccion.push(redaccion);
+            });
+
+            if (frasesSeccion.length > 0) {
+                bloques.push(`${seccion.titulo}: ${frasesSeccion.join('; ')}.`);
+            }
         });
-        return partes.join('\n');
+
+        return bloques.join('\n\n');
     }
 
     function regenerarAnamnesis(forzar) {
@@ -260,6 +277,8 @@
     function renderInspeccionPalpacion(datos) {
         const cont = el('subInspeccionPalpacion');
         cont.innerHTML = '';
+        if (!datos) return;
+        
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
@@ -274,40 +293,87 @@
     function renderMovilidadArticular(datos) {
         const cont = el('subMovilidadArticular');
         cont.innerHTML = '';
+        if (!datos) return;
+
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
 
         datos.movimientos.forEach((mov) => {
-            cont.appendChild(construirGrupoBotones({
-                id: mov.id,
-                etiqueta: mov.etiqueta,
-                opciones: mov.categorias
-            }, estado.exploracion.campos, regenerarExploracion));
+            const fila = document.createElement('div');
+            fila.className = 'grupo-botones-bloque';
+
+            const span = document.createElement('span');
+            span.className = 'grupo-etiqueta';
+            span.textContent = mov.etiqueta;
+            fila.appendChild(span);
+
+            const divBotones = document.createElement('div');
+            divBotones.className = 'grupo-botones-fila';
+
+            mov.opciones.forEach((opc) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = opc.etiqueta;
+                btn.addEventListener('click', () => {
+                    const yaActivo = btn.classList.contains('activo');
+                    divBotones.querySelectorAll('button').forEach(b => b.classList.remove('activo'));
+                    if (yaActivo) {
+                        delete estado.exploracion.campos[mov.id];
+                    } else {
+                        btn.classList.add('activo');
+                        estado.exploracion.campos[mov.id] = opc;
+                    }
+                    regenerarExploracion();
+                });
+                divBotones.appendChild(btn);
+            });
+
+            fila.appendChild(divBotones);
+            cont.appendChild(fila);
         });
     }
 
     function renderBalanceMuscular(datos) {
         const cont = el('subBalanceMuscular');
         cont.innerHTML = '';
+        if (!datos) return;
+
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
 
-        const ayuda = document.createElement('p');
-        ayuda.className = 'ayuda-daniels';
-        ayuda.innerHTML = 'Escala de Daniels (0-5): ' +
-            datos.escala.map((e) => `<strong>${e.valor}</strong> ${escapeHTML(e.descripcion)}`).join(' · ');
-        cont.appendChild(ayuda);
-
-        const opciones = [...datos.escala.map((e) => e.valor), 'No valorado'];
         datos.movimientos.forEach((mov) => {
-            const fila = construirGrupoBotones({
-                id: mov.id,
-                etiqueta: mov.etiqueta,
-                opciones,
-                claseExtra: 'grupo-daniels'
-            }, estado.exploracion.campos, regenerarExploracion);
+            const fila = document.createElement('div');
+            fila.className = 'grupo-botones-bloque';
+
+            const span = document.createElement('span');
+            span.className = 'grupo-etiqueta';
+            span.textContent = mov.etiqueta;
+            fila.appendChild(span);
+
+            const divBotones = document.createElement('div');
+            divBotones.className = 'grupo-botones-fila daniels-grid';
+
+            ['0', '1', '2', '3', '4', '5'].forEach((val) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = val;
+                btn.addEventListener('click', () => {
+                    const yaActivo = btn.classList.contains('activo');
+                    divBotones.querySelectorAll('button').forEach(b => b.classList.remove('activo'));
+                    if (yaActivo) {
+                        delete estado.exploracion.campos[mov.id];
+                    } else {
+                        btn.classList.add('activo');
+                        estado.exploracion.campos[mov.id] = val;
+                    }
+                    regenerarExploracion();
+                });
+                divBotones.appendChild(btn);
+            });
+
+            fila.appendChild(divBotones);
             cont.appendChild(fila);
         });
     }
@@ -315,6 +381,7 @@
     function renderActitudPostural(datos) {
         const cont = el('subActitudPostural');
         cont.innerHTML = '';
+        if (!datos) return;
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
@@ -327,6 +394,7 @@
     function renderSensibilidad(datos) {
         const cont = el('subSensibilidad');
         cont.innerHTML = '';
+        if (!datos) return;
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
@@ -340,6 +408,8 @@
     function renderTestsEspecificos(datos) {
         const cont = el('subTestsEspecificos');
         cont.innerHTML = '';
+        if (!datos) return;
+
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
@@ -351,19 +421,35 @@
             const info = document.createElement('div');
             info.className = 'test-info';
             info.innerHTML = `<span class="test-nombre">${escapeHTML(test.nombre)}</span>
-                               <span class="test-estructura">${escapeHTML(test.estructura)}</span>`;
-            if (test.ayuda) {
-                info.title = test.ayuda;
-                info.classList.add('con-ayuda');
-            }
+                              <span class="test-estructura">${escapeHTML(test.estructura)}</span>`;
             fila.appendChild(info);
 
-            fila.appendChild(construirGrupoBotones({
-                id: test.id,
-                opciones: ['Positiva', 'Negativa', 'No realizada'],
-                sinEtiqueta: true
-            }, estado.exploracion.campos, regenerarExploracion));
+            const divBotones = document.createElement('div');
+            divBotones.className = 'grupo-botones-fila';
 
+            [
+                { id: 'pos', label: '+' },
+                { id: 'neg', label: '-' }
+            ].forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = opt.label;
+                btn.className = 'btn-test';
+                btn.addEventListener('click', () => {
+                    const yaActivo = btn.classList.contains('activo');
+                    divBotones.querySelectorAll('button').forEach(b => b.classList.remove('activo'));
+                    if (yaActivo) {
+                        delete estado.exploracion.campos[test.id];
+                    } else {
+                        btn.classList.add('activo');
+                        estado.exploracion.campos[test.id] = opt.id;
+                    }
+                    regenerarExploracion();
+                });
+                divBotones.appendChild(btn);
+            });
+
+            fila.appendChild(divBotones);
             cont.appendChild(fila);
         });
     }
@@ -371,54 +457,78 @@
     function generarTextoExploracion() {
         const ef = config.exploracionFisica;
         const campos = estado.exploracion.campos;
-        const partes = [];
+        const bloques = [];
 
         // Inspección y palpación
-        const insp = [];
-        ef.inspeccionPalpacion.campos.forEach((campo) => {
-            const t = formatearValorCampo(campo, campos[campo.id]);
-            if (t) insp.push(t);
-        });
-        if (insp.length) partes.push(`Inspección y palpación: ${insp.join('; ')}.`);
-
-        // Movilidad articular
-        const mov = [];
-        ef.movilidadArticular.movimientos.forEach((m) => {
-            const v = campos[m.id];
-            if (v) mov.push(`${m.etiqueta.toLowerCase()} - ${v.toLowerCase()}`);
-        });
-        if (mov.length) partes.push(`Movilidad articular: ${mov.join('; ')}.`);
-
-        // Balance muscular (Daniels) — nunca se incluye "No valorado"
-        const fuerza = [];
-        ef.balanceMuscular.movimientos.forEach((m) => {
-            const v = campos[m.id];
-            if (v && v !== 'No valorado') fuerza.push(`${m.etiqueta.toLowerCase()} ${v}/5`);
-        });
-        if (fuerza.length) partes.push(`Balance muscular: ${unirConY(fuerza)} según escala de Daniels.`);
-
-        // Actitud postural
-        const actitud = formatearValorCampo(ef.actitudPostural.campo, campos[ef.actitudPostural.campo.id]);
-        if (actitud) partes.push(`${actitud}.`);
-
-        // Sensibilidad
-        const sens = campos[ef.sensibilidad.campo.id];
-        if (sens) {
-            const obs = limpio(campos[ef.sensibilidad.campoObservaciones.id]);
-            partes.push(`Sensibilidad: ${sens.toLowerCase()}.${obs ? ' Observaciones: ' + obs + '.' : ''}`);
+        if (ef.inspeccionPalpacion) {
+            const insp = [];
+            ef.inspeccionPalpacion.campos.forEach((campo) => {
+                const red = formatearRedaccionCampo(campo, campos[campo.id]);
+                if (red) insp.push(red);
+            });
+            if (insp.length) bloques.push(`Inspección y palpación: ${insp.join('; ')}.`);
         }
 
-        // Tests específicos — "No realizada" no se documenta
-        const tests = [];
-        ef.testsEspecificos.tests.forEach((t) => {
-            const v = campos[t.id];
-            if (v === 'Positiva' || v === 'Negativa') {
-                tests.push(`${t.nombre} ${v.toLowerCase()}`);
-            }
-        });
-        if (tests.length) partes.push(`Tests específicos: ${tests.join('; ')}.`);
+        // Movilidad articular
+        if (ef.movilidadArticular) {
+            const movs = [];
+            ef.movilidadArticular.movimientos.forEach((m) => {
+                const opcSeleccionada = campos[m.id];
+                if (opcSeleccionada && opcSeleccionada.texto) {
+                    movs.push(opcSeleccionada.texto);
+                }
+            });
+            if (movs.length) bloques.push(`Movilidad articular: ${movs.join('; ')}.`);
+        }
 
-        return partes.join('\n');
+        // Balance muscular (Daniels)
+        if (ef.balanceMuscular) {
+            const fuerza = [];
+            ef.balanceMuscular.movimientos.forEach((m) => {
+                const val = campos[m.id];
+                if (val !== undefined) {
+                    fuerza.push(`${m.etiqueta.toLowerCase()} ${val}/5`);
+                }
+            });
+            if (fuerza.length) bloques.push(`Balance muscular (Daniels): ${unirConY(fuerza)}.`);
+        }
+
+        // Actitud postural
+        if (ef.actitudPostural) {
+            const actitud = formatearRedaccionCampo(ef.actitudPostural.campo, campos[ef.actitudPostural.campo.id]);
+            if (actitud) bloques.push(`${actitud}.`);
+        }
+
+        // Sensibilidad
+        if (ef.sensibilidad) {
+            const estadoSens = campos[ef.sensibilidad.campo.id];
+            const redSens = formatearRedaccionCampo(ef.sensibilidad.campo, estadoSens);
+            if (redSens) {
+                const obs = formatearRedaccionCampo(ef.sensibilidad.campoObservaciones, campos[ef.sensibilidad.campoObservaciones.id]);
+                bloques.push(`Sensibilidad: ${redSens}${obs ? ' ' + obs : ''}.`);
+            }
+        }
+
+        // Tests específicos (Resumen agregador de Positivos / Negativos)
+        if (ef.testsEspecificos) {
+            const pos = [];
+            const neg = [];
+            ef.testsEspecificos.tests.forEach((t) => {
+                const res = campos[t.id];
+                if (res === 'pos') pos.push(t.nombre);
+                if (res === 'neg') neg.push(t.nombre);
+            });
+
+            const partesTest = [];
+            if (pos.length > 0) partesTest.push(`Tests positivos: ${pos.join(', ')}`);
+            if (neg.length > 0) partesTest.push(`Tests negativos: ${neg.join(', ')}`);
+
+            if (partesTest.length > 0) {
+                bloques.push(`${partesTest.join('. ')}.`);
+            }
+        }
+
+        return bloques.join('\n\n');
     }
 
     function regenerarExploracion(forzar) {
@@ -430,84 +540,105 @@
        ========================================================== */
 
     function renderPlan() {
-        estado.plan = { campos: {}, ultimoGenerado: '' };
+        estado.plan = { educacion: {}, tratamiento: {}, programacion: {}, ultimoGenerado: '' };
         const pa = config.planActuacion;
+        if (!pa) return;
 
-        const cont = el('subRecomendaciones');
-        cont.innerHTML = '';
-        const h3 = document.createElement('h3');
-        h3.textContent = 'Recomendaciones';
-        cont.appendChild(h3);
-        (pa.recomendaciones || []).forEach((rec) => {
-            const label = document.createElement('label');
-            label.className = 'checkbox-linea';
-            const input = document.createElement('input');
-            input.type = 'checkbox';
-            input.addEventListener('change', () => {
-                estado.plan.campos[rec.id] = input.checked;
-                regenerarPlan();
-            });
-            label.appendChild(input);
-            label.appendChild(document.createTextNode(' ' + rec.texto));
-            cont.appendChild(label);
+        // Educación
+        const contEdu = el('subEducacion');
+        contEdu.innerHTML = '<h3>Educación y recomendaciones</h3>';
+        (pa.educacion || []).forEach((item) => {
+            contEdu.appendChild(crearCheckboxPlan(item, estado.plan.educacion, regenerarPlan));
         });
 
-        // Tipo de sesión (próxima cita)
+        // Tratamiento
+        const contTrat = el('subTratamiento');
+        contTrat.innerHTML = '<h3>Tratamiento</h3>';
+        (pa.tratamiento || []).forEach((item) => {
+            contTrat.appendChild(crearCheckboxPlan(item, estado.plan.tratamiento, regenerarPlan));
+        });
+
+        // Programación y citas
         const selectTipo = el('planTipoSesion');
         selectTipo.innerHTML = '<option value="">Seleccionar…</option>' +
-            pa.tiposSesion.map((t) => `<option value="${escapeHTML(t)}">${escapeHTML(t)}</option>`).join('');
+            (pa.tiposSesion || []).map((t) => `<option value="${escapeHTML(t)}">${escapeHTML(t)}</option>`).join('');
 
-        ['planSesionesIndividuales', 'planSesionesGrupales', 'planFecha', 'planHora', 'planTipoSesion', 'planNotas']
+        ['planSesionesIndividuales', 'planSesionesGrupales', 'planFecha', 'planHora', 'planTipoSesion']
             .forEach((id) => {
                 const elemento = el(id);
                 elemento.value = '';
-                elemento.addEventListener('input', regenerarPlan);
-                elemento.addEventListener('change', regenerarPlan);
+                elemento.oninput = regenerarPlan;
+                elemento.onchange = regenerarPlan;
             });
 
         configurarTextoFinal('planTexto', 'regenerarPlan', estado.plan, regenerarPlan);
         regenerarPlan(true);
     }
 
-    function generarTextoPlan() {
-        const pa = config.planActuacion;
-        const partes = [];
-
-        (pa.recomendaciones || []).forEach((rec) => {
-            if (estado.plan.campos[rec.id]) partes.push(rec.texto);
+    function crearCheckboxPlan(item, almacen, onCambio) {
+        const label = document.createElement('label');
+        label.className = 'checkbox-linea';
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.addEventListener('change', () => {
+            if (input.checked) {
+                almacen[item.id] = item.texto;
+            } else {
+                delete almacen[item.id];
+            }
+            onCambio();
         });
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(' ' + (item.etiqueta || item.texto)));
+        return label;
+    }
 
-        const individuales = parseInt(el('planSesionesIndividuales').value, 10);
-        const grupales = parseInt(el('planSesionesGrupales').value, 10);
-        const tieneIndividuales = Number.isFinite(individuales) && individuales > 0;
-        const tieneGrupales = Number.isFinite(grupales) && grupales > 0;
-        if (tieneIndividuales && tieneGrupales) {
-            partes.push(`Se programan ${individuales} citas en sesión individual y ${grupales} en sesiones grupales.`);
-        } else if (tieneIndividuales) {
-            partes.push(`Se programan ${individuales} citas en sesión individual.`);
-        } else if (tieneGrupales) {
-            partes.push(`Se programan ${grupales} citas en sesiones grupales.`);
+    function generarTextoPlan() {
+        const bloques = [];
+
+        // Educación
+        const eduTextos = Object.values(estado.plan.educacion);
+        if (eduTextos.length > 0) {
+            bloques.push(`Se pauta ${unirConY(eduTextos)}.`);
         }
 
+        // Tratamiento
+        const tratTextos = Object.values(estado.plan.tratamiento);
+        if (tratTextos.length > 0) {
+            bloques.push(`Tratamiento: ${unirConY(tratTextos)}.`);
+        }
+
+        // Programación
+        const ind = parseInt(el('planSesionesIndividuales').value, 10);
+        const gru = parseInt(el('planSesionesGrupales').value, 10);
+        const tieneInd = Number.isFinite(ind) && ind > 0;
+        const tieneGru = Number.isFinite(gru) && gru > 0;
+
+        if (tieneInd && tieneGru) {
+            bloques.push(`Se programan ${ind} sesiones individuales y ${gru} grupales.`);
+        } else if (tieneInd) {
+            bloques.push(`Se programan ${ind} sesiones individuales.`);
+        } else if (tieneGru) {
+            bloques.push(`Se programan ${gru} sesiones grupales.`);
+        }
+
+        // Cita
         const fecha = limpio(el('planFecha').value);
         const hora = limpio(el('planHora').value);
         const tipo = limpio(el('planTipoSesion').value);
+
         if (fecha || hora || tipo) {
-            let frase = 'Próxima cita';
-            if (tipo) frase += ` en sesión ${tipo.toLowerCase()}`;
-            if (fecha) frase += ` el ${formatearFecha(fecha)}`;
-            if (hora) frase += ` a las ${hora}`;
-            partes.push(frase + '.');
+            let cita = 'Próxima cita';
+            if (tipo) cita += ` (${tipo})`;
+            if (fecha) cita += ` el ${formatearFecha(fecha)}`;
+            if (hora) cita += ` a las ${hora}`;
+            bloques.push(`${cita}.`);
         }
 
-        const notas = limpio(el('planNotas').value);
-        if (notas) partes.push(notas);
-
-        return partes.join('\n');
+        return bloques.join('\n\n');
     }
 
     function formatearFecha(iso) {
-        // input[type=date] entrega AAAA-MM-DD; lo mostramos como DD/MM/AAAA
         const [a, m, d] = iso.split('-');
         if (!a || !m || !d) return iso;
         return `${d}/${m}/${a}`;
@@ -518,30 +649,50 @@
     }
 
     /* ==========================================================
-       Constructores de campos genéricos (data-driven)
+       CONSTRUCTORES Y REGLAS DE REDACCIÓN
        ========================================================== */
 
     function construirCampoGenerico(campo, almacen, onCambio) {
-        const wrap = document.createElement('label');
-        wrap.className = 'campo-simple';
+        const wrap = document.createElement('div');
+        wrap.className = 'campo-bloque';
 
         if (campo.tipo === 'tristate') {
-            wrap.classList.add('campo-tristate');
             const span = document.createElement('span');
+            span.className = 'campo-etiqueta';
             span.textContent = campo.etiqueta;
             wrap.appendChild(span);
-            wrap.appendChild(construirGrupoBotones({
-                id: campo.id,
-                opciones: ['No valorado', 'Sí', 'No'],
-                sinEtiqueta: true,
-                mapaValores: { 'No valorado': 'no_valorado', 'Sí': 'si', 'No': 'no' }
-            }, almacen, onCambio));
+
+            const divBotones = document.createElement('div');
+            divBotones.className = 'grupo-botones-fila';
+
+            [
+                { val: 'si', label: 'Sí' },
+                { val: 'no', label: 'No' }
+            ].forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = opt.label;
+                btn.addEventListener('click', () => {
+                    const yaActivo = btn.classList.contains('activo');
+                    divBotones.querySelectorAll('button').forEach(b => b.classList.remove('activo'));
+                    if (yaActivo) {
+                        delete almacen[campo.id];
+                    } else {
+                        btn.classList.add('activo');
+                        almacen[campo.id] = opt.val;
+                    }
+                    onCambio();
+                });
+                divBotones.appendChild(btn);
+            });
+
+            wrap.appendChild(divBotones);
             return wrap;
         }
 
-        const span = document.createElement('span');
-        span.textContent = campo.etiqueta;
-        wrap.appendChild(span);
+        const label = document.createElement('label');
+        label.className = 'campo-label';
+        label.innerHTML = `<span>${escapeHTML(campo.etiqueta)}</span>`;
 
         let input;
         if (campo.tipo === 'numero') {
@@ -552,12 +703,12 @@
         } else if (campo.tipo === 'select') {
             input = document.createElement('select');
             input.innerHTML = '<option value="">Seleccionar…</option>' +
-                campo.opciones.map((o) => `<option value="${escapeHTML(o)}">${escapeHTML(o)}</option>`).join('');
+                campo.opciones.map((o) => `<option value="${escapeHTML(o.valor)}">${escapeHTML(o.etiqueta)}</option>`).join('');
         } else {
             input = document.createElement('input');
             input.type = 'text';
         }
-        input.id = 'campo_' + campo.id;
+
         input.addEventListener('input', () => {
             almacen[campo.id] = input.value;
             onCambio();
@@ -566,66 +717,38 @@
             almacen[campo.id] = input.value;
             onCambio();
         });
-        wrap.appendChild(input);
+
+        label.appendChild(input);
+        wrap.appendChild(label);
         return wrap;
     }
 
-    // Grupo de botones de una sola selección (tri-state, categorías, Daniels, tests…)
-    function construirGrupoBotones(opts, almacen, onCambio) {
-        const wrap = document.createElement('div');
-        wrap.className = 'grupo-botones' + (opts.claseExtra ? ' ' + opts.claseExtra : '');
+    function formatearRedaccionCampo(campo, valor) {
+        if (!valor) return '';
 
-        if (!opts.sinEtiqueta && opts.etiqueta) {
-            const label = document.createElement('span');
-            label.className = 'grupo-botones-etiqueta';
-            label.textContent = opts.etiqueta;
-            wrap.appendChild(label);
-        }
-
-        const fila = document.createElement('div');
-        fila.className = 'grupo-botones-fila';
-
-        opts.opciones.forEach((opcion) => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.textContent = opcion;
-            btn.dataset.valor = opcion;
-            btn.addEventListener('click', () => {
-                const yaActivo = btn.classList.contains('activo');
-                fila.querySelectorAll('button').forEach((b) => b.classList.remove('activo'));
-                if (yaActivo) {
-                    // Permite deseleccionar (volver a "sin informar")
-                    delete almacen[opts.id];
-                } else {
-                    btn.classList.add('activo');
-                    const valorGuardado = opts.mapaValores ? opts.mapaValores[opcion] : opcion;
-                    almacen[opts.id] = valorGuardado === 'no_valorado' ? undefined : valorGuardado;
-                    if (valorGuardado === 'no_valorado') delete almacen[opts.id];
-                }
-                onCambio();
-            });
-            fila.appendChild(btn);
-        });
-
-        wrap.appendChild(fila);
-        return wrap;
-    }
-
-    function formatearValorCampo(campo, valor) {
         if (campo.tipo === 'tristate') {
-            if (valor === 'si') return `${campo.etiqueta.toLowerCase()}: sí`;
-            if (valor === 'no') return `${campo.etiqueta.toLowerCase()}: no`;
+            if (valor === 'si') return campo.redaccionAfirmativa || `${campo.etiqueta.toLowerCase()}: sí`;
+            if (valor === 'no') return campo.redaccionNegativa || `${campo.etiqueta.toLowerCase()}: no`;
             return '';
         }
+
         const v = limpio(valor);
         if (!v) return '';
-        if (campo.tipo === 'numero') return `${campo.etiqueta.toLowerCase()}: ${v}`;
-        if (campo.tipo === 'select') return `${campo.etiqueta}: ${v}`;
+
+        if (campo.tipo === 'select') {
+            const opc = campo.opciones.find(o => o.valor === v);
+            return opc ? opc.texto : v;
+        }
+
+        if (campo.redaccion) {
+            return campo.redaccion.replace('{valor}', v);
+        }
+
         return `${campo.etiqueta.toLowerCase()}: ${v}`;
     }
 
     /* ==========================================================
-       Sincronización campos → texto final editable
+       GESTIÓN DE TEXTO EDITABLE Y PORTAPAPELES
        ========================================================== */
 
     function configurarTextoFinal(idTextarea, idBotonRegenerar, bloqueEstado, funcionRegenerar) {
@@ -634,28 +757,25 @@
         bloqueEstado.ultimoGenerado = '';
         textarea.oninput = () => {
             const boton = el(idBotonRegenerar);
-            boton.hidden = textarea.value === bloqueEstado.ultimoGenerado;
+            if (boton) boton.hidden = (textarea.value === bloqueEstado.ultimoGenerado);
         };
-        el(idBotonRegenerar).onclick = () => funcionRegenerar(true);
+        const btnReg = el(idBotonRegenerar);
+        if (btnReg) btnReg.onclick = () => funcionRegenerar(true);
     }
 
-    // Actualiza el textarea con el texto recién generado, salvo que el
-    // usuario ya lo haya editado a mano (a menos que forzar === true).
     function aplicarTextoGenerado(idTextarea, bloqueEstado, textoGenerado, forzar, idBotonRegenerar) {
         const textarea = el(idTextarea);
         const editadoManualmente = textarea.value !== bloqueEstado.ultimoGenerado;
         if (forzar || !editadoManualmente) {
             textarea.value = textoGenerado;
             bloqueEstado.ultimoGenerado = textoGenerado;
-            el(idBotonRegenerar).hidden = true;
+            const btn = el(idBotonRegenerar);
+            if (btn) btn.hidden = true;
         } else {
-            el(idBotonRegenerar).hidden = false;
+            const btn = el(idBotonRegenerar);
+            if (btn) btn.hidden = false;
         }
     }
-
-    /* ==========================================================
-       Portapapeles
-       ========================================================== */
 
     function mostrarFeedbackCopiado(boton) {
         if (boton._timeoutCopiado) clearTimeout(boton._timeoutCopiado);
@@ -668,20 +788,8 @@
         }, 1800);
     }
 
-    function copiarConFallback(texto) {
-        const ta = document.createElement('textarea');
-        ta.value = texto;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
-        const ok = document.execCommand('copy');
-        document.body.removeChild(ta);
-        return ok;
-    }
-
     async function copiarTexto(texto, boton) {
+        if (!texto || !texto.trim()) return;
         try {
             if (navigator.clipboard && window.isSecureContext) {
                 await navigator.clipboard.writeText(texto);
@@ -689,17 +797,19 @@
                 return;
             }
         } catch (err) {
-            console.warn('Fisio+AP: navigator.clipboard falló, usando fallback', err);
+            console.warn('Fisio+AP: Fallback clipboard', err);
         }
-        try {
-            if (copiarConFallback(texto)) {
-                mostrarFeedbackCopiado(boton);
-                return;
-            }
-        } catch (err) {
-            console.warn('Fisio+AP: fallback de copia falló', err);
-        }
-        alert('No se ha podido copiar automáticamente. Selecciona el texto y cópialo manualmente (Ctrl/Cmd + C).');
+        
+        const ta = document.createElement('textarea');
+        ta.value = texto;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        mostrarFeedbackCopiado(boton);
     }
 
     document.addEventListener('click', (e) => {
@@ -709,10 +819,6 @@
         if (!textarea) return;
         copiarTexto(textarea.value, boton);
     });
-
-    /* ==========================================================
-       Arranque
-       ========================================================== */
 
     document.addEventListener('DOMContentLoaded', iniciar);
 })();
