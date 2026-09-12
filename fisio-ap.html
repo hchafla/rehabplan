@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fisio+AP · RehabPlan</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+<a class="volver" href="index.html">← Volver a RehabPlan</a>
+
+<div class="fisioap-cabecera">
+    <h1>Fisio+AP</h1>
+    <p class="subtitulo">Apoyo para la valoración y seguimiento en fisioterapia de Atención Primaria.</p>
+    <p class="fisioap-disclaimer">
+        Esta herramienta no sustituye a DRAGOAP ni almacena historias clínicas. Los datos introducidos
+        existen únicamente durante el uso de esta página y se pierden al cerrarla o recargarla.
+    </p>
+</div>
+
+<div id="errorCarga" class="fisioap-error" hidden>
+    <strong>No se han podido cargar los datos de la patología.</strong>
+    <p>
+        Si has abierto este archivo con doble clic (protocolo <code>file://</code>), el navegador bloquea
+        por seguridad la carga de los archivos JSON. Ejecuta un servidor local sencillo desde la carpeta
+        del proyecto, por ejemplo:
+    </p>
+    <p><code>python3 -m http.server</code> y abre después <code>http://localhost:8000/fisio-ap.html</code></p>
+</div>
+
+<div class="patologia-selector">
+    <label for="selectorPatologia">Patología</label>
+    <select id="selectorPatologia"></select>
+</div>
+
+<div id="contenedorAvisos"></div>
+
+<div id="contenedorObjetivos"></div>
+
+<nav class="fisioap-nav" aria-label="Ir a sección">
+    <a href="#seccionMotivo">Motivo</a>
+    <a href="#seccionAnamnesis">Anamnesis</a>
+    <a href="#seccionExploracion">Exploración física</a>
+    <a href="#seccionPlan">Plan de actuación</a>
+</nav>
+
+<!-- 1. MOTIVO -->
+<section class="seccion-fisioap" id="seccionMotivo">
+    <h2>1. Motivo</h2>
+    <div id="motivoFrasesPredefinidas" class="frases-predefinidas"></div>
+    <label class="campo-final-label" for="motivoTexto">Texto final (editable)</label>
+    <textarea id="motivoTexto" class="texto-final" rows="3" placeholder="Escribe o elige una frase predefinida arriba…"></textarea>
+    <div class="acciones-copia">
+        <button type="button" class="btn-copiar" data-target="motivoTexto">Copiar MOTIVO</button>
+    </div>
+</section>
+
+<!-- 2. ANAMNESIS -->
+<section class="seccion-fisioap" id="seccionAnamnesis">
+    <h2>2. Anamnesis</h2>
+    <div id="anamnesisCampos" class="campos-anamnesis"></div>
+
+    <div class="bloque-texto-final">
+        <div class="cabecera-texto-final">
+            <label class="campo-final-label" for="anamnesisTexto">Texto final (editable)</label>
+            <button type="button" class="btn-regenerar" id="regenerarAnamnesis" hidden>↻ Regenerar desde los campos</button>
+        </div>
+        <textarea id="anamnesisTexto" class="texto-final" rows="6"></textarea>
+    </div>
+    <div class="acciones-copia">
+        <button type="button" class="btn-copiar" data-target="anamnesisTexto">Copiar ANAMNESIS</button>
+    </div>
+</section>
+
+<!-- 3. EXPLORACIÓN FÍSICA -->
+<section class="seccion-fisioap" id="seccionExploracion">
+    <h2>3. Exploración física</h2>
+
+    <div class="subseccion" id="subInspeccionPalpacion"></div>
+    <div class="subseccion" id="subMovilidadArticular"></div>
+    <div class="subseccion" id="subBalanceMuscular"></div>
+    <div class="subseccion" id="subActitudPostural"></div>
+    <div class="subseccion" id="subSensibilidad"></div>
+    <div class="subseccion" id="subTestsEspecificos"></div>
+
+    <div class="bloque-texto-final">
+        <div class="cabecera-texto-final">
+            <label class="campo-final-label" for="exploracionTexto">Texto final (editable)</label>
+            <button type="button" class="btn-regenerar" id="regenerarExploracion" hidden>↻ Regenerar desde los campos</button>
+        </div>
+        <textarea id="exploracionTexto" class="texto-final" rows="8"></textarea>
+    </div>
+    <div class="acciones-copia">
+        <button type="button" class="btn-copiar" data-target="exploracionTexto">Copiar EXPLORACIÓN FÍSICA</button>
+    </div>
+</section>
+
+<!-- 4. PLAN DE ACTUACIÓN -->
+<section class="seccion-fisioap" id="seccionPlan">
+    <h2>4. Plan de actuación</h2>
+
+    <div class="subseccion" id="subRecomendaciones"></div>
+
+    <div class="subseccion">
+        <h3>Programación</h3>
+        <div class="campo-grid">
+            <label>Sesiones individuales
+                <input type="number" id="planSesionesIndividuales" min="0" step="1">
+            </label>
+            <label>Sesiones grupales
+                <input type="number" id="planSesionesGrupales" min="0" step="1">
+            </label>
+        </div>
+    </div>
+
+    <div class="subseccion">
+        <h3>Próxima cita</h3>
+        <div class="campo-grid">
+            <label>Fecha
+                <input type="date" id="planFecha">
+            </label>
+            <label>Hora
+                <input type="time" id="planHora">
+            </label>
+            <label>Tipo de sesión
+                <select id="planTipoSesion"></select>
+            </label>
+        </div>
+    </div>
+
+    <div class="subseccion">
+        <h3>Otras indicaciones</h3>
+        <textarea id="planNotas" class="campo-texto-libre" rows="2" placeholder="Texto adicional opcional…"></textarea>
+    </div>
+
+    <div class="bloque-texto-final">
+        <div class="cabecera-texto-final">
+            <label class="campo-final-label" for="planTexto">Texto final (editable)</label>
+            <button type="button" class="btn-regenerar" id="regenerarPlan" hidden>↻ Regenerar desde los campos</button>
+        </div>
+        <textarea id="planTexto" class="texto-final" rows="6"></textarea>
+    </div>
+    <div class="acciones-copia">
+        <button type="button" class="btn-copiar" data-target="planTexto">Copiar PLAN DE ACTUACIÓN</button>
+    </div>
+</section>
+
+<script src="js/fisio-ap.js"></script>
+
+</body>
+
+</html>
