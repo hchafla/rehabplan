@@ -1412,6 +1412,72 @@ textarea:focus-visible {
     grid-column: span 1;
 }
 
+/* Anamnesis: una fila por campo, con espacio de sobra para leer y escribir */
+
+.campo-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.campo-lista .campo-simple {
+    width: 100%;
+}
+
+.campo-simple textarea {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--ink);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    background: var(--bg);
+    resize: vertical;
+    width: 100%;
+}
+
+.campo-simple textarea:focus {
+    border-color: var(--brand);
+    background: var(--surface);
+}
+
+.campo-ayuda {
+    font-size: 0.74rem;
+    font-weight: 400;
+    color: var(--ink-faint);
+    line-height: 1.4;
+}
+
+.ayuda-seccion {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    margin: -4px 0 12px;
+}
+
+/* Checklists (historia laboral, AVD…) */
+
+.checklist-opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.campo-otro {
+    margin-top: 4px;
+    max-width: 320px;
+}
+
+.campo-otro input {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+    background: var(--bg);
+    width: 100%;
+}
+
 /* Grupos de botones: tri-state, categorías de movilidad, Daniels, tests */
 
 .grupo-botones {
