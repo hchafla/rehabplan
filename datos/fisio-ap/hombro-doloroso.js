@@ -543,59 +543,6 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
       "Grupal",
       "Telefónica"
     ],
-    "frasesPredefinidas": [],
-    "tratamientoHoy": {
-      "titulo": "Tratamiento de la sesión de hoy",
-      "fuente": "protocolo (opciones terapéuticas) + \"estiramientos\" añadido por Héctor",
-      "opciones": [
-        {
-          "id": "trat_manual",
-          "etiqueta": "Terapia manual",
-          "fraseTexto": "terapia manual"
-        },
-        {
-          "id": "trat_cinesiterapia",
-          "etiqueta": "Cinesiterapia",
-          "fraseTexto": "cinesiterapia"
-        },
-        {
-          "id": "trat_ejercicio",
-          "etiqueta": "Ejercicio terapéutico",
-          "fraseTexto": "ejercicio terapéutico"
-        },
-        {
-          "id": "trat_estiramientos",
-          "etiqueta": "Estiramientos",
-          "fraseTexto": "estiramientos"
-        },
-        {
-          "id": "trat_electro",
-          "etiqueta": "Electroterapia / termoterapia / crioterapia",
-          "fraseTexto": "electroterapia/termoterapia/crioterapia"
-        },
-        {
-          "id": "trat_vendaje",
-          "etiqueta": "Vendaje neuromuscular",
-          "fraseTexto": "vendaje neuromuscular"
-        },
-        {
-          "id": "trat_puncion",
-          "etiqueta": "Punción seca",
-          "fraseTexto": "punción seca"
-        },
-        {
-          "id": "trat_fibrolisis",
-          "etiqueta": "Fibrolisis diacutánea",
-          "fraseTexto": "fibrolisis diacutánea"
-        },
-        {
-          "id": "trat_educacion",
-          "etiqueta": "Educación al paciente",
-          "fraseTexto": "educación al paciente"
-        }
-      ],
-      "prefijoTexto": "En la sesión de hoy ",
-      "sufijoTexto": "."
-    }
+    "frasesPredefinidas": []
   }
 };
