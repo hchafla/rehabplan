@@ -609,7 +609,18 @@
         selectTipo.innerHTML = '<option value="">Seleccionar…</option>' +
             pa.tiposSesion.map((t) => `<option value="${escapeHTML(t)}">${escapeHTML(t)}</option>`).join('');
 
-        ['planSesionesIndividuales', 'planSesionesGrupales', 'planFecha', 'planHora', 'planTipoSesion', 'planNotas']
+        // Hora en dos <select> (hora / minutos de 15 en 15): un <input type="time">
+        // deja elegir cualquier minuto en el teclado o en algunos navegadores,
+        // así que se sustituye por dos desplegables con las opciones exactas.
+        const selectHoraH = el('planHoraH');
+        selectHoraH.innerHTML = '<option value="">--</option>' +
+            Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0'))
+                .map((h) => `<option value="${h}">${h}</option>`).join('');
+        const selectHoraM = el('planHoraM');
+        selectHoraM.innerHTML = '<option value="">--</option>' +
+            ['00', '15', '30', '45'].map((m) => `<option value="${m}">${m}</option>`).join('');
+
+        ['planSesionesIndividuales', 'planSesionesGrupales', 'planFecha', 'planHoraH', 'planHoraM', 'planTipoSesion', 'planNotas']
             .forEach((id) => {
                 const elemento = el(id);
                 elemento.value = '';
@@ -647,7 +658,9 @@
         }
 
         const fecha = limpio(el('planFecha').value);
-        const hora = limpio(el('planHora').value);
+        const horaH = el('planHoraH').value;
+        const horaM = el('planHoraM').value;
+        const hora = (horaH && horaM) ? `${horaH}:${horaM}` : '';
         const tipo = limpio(el('planTipoSesion').value);
         if (fecha || hora || tipo) {
             let frase = 'Próxima cita';
