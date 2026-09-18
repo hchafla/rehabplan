@@ -1531,6 +1531,22 @@ textarea:focus-visible {
     transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 
+.plan-hora-grupo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.plan-hora-grupo .plan-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.plan-hora-separador {
+    font-weight: 600;
+    color: var(--ink-soft);
+}
+
 .plan-input:hover {
     border-color: var(--brand);
 }
