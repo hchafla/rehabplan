@@ -140,7 +140,11 @@
             </label>
             <label class="plan-campo">
                 <span>Hora</span>
-                <input type="time" id="planHora" step="900" class="plan-input">
+                <div class="plan-hora-grupo">
+                    <select id="planHoraH" class="plan-input"></select>
+                    <span class="plan-hora-separador">:</span>
+                    <select id="planHoraM" class="plan-input"></select>
+                </div>
             </label>
             <label class="plan-campo">
                 <span>Tipo de sesión</span>
