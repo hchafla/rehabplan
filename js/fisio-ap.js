@@ -132,7 +132,7 @@
         const exclusion = (a.criteriosExclusion || []).map((t) => `<li>${escapeHTML(t)}</li>`).join('');
 
         cont.innerHTML = `
-            <details class="aviso-derivacion" open>
+            <details class="aviso-derivacion">
                 <summary>⚠️ Criterios de derivación / alarma</summary>
                 <div class="aviso-contenido">
                     ${inclusion ? `<p class="aviso-subtitulo">Criterios de inclusión</p><ul>${inclusion}</ul>` : ''}
@@ -156,7 +156,7 @@
 
         cont.innerHTML = `
             <details class="objetivos-box">
-                <summary>Objetivos del protocolo</summary>
+                <summary>Objetivos</summary>
                 <div class="objetivos-contenido">
                     ${general ? `<p class="objetivos-subtitulo">Objetivo general</p><ul>${general}</ul>` : ''}
                     ${especificos ? `<p class="objetivos-subtitulo">Objetivos específicos</p><ul>${especificos}</ul>` : ''}
@@ -167,11 +167,14 @@
             </details>`;
 
         el('btnCopiarObjetivos').addEventListener('click', (e) => {
-            const texto = [
-                ...(o.general || []),
-                ...(o.especificos || [])
-            ].map((t) => '- ' + t).join('\n');
-            copiarTexto(texto, e.currentTarget);
+            const bloques = [];
+            if ((o.general || []).length) {
+                bloques.push('Objetivo general:\n' + o.general.map((t) => '- ' + t).join('\n'));
+            }
+            if ((o.especificos || []).length) {
+                bloques.push('Objetivos específicos:\n' + o.especificos.map((t) => '- ' + t).join('\n'));
+            }
+            copiarTexto(bloques.join('\n\n'), e.currentTarget);
         });
     }
 
@@ -183,25 +186,78 @@
 
     /* ==========================================================
        1. MOTIVO
-       ========================================================== */
+       ==========================================================
+       "Centro" se recuerda en este ordenador (localStorage): no es un
+       dato del paciente, es el centro de trabajo del fisioterapeuta.
+       "Diagnóstico" y "Motivo" NUNCA se recuerdan entre pacientes: son
+       datos de la valoración actual y arrastrarlos de un paciente al
+       siguiente sería un riesgo real de mezclar historias clínicas. */
+
+    const CLAVE_LOCALSTORAGE_CENTRO = 'fisioap_centro';
+
+    function leerCentroGuardado() {
+        try {
+            return window.localStorage.getItem(CLAVE_LOCALSTORAGE_CENTRO) || '';
+        } catch (err) {
+            return '';
+        }
+    }
+
+    function guardarCentro(valor) {
+        try {
+            window.localStorage.setItem(CLAVE_LOCALSTORAGE_CENTRO, valor);
+        } catch (err) {
+            // Si el navegador bloquea localStorage (modo privado, etc.) simplemente lo omitimos.
+        }
+    }
 
     function renderMotivo() {
-        const cont = el('motivoFrasesPredefinidas');
+        const cont = el('motivoCampos');
         cont.innerHTML = '';
-        const frases = (config.motivo && config.motivo.frasesPredefinidas) || [];
-        frases.forEach((frase) => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'chip-frase';
-            btn.textContent = frase;
-            btn.addEventListener('click', () => {
-                const campo = el('motivoTexto');
-                campo.value = campo.value.trim() ? campo.value.trim() + '\n' + frase : frase;
-                campo.focus();
-            });
-            cont.appendChild(btn);
+        estado.motivo = { campos: {}, ultimoGenerado: '' };
+
+        const lista = document.createElement('div');
+        lista.className = 'campo-lista';
+        (config.motivo.campos || []).forEach((campo) => {
+            const elementoCampo = construirCampoGenerico(campo, estado.motivo.campos, regenerarMotivo);
+            if (campo.persistirLocal) {
+                const input = elementoCampo.querySelector('input, textarea, select');
+                const valorGuardado = leerCentroGuardado();
+                if (valorGuardado) {
+                    input.value = valorGuardado;
+                    estado.motivo.campos[campo.id] = valorGuardado;
+                }
+                // El listener de guardado debe existir SIEMPRE, no solo cuando
+                // ya había un valor previo (si no, nunca se guardaría la primera vez).
+                input.addEventListener('input', () => guardarCentro(input.value));
+                input.addEventListener('change', () => guardarCentro(input.value));
+            }
+            lista.appendChild(elementoCampo);
         });
-        el('motivoTexto').value = '';
+        cont.appendChild(lista);
+
+        configurarTextoFinal('motivoTexto', 'regenerarMotivo', estado.motivo, regenerarMotivo);
+        regenerarMotivo(true);
+    }
+
+    function generarTextoMotivo() {
+        const p = config.motivo.plantilla;
+        const campos = estado.motivo.campos;
+        const centro = limpio(campos[p.campoCentro]);
+
+        // Las cláusulas son alternativas entre sí (diagnóstico vs. motivo):
+        // se usa la primera que tenga contenido, nunca varias a la vez.
+        const clausula = (p.clausulas || []).find((c) => limpio(campos[c.campo]));
+
+        if (!centro && !clausula) return '';
+
+        let texto = p.base + (centro ? p.fragmentoCentro.replace('{valor}', centro) : '');
+        if (clausula) texto += ' ' + clausula.texto.replace('{valor}', limpio(campos[clausula.campo]));
+        return texto + p.sufijo;
+    }
+
+    function regenerarMotivo(forzar) {
+        aplicarTextoGenerado('motivoTexto', estado.motivo, generarTextoMotivo(), forzar, 'regenerarMotivo');
     }
 
     /* ==========================================================
@@ -279,8 +335,12 @@
     }
 
     function generarTextoSeccionChecklist(seccion, campos) {
-        const seleccionadas = (seccion.opciones || [])
-            .filter((o) => campos[o.id])
+        const opciones = seccion.opciones || [];
+        const opcionExclusivaMarcada = opciones.find((o) => o.exclusivoConTodo && campos[o.id]);
+        if (opcionExclusivaMarcada) return opcionExclusivaMarcada.fraseCompleta || '';
+
+        const seleccionadas = opciones
+            .filter((o) => !o.exclusivoConTodo && campos[o.id])
             .map((o) => o.fraseTexto || o.etiqueta.toLowerCase());
         const otroId = seccion.otro && seccion.otro.id;
         const otroValor = otroId ? limpio(campos[otroId]) : '';
@@ -353,6 +413,13 @@
                 opciones: mov.categorias
             }, estado.exploracion.campos, regenerarExploracion));
         });
+
+        if (datos.campoEspecificaciones) {
+            const lista = document.createElement('div');
+            lista.className = 'campo-lista campo-lista-compacta';
+            lista.appendChild(construirCampoGenerico(datos.campoEspecificaciones, estado.exploracion.campos, regenerarExploracion));
+            cont.appendChild(lista);
+        }
     }
 
     function renderBalanceMuscular(datos) {
@@ -456,6 +523,11 @@
             if (v) mov.push(`${m.etiqueta.toLowerCase()} - ${v.toLowerCase()}`);
         });
         if (mov.length) partes.push(`Movilidad articular: ${mov.join('; ')}.`);
+        if (ef.movilidadArticular.campoEspecificaciones) {
+            const especCampo = ef.movilidadArticular.campoEspecificaciones;
+            const especTexto = formatearValorCampo(especCampo, campos[especCampo.id]);
+            if (especTexto) partes.push(`${especTexto}.`);
+        }
 
         // Balance muscular (Daniels) — nunca se incluye "No valorado"
         const fuerza = [];
@@ -501,6 +573,15 @@
         estado.plan = { campos: {}, ultimoGenerado: '' };
         const pa = config.planActuacion;
 
+        if (pa.tratamientoHoy) {
+            const contTrat = el('subTratamientoHoy');
+            contTrat.innerHTML = '';
+            const h3trat = document.createElement('h3');
+            h3trat.textContent = pa.tratamientoHoy.titulo;
+            contTrat.appendChild(h3trat);
+            contTrat.appendChild(construirChecklist(pa.tratamientoHoy, estado.plan.campos, regenerarPlan));
+        }
+
         const cont = el('subRecomendaciones');
         cont.innerHTML = '';
         const h3 = document.createElement('h3');
@@ -540,6 +621,11 @@
     function generarTextoPlan() {
         const pa = config.planActuacion;
         const partes = [];
+
+        if (pa.tratamientoHoy) {
+            const t = generarTextoSeccionChecklist(pa.tratamientoHoy, estado.plan.campos);
+            if (t) partes.push(t);
+        }
 
         (pa.recomendaciones || []).forEach((rec) => {
             if (estado.plan.campos[rec.id]) partes.push(rec.texto);
@@ -594,16 +680,18 @@
         wrap.className = 'campo-simple';
         if (campo.ayuda) wrap.title = campo.ayuda;
 
-        if (campo.tipo === 'tristate') {
+        if (campo.tipo === 'tristate' || campo.tipo === 'binario') {
             wrap.classList.add('campo-tristate');
             const span = document.createElement('span');
             span.textContent = campo.etiqueta;
             wrap.appendChild(span);
+            const opcionesBinarias = campo.tipo === 'binario'
+                ? { opciones: ['Sí', 'No'], mapaValores: { 'Sí': 'si', 'No': 'no' } }
+                : { opciones: ['No valorado', 'Sí', 'No'], mapaValores: { 'No valorado': 'no_valorado', 'Sí': 'si', 'No': 'no' } };
             wrap.appendChild(construirGrupoBotones({
                 id: campo.id,
-                opciones: ['No valorado', 'Sí', 'No'],
                 sinEtiqueta: true,
-                mapaValores: { 'No valorado': 'no_valorado', 'Sí': 'si', 'No': 'no' }
+                ...opcionesBinarias
             }, almacen, onCambio));
             if (campo.ayuda) wrap.appendChild(construirAyudaVisible(campo.ayuda));
             return wrap;
@@ -654,11 +742,16 @@
         return p;
     }
 
-    // Sección tipo checklist (historia laboral, AVD…): checkboxes de una
-    // sola marca + campo "otro" libre opcional.
+    // Sección tipo checklist (historia laboral, AVD, tratamiento de hoy…):
+    // checkboxes de una sola marca + campo "otro" libre opcional. Una
+    // opción puede marcarse "exclusivoConTodo": al marcarla se desmarcan
+    // (y deshabilitan) las demás, y viceversa.
     function construirChecklist(seccion, almacen, onCambio) {
         const cont = document.createElement('div');
-        cont.className = 'checklist-opciones';
+        cont.className = seccion.disposicion === 'grid' ? 'checklist-opciones checklist-grid' : 'checklist-opciones';
+
+        const inputs = [];
+        const inputExclusivo = { ref: null };
 
         (seccion.opciones || []).forEach((opcion) => {
             const label = document.createElement('label');
@@ -667,26 +760,55 @@
             input.type = 'checkbox';
             input.addEventListener('change', () => {
                 almacen[opcion.id] = input.checked;
+                if (opcion.exclusivoConTodo && input.checked) {
+                    inputs.forEach((otro) => {
+                        if (otro.input !== input) {
+                            otro.input.checked = false;
+                            otro.input.disabled = true;
+                            delete almacen[otro.id];
+                        }
+                    });
+                    if (campoOtroInput) {
+                        campoOtroInput.value = '';
+                        campoOtroInput.disabled = true;
+                        delete almacen[seccion.otro.id];
+                    }
+                } else if (opcion.exclusivoConTodo && !input.checked) {
+                    inputs.forEach((otro) => { otro.input.disabled = false; });
+                    if (campoOtroInput) campoOtroInput.disabled = false;
+                } else if (input.checked && inputExclusivo.ref) {
+                    inputExclusivo.ref.checked = false;
+                    inputExclusivo.ref.disabled = false;
+                    delete almacen[inputExclusivo.id];
+                }
                 onCambio();
             });
             label.appendChild(input);
             label.appendChild(document.createTextNode(' ' + opcion.etiqueta));
             cont.appendChild(label);
+            inputs.push({ input, id: opcion.id });
+            if (opcion.exclusivoConTodo) inputExclusivo.ref = input, inputExclusivo.id = opcion.id;
         });
 
+        let campoOtroInput = null;
         if (seccion.otro) {
             const label = document.createElement('label');
             label.className = 'campo-simple campo-otro';
             const span = document.createElement('span');
             span.textContent = seccion.otro.etiqueta;
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.addEventListener('input', () => {
-                almacen[seccion.otro.id] = input.value;
+            campoOtroInput = document.createElement('input');
+            campoOtroInput.type = 'text';
+            campoOtroInput.addEventListener('input', () => {
+                almacen[seccion.otro.id] = campoOtroInput.value;
+                if (campoOtroInput.value && inputExclusivo.ref) {
+                    inputExclusivo.ref.checked = false;
+                    inputExclusivo.ref.disabled = false;
+                    delete almacen[inputExclusivo.id];
+                }
                 onCambio();
             });
             label.appendChild(span);
-            label.appendChild(input);
+            label.appendChild(campoOtroInput);
             cont.appendChild(label);
         }
 
@@ -735,7 +857,7 @@
     }
 
     function formatearValorCampo(campo, valor) {
-        if (campo.tipo === 'tristate') {
+        if (campo.tipo === 'tristate' || campo.tipo === 'binario') {
             if (valor === 'si') return `${campo.etiqueta.toLowerCase()}: sí`;
             if (valor === 'no') return `${campo.etiqueta.toLowerCase()}: no`;
             return '';
