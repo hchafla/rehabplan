@@ -34,12 +34,45 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
   },
   "motivo": {
     "fuente": "editable",
-    "notaFuente": "El protocolo no establece una fórmula concreta para este campo. Estas frases son solo sugerencias editables, no un texto oficial del SCS.",
-    "frasesPredefinidas": [
-      "Acceso a HC del paciente como fisioterapeuta del C.S. [CENTRO].",
-      "Acceso a HC tras derivación de MAP por diagnóstico de [DIAGNÓSTICO].",
-      "Acceso a HC tras derivación de MAP para valoración fisioterapéutica de [MOTIVO]."
-    ]
+    "notaFuente": "El protocolo no establece una fórmula concreta para este campo. Es una redacción editable, no un texto oficial del SCS.",
+    "campos": [
+      {
+        "id": "motivo_centro",
+        "tipo": "texto",
+        "etiqueta": "Centro de salud",
+        "ayuda": "Tu centro de salud. Se recuerda entre sesiones (no es un dato del paciente).",
+        "persistirLocal": true
+      },
+      {
+        "id": "motivo_diagnostico",
+        "tipo": "texto",
+        "etiqueta": "Diagnóstico (si consta en la derivación)",
+        "ayuda": "Diagnóstico indicado por el MAP en la derivación, si lo hay."
+      },
+      {
+        "id": "motivo_motivo",
+        "tipo": "texto",
+        "etiqueta": "Motivo de valoración (si no hay diagnóstico)",
+        "ayuda": "Alternativa a \"Diagnóstico\": úsalo cuando la derivación no especifica un diagnóstico concreto."
+      }
+    ],
+    "plantilla": {
+      "campoCentro": "motivo_centro",
+      "base": "Acceso a HC del paciente como fisioterapeuta",
+      "fragmentoCentro": " del C.S. {valor}",
+      "clausulas": [
+        {
+          "campo": "motivo_diagnostico",
+          "texto": "tras derivación de MAP por diagnóstico de {valor}"
+        },
+        {
+          "campo": "motivo_motivo",
+          "texto": "tras derivación de MAP para valoración fisioterapéutica de {valor}"
+        }
+      ],
+      "union": " ",
+      "sufijo": "."
+    }
   },
   "anamnesis": {
     "fuente": "Estructura y campos definidos por Héctor a partir del protocolo SCS; la redacción generada no es un texto oficial",
@@ -53,7 +86,7 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
             "id": "lesion_inicio",
             "tipo": "texto",
             "etiqueta": "Inicio",
-            "ayuda": "¿Cuándo y cómo empezó? Ej.: hace 3 semanas, de forma insidiosa."
+            "ayuda": "¿Cuándo y cómo empezó? Ej.: hace 3 semanas, de forma insidiosa/súbita, tras un esfuerzo concreto…"
           },
           {
             "id": "lesion_evolucion",
@@ -124,12 +157,6 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
             "ayuda": "Tipo de dolor: mecánico, inflamatorio, punzante, sordo…"
           },
           {
-            "id": "dolor_aparicion",
-            "tipo": "texto",
-            "etiqueta": "Aparición",
-            "ayuda": "¿Cómo apareció? Súbita, insidiosa, tras un esfuerzo concreto…"
-          },
-          {
             "id": "dolor_agravantes",
             "tipo": "texto_area",
             "etiqueta": "Factores agravantes",
@@ -143,9 +170,9 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
           },
           {
             "id": "dolor_nocturno",
-            "tipo": "tristate",
+            "tipo": "binario",
             "etiqueta": "Dolor nocturno",
-            "ayuda": "¿Le despierta por la noche?"
+            "ayuda": "¿Le despierta por la noche? (Sí / No)"
           }
         ],
         "gruposNarrativos": [
@@ -166,15 +193,6 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
               }
             ],
             "union": ", ",
-            "sufijo": "."
-          },
-          {
-            "fragmentos": [
-              {
-                "campo": "dolor_aparicion",
-                "texto": "De aparición {valor}"
-              }
-            ],
             "sufijo": "."
           },
           {
@@ -209,12 +227,12 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
           {
             "id": "laboral_sedentario",
             "etiqueta": "Trabajo sedentario",
-            "fraseTexto": "trabajo sedentario"
+            "fraseTexto": "tareas sedentarias"
           },
           {
             "id": "laboral_mmss",
             "etiqueta": "Trabajo con MMSS",
-            "fraseTexto": "trabajo con uso repetido de miembros superiores"
+            "fraseTexto": "uso repetido de miembros superiores"
           },
           {
             "id": "laboral_altura",
@@ -225,13 +243,19 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
             "id": "laboral_cargas",
             "etiqueta": "Manipulación de cargas",
             "fraseTexto": "manipulación de cargas"
+          },
+          {
+            "id": "laboral_no_trabaja",
+            "etiqueta": "Desempleado/a o jubilado/a",
+            "exclusivoConTodo": true,
+            "fraseCompleta": "No consta actividad laboral activa (desempleado/a o jubilado/a)."
           }
         ],
         "otro": {
           "id": "laboral_otro",
           "etiqueta": "Otro"
         },
-        "prefijoTexto": "En su trabajo refiere ",
+        "prefijoTexto": "Su actividad laboral incluye ",
         "sufijoTexto": "."
       },
       {
@@ -363,12 +387,18 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
           "etiqueta": "Rotación externa",
           "categorias": [
             "No valorada",
+            "Mano no llega a nuca",
             "Mano llega a nuca",
-            "No llega a nuca",
             "Sin limitación funcional"
           ]
         }
-      ]
+      ],
+      "campoEspecificaciones": {
+        "id": "movilidad_notas",
+        "tipo": "texto_area",
+        "etiqueta": "Otras especificaciones sobre la movilidad",
+        "ayuda": "Ej.: limitación en activo por dolor muscular, limitación en pasivo (articular), etc."
+      }
     },
     "balanceMuscular": {
       "titulo": "Balance muscular (escala de Daniels)",
@@ -472,16 +502,22 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
           "ayuda": "Mano del paciente tras la espalda, en rotación interna; se retira la mano de la zona lumbar contra resistencia."
         },
         {
-          "id": "test_napoleon",
-          "nombre": "Napoleón",
-          "estructura": "Subescapular",
-          "ayuda": null
-        },
-        {
           "id": "test_patte",
           "nombre": "Patte",
           "estructura": "Infraespinoso / redondo menor",
           "ayuda": "90° de abducción, 30° de anteversión y codo en 90° apoyado sobre el antebrazo del explorador; se solicita rotación externa activa contra resistencia, comparando con el lado contrario."
+        },
+        {
+          "id": "test_palmup",
+          "nombre": "Palm-up test (Speed)",
+          "estructura": "Porción larga del bíceps braquial",
+          "ayuda": "Codo en extensión, antebrazo en supinación y hombro en flexión de 90°; se resiste la flexión del hombro y se valora el dolor en la corredera bicipital."
+        },
+        {
+          "id": "test_palm_up",
+          "nombre": "Palm-up test (Speed)",
+          "estructura": "Bíceps braquial (porción larga) / labrum",
+          "ayuda": "Codo en extensión, antebrazo supinado (palma hacia arriba) y hombro en flexión anterior de unos 90°; se aplica resistencia descendente. El dolor en la corredera bicipital sugiere afectación de la porción larga del bíceps."
         }
       ]
     }
@@ -492,13 +528,74 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
       {
         "id": "rec_scs",
         "texto": "Se entregan recomendaciones para su patología elaboradas por el SCS."
+      },
+      {
+        "id": "rec_ejercicios_pautados",
+        "texto": "Se pautan ejercicios domiciliarios y se explican al paciente."
+      },
+      {
+        "id": "rec_hoja_ejercicios",
+        "texto": "Se entrega hoja de ejercicios domiciliarios."
       }
     ],
     "tiposSesion": [
       "Individual",
-      "Grupal"
+      "Grupal",
+      "Telefónica"
     ],
     "frasesPredefinidas": [],
-    "_notaFuturo": "El protocolo también enumera opciones terapéuticas (electroterapia/termoterapia/crioterapia, vendaje neuromuscular, fibrolisis diacutánea, punción seca, cinesiterapia, terapia manual, ejercicio terapéutico, educación al paciente). No se han incluido todavía en el PLAN DE ACTUACIÓN porque no se pidieron explícitamente en esta primera versión; se pueden añadir aquí como checkboxes cuando se decida."
+    "tratamientoHoy": {
+      "titulo": "Tratamiento de la sesión de hoy",
+      "fuente": "protocolo (opciones terapéuticas) + \"estiramientos\" añadido por Héctor",
+      "opciones": [
+        {
+          "id": "trat_manual",
+          "etiqueta": "Terapia manual",
+          "fraseTexto": "terapia manual"
+        },
+        {
+          "id": "trat_cinesiterapia",
+          "etiqueta": "Cinesiterapia",
+          "fraseTexto": "cinesiterapia"
+        },
+        {
+          "id": "trat_ejercicio",
+          "etiqueta": "Ejercicio terapéutico",
+          "fraseTexto": "ejercicio terapéutico"
+        },
+        {
+          "id": "trat_estiramientos",
+          "etiqueta": "Estiramientos",
+          "fraseTexto": "estiramientos"
+        },
+        {
+          "id": "trat_electro",
+          "etiqueta": "Electroterapia / termoterapia / crioterapia",
+          "fraseTexto": "electroterapia/termoterapia/crioterapia"
+        },
+        {
+          "id": "trat_vendaje",
+          "etiqueta": "Vendaje neuromuscular",
+          "fraseTexto": "vendaje neuromuscular"
+        },
+        {
+          "id": "trat_puncion",
+          "etiqueta": "Punción seca",
+          "fraseTexto": "punción seca"
+        },
+        {
+          "id": "trat_fibrolisis",
+          "etiqueta": "Fibrolisis diacutánea",
+          "fraseTexto": "fibrolisis diacutánea"
+        },
+        {
+          "id": "trat_educacion",
+          "etiqueta": "Educación al paciente",
+          "fraseTexto": "educación al paciente"
+        }
+      ],
+      "prefijoTexto": "En la sesión de hoy ",
+      "sufijoTexto": "."
+    }
   }
 };
