@@ -508,13 +508,16 @@
         const campos = estado.exploracion.campos;
         const partes = [];
 
+        // Los títulos de cada bloque van en MAYÚSCULAS en el texto copiado
+        // (así se distinguen mejor al pegarlo en DRAGOAP).
+
         // Inspección y palpación
         const insp = [];
         ef.inspeccionPalpacion.campos.forEach((campo) => {
             const t = formatearValorCampo(campo, campos[campo.id]);
             if (t) insp.push(t);
         });
-        if (insp.length) partes.push(`Inspección y palpación: ${insp.join('; ')}.`);
+        if (insp.length) partes.push(`INSPECCIÓN Y PALPACIÓN: ${insp.join('; ')}.`);
 
         // Movilidad articular
         const mov = [];
@@ -522,10 +525,10 @@
             const v = campos[m.id];
             if (v) mov.push(`${m.etiqueta.toLowerCase()} - ${v.toLowerCase()}`);
         });
-        if (mov.length) partes.push(`Movilidad articular: ${mov.join('; ')}.`);
+        if (mov.length) partes.push(`MOVILIDAD ARTICULAR: ${mov.join('; ')}.`);
         if (ef.movilidadArticular.campoEspecificaciones) {
             const especCampo = ef.movilidadArticular.campoEspecificaciones;
-            const especTexto = formatearValorCampo(especCampo, campos[especCampo.id]);
+            const especTexto = limpio(campos[especCampo.id]);
             if (especTexto) partes.push(`${especTexto}.`);
         }
 
@@ -535,17 +538,17 @@
             const v = campos[m.id];
             if (v && v !== 'No valorado') fuerza.push(`${m.etiqueta.toLowerCase()} ${v}/5`);
         });
-        if (fuerza.length) partes.push(`Balance muscular: ${unirConY(fuerza)} según escala de Daniels.`);
+        if (fuerza.length) partes.push(`BALANCE MUSCULAR: ${unirConY(fuerza)} según escala de Daniels.`);
 
         // Actitud postural
-        const actitud = formatearValorCampo(ef.actitudPostural.campo, campos[ef.actitudPostural.campo.id]);
-        if (actitud) partes.push(`${actitud}.`);
+        const actitudValor = limpio(campos[ef.actitudPostural.campo.id]);
+        if (actitudValor) partes.push(`ACTITUD POSTURAL GENERAL: ${actitudValor}.`);
 
         // Sensibilidad
         const sens = campos[ef.sensibilidad.campo.id];
         if (sens) {
             const obs = limpio(campos[ef.sensibilidad.campoObservaciones.id]);
-            partes.push(`Sensibilidad: ${sens.toLowerCase()}.${obs ? ' Observaciones: ' + obs + '.' : ''}`);
+            partes.push(`SENSIBILIDAD: ${sens.toLowerCase()}.${obs ? ' Observaciones: ' + obs + '.' : ''}`);
         }
 
         // Tests específicos — "No realizada" no se documenta
@@ -556,7 +559,7 @@
                 tests.push(`${t.nombre} ${v.toLowerCase()}`);
             }
         });
-        if (tests.length) partes.push(`Tests específicos: ${tests.join('; ')}.`);
+        if (tests.length) partes.push(`TESTS ESPECÍFICOS: ${tests.join('; ')}.`);
 
         return partes.join('\n');
     }
