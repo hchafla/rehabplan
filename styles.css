@@ -1463,6 +1463,25 @@ textarea:focus-visible {
     gap: 8px;
 }
 
+.checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px 16px;
+}
+
+.checkbox-linea input:disabled {
+    accent-color: var(--border-strong);
+}
+
+.checkbox-linea:has(input:disabled) {
+    color: var(--ink-faint);
+    opacity: 0.6;
+}
+
+.campo-lista-compacta {
+    margin-top: 12px;
+}
+
 .campo-otro {
     margin-top: 4px;
     max-width: 320px;
@@ -1476,6 +1495,51 @@ textarea:focus-visible {
     padding: 7px 10px;
     background: var(--bg);
     width: 100%;
+}
+
+.campo-otro input:disabled {
+    background: var(--surface-alt);
+    color: var(--ink-faint);
+}
+
+/* Plan de actuación: Programación / Próxima cita, look moderno */
+
+.plan-grid-moderno {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+}
+
+.plan-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+}
+
+.plan-input {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    padding: 11px 14px;
+    background: var(--surface-alt);
+    transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.plan-input:hover {
+    border-color: var(--brand);
+}
+
+.plan-input:focus {
+    border-color: var(--brand);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px var(--brand-soft);
+    outline: none;
 }
 
 /* Grupos de botones: tri-state, categorías de movilidad, Daniels, tests */
