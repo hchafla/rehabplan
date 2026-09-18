@@ -57,9 +57,15 @@
 <!-- 1. MOTIVO -->
 <section class="seccion-fisioap" id="seccionMotivo">
     <h2>1. Motivo</h2>
-    <div id="motivoFrasesPredefinidas" class="frases-predefinidas"></div>
-    <label class="campo-final-label" for="motivoTexto">Texto final (editable)</label>
-    <textarea id="motivoTexto" class="texto-final" rows="3" placeholder="Escribe o elige una frase predefinida arriba…"></textarea>
+    <div id="motivoCampos" class="campo-lista"></div>
+
+    <div class="bloque-texto-final">
+        <div class="cabecera-texto-final">
+            <label class="campo-final-label" for="motivoTexto">Texto final (editable)</label>
+            <button type="button" class="btn-regenerar" id="regenerarMotivo" hidden>↻ Regenerar desde los campos</button>
+        </div>
+        <textarea id="motivoTexto" class="texto-final" rows="3"></textarea>
+    </div>
     <div class="acciones-copia">
         <button type="button" class="btn-copiar" data-target="motivoTexto">Copiar MOTIVO</button>
     </div>
@@ -109,31 +115,38 @@
 <section class="seccion-fisioap" id="seccionPlan">
     <h2>4. Plan de actuación</h2>
 
+    <div class="subseccion" id="subTratamientoHoy"></div>
+
     <div class="subseccion" id="subRecomendaciones"></div>
 
     <div class="subseccion">
         <h3>Programación</h3>
-        <div class="campo-grid">
-            <label>Sesiones individuales
-                <input type="number" id="planSesionesIndividuales" min="0" step="1">
+        <div class="plan-grid-moderno">
+            <label class="plan-campo">
+                <span>Sesiones individuales</span>
+                <input type="number" id="planSesionesIndividuales" min="0" step="1" class="plan-input" placeholder="0">
             </label>
-            <label>Sesiones grupales
-                <input type="number" id="planSesionesGrupales" min="0" step="1">
+            <label class="plan-campo">
+                <span>Sesiones grupales</span>
+                <input type="number" id="planSesionesGrupales" min="0" step="1" class="plan-input" placeholder="0">
             </label>
         </div>
     </div>
 
     <div class="subseccion">
         <h3>Próxima cita</h3>
-        <div class="campo-grid">
-            <label>Fecha
-                <input type="date" id="planFecha">
+        <div class="plan-grid-moderno">
+            <label class="plan-campo">
+                <span>Fecha</span>
+                <input type="date" id="planFecha" class="plan-input">
             </label>
-            <label>Hora
-                <input type="time" id="planHora">
+            <label class="plan-campo">
+                <span>Hora</span>
+                <input type="time" id="planHora" step="900" class="plan-input">
             </label>
-            <label>Tipo de sesión
-                <select id="planTipoSesion"></select>
+            <label class="plan-campo">
+                <span>Tipo de sesión</span>
+                <select id="planTipoSesion" class="plan-input"></select>
             </label>
         </div>
     </div>
