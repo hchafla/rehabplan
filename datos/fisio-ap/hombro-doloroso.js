@@ -30,7 +30,11 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
       "Hombro doloroso de etiología extrínseca.",
       "Capsulitis adhesiva (derivación a Rehabilitación)."
     ],
-    "sesionesMaximas": 10
+    "sesionesMaximas": 10,
+    "decisionInterconsulta": {
+      "textoAceptado": "Cumple criterios de inclusión, se acepta el proceso.",
+      "textoNoAceptado": "No cumple criterios de inclusión o presenta criterios de exclusión, no se acepta el proceso."
+    }
   },
   "motivo": {
     "fuente": "editable",
