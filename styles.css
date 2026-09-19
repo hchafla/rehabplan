@@ -1786,3 +1786,109 @@ textarea:focus-visible {
     }
 
 }
+
+
+/* ==============================
+   Fisio+AP — pestañas (Interconsulta / Valoración / Individual / Alta)
+   ============================== */
+
+.fisioap-tabs-barra {
+    max-width: 720px;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.fisioap-tabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--border);
+}
+
+.fisioap-tab {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink-faint);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+.fisioap-tab:hover {
+    color: var(--ink-soft);
+}
+
+.fisioap-tab.activo {
+    color: var(--brand-dark);
+    border-bottom-color: var(--brand);
+}
+
+.btn-borrar-todo {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--danger);
+    background: var(--danger-soft);
+    border: 1px solid var(--danger);
+    border-radius: var(--radius-sm);
+    padding: 7px 12px;
+    white-space: nowrap;
+}
+
+.btn-borrar-todo:hover {
+    background: var(--danger);
+    color: white;
+}
+
+.fisioap-panel {
+    animation: fisioap-fade-in 0.12s ease;
+}
+
+@keyframes fisioap-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fisioap-placeholder {
+    max-width: 720px;
+    margin: 40px auto;
+    text-align: center;
+    font-size: 0.92rem;
+    color: var(--ink-faint);
+    padding: 30px;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+}
+
+.fisioap-nota-pendiente {
+    max-width: 720px;
+    margin: -8px auto 24px;
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+
+    .fisioap-tabs-barra {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .fisioap-tabs {
+        overflow-x: auto;
+    }
+
+    .fisioap-tab {
+        white-space: nowrap;
+    }
+
+}
