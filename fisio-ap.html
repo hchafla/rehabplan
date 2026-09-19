@@ -38,137 +38,197 @@
     <p><code>python3 -m http.server</code> y abre después <code>http://localhost:8000/fisio-ap.html</code></p>
 </div>
 
-<div class="patologia-selector">
-    <label for="selectorPatologia">Patología</label>
-    <select id="selectorPatologia"></select>
+<div class="fisioap-tabs-barra">
+    <nav class="fisioap-tabs" role="tablist" aria-label="Supuesto de la consulta">
+        <button type="button" class="fisioap-tab activo" role="tab" aria-selected="true" data-tab="interconsulta">Valoración de Interconsulta</button>
+        <button type="button" class="fisioap-tab" role="tab" aria-selected="false" data-tab="valoracion">Valoración</button>
+        <button type="button" class="fisioap-tab" role="tab" aria-selected="false" data-tab="individual">Sesión Individual</button>
+        <button type="button" class="fisioap-tab" role="tab" aria-selected="false" data-tab="alta">Alta tras sesión grupal</button>
+    </nav>
+    <button type="button" class="btn-borrar-todo" id="btnBorrarTodo" title="Borra los datos de la pestaña que tienes abierta ahora mismo">🗑 Borrar todo</button>
 </div>
 
-<div id="contenedorAvisos"></div>
+<!-- ================= INTERCONSULTA ================= -->
+<div class="fisioap-panel" data-panel="interconsulta">
 
-<div id="contenedorObjetivos"></div>
+    <div class="patologia-selector">
+        <label for="interSelectorPatologia">Patología</label>
+        <select id="interSelectorPatologia"></select>
+    </div>
 
-<nav class="fisioap-nav" aria-label="Ir a sección">
-    <a href="#seccionMotivo">Motivo</a>
-    <a href="#seccionAnamnesis">Anamnesis</a>
-    <a href="#seccionExploracion">Exploración física</a>
-    <a href="#seccionPlan">Plan de actuación</a>
-</nav>
+    <div id="interAvisos"></div>
 
-<!-- 1. MOTIVO -->
-<section class="seccion-fisioap" id="seccionMotivo">
-    <h2>1. Motivo</h2>
-    <div id="motivoCampos" class="campo-lista"></div>
+    <section class="seccion-fisioap">
+        <h2>Motivo</h2>
+        <div id="interMotivoCampos" class="campo-lista"></div>
 
-    <div class="bloque-texto-final">
-        <div class="cabecera-texto-final">
-            <label class="campo-final-label" for="motivoTexto">Texto final (editable)</label>
-            <button type="button" class="btn-regenerar" id="regenerarMotivo" hidden>↻ Regenerar desde los campos</button>
+        <div class="subseccion">
+            <h3>¿Cumple criterios para aceptar el proceso?</h3>
+            <div id="interDecisionContenedor"></div>
         </div>
-        <textarea id="motivoTexto" class="texto-final" rows="3"></textarea>
-    </div>
-    <div class="acciones-copia">
-        <button type="button" class="btn-copiar" data-target="motivoTexto">Copiar MOTIVO</button>
-    </div>
-</section>
 
-<!-- 2. ANAMNESIS -->
-<section class="seccion-fisioap" id="seccionAnamnesis">
-    <h2>2. Anamnesis</h2>
-    <div id="anamnesisCampos" class="campos-anamnesis"></div>
-
-    <div class="bloque-texto-final">
-        <div class="cabecera-texto-final">
-            <label class="campo-final-label" for="anamnesisTexto">Texto final (editable)</label>
-            <button type="button" class="btn-regenerar" id="regenerarAnamnesis" hidden>↻ Regenerar desde los campos</button>
+        <div class="bloque-texto-final">
+            <div class="cabecera-texto-final">
+                <label class="campo-final-label" for="interMotivoTexto">Texto final (editable)</label>
+                <button type="button" class="btn-regenerar" id="interRegenerarMotivo" hidden>↻ Regenerar desde los campos</button>
+            </div>
+            <textarea id="interMotivoTexto" class="texto-final" rows="4"></textarea>
         </div>
-        <textarea id="anamnesisTexto" class="texto-final" rows="6"></textarea>
-    </div>
-    <div class="acciones-copia">
-        <button type="button" class="btn-copiar" data-target="anamnesisTexto">Copiar ANAMNESIS</button>
-    </div>
-</section>
-
-<!-- 3. EXPLORACIÓN FÍSICA -->
-<section class="seccion-fisioap" id="seccionExploracion">
-    <h2>3. Exploración física</h2>
-
-    <div class="subseccion" id="subInspeccionPalpacion"></div>
-    <div class="subseccion" id="subMovilidadArticular"></div>
-    <div class="subseccion" id="subBalanceMuscular"></div>
-    <div class="subseccion" id="subActitudPostural"></div>
-    <div class="subseccion" id="subSensibilidad"></div>
-    <div class="subseccion" id="subTestsEspecificos"></div>
-
-    <div class="bloque-texto-final">
-        <div class="cabecera-texto-final">
-            <label class="campo-final-label" for="exploracionTexto">Texto final (editable)</label>
-            <button type="button" class="btn-regenerar" id="regenerarExploracion" hidden>↻ Regenerar desde los campos</button>
+        <div class="acciones-copia">
+            <button type="button" class="btn-copiar" data-target="interMotivoTexto">Copiar MOTIVO</button>
         </div>
-        <textarea id="exploracionTexto" class="texto-final" rows="8"></textarea>
+    </section>
+
+    <p class="fisioap-nota-pendiente">Anamnesis y Plan de actuación para esta pestaña se añadirán más adelante.</p>
+
+</div>
+
+<!-- ================= VALORACIÓN ================= -->
+<div class="fisioap-panel" data-panel="valoracion" hidden>
+
+    <div class="patologia-selector">
+        <label for="selectorPatologia">Patología</label>
+        <select id="selectorPatologia"></select>
     </div>
-    <div class="acciones-copia">
-        <button type="button" class="btn-copiar" data-target="exploracionTexto">Copiar EXPLORACIÓN FÍSICA</button>
-    </div>
-</section>
 
-<!-- 4. PLAN DE ACTUACIÓN -->
-<section class="seccion-fisioap" id="seccionPlan">
-    <h2>4. Plan de actuación</h2>
+    <div id="contenedorAvisos"></div>
 
-    <div class="subseccion" id="subRecomendaciones"></div>
+    <div id="contenedorObjetivos"></div>
 
-    <div class="subseccion">
-        <h3>Programación</h3>
-        <div class="plan-grid-moderno">
-            <label class="plan-campo">
-                <span>Sesiones individuales</span>
-                <input type="number" id="planSesionesIndividuales" min="0" step="1" class="plan-input" placeholder="0">
-            </label>
-            <label class="plan-campo">
-                <span>Sesiones grupales</span>
-                <input type="number" id="planSesionesGrupales" min="0" step="1" class="plan-input" placeholder="0">
-            </label>
+    <nav class="fisioap-nav" aria-label="Ir a sección">
+        <a href="#seccionMotivo">Motivo</a>
+        <a href="#seccionAnamnesis">Anamnesis</a>
+        <a href="#seccionExploracion">Exploración física</a>
+        <a href="#seccionPlan">Plan de actuación</a>
+    </nav>
+
+    <!-- 1. MOTIVO -->
+    <section class="seccion-fisioap" id="seccionMotivo">
+        <h2>1. Motivo</h2>
+        <div id="motivoCampos" class="campo-lista"></div>
+
+        <div class="bloque-texto-final">
+            <div class="cabecera-texto-final">
+                <label class="campo-final-label" for="motivoTexto">Texto final (editable)</label>
+                <button type="button" class="btn-regenerar" id="regenerarMotivo" hidden>↻ Regenerar desde los campos</button>
+            </div>
+            <textarea id="motivoTexto" class="texto-final" rows="3"></textarea>
         </div>
-    </div>
-
-    <div class="subseccion">
-        <h3>Próxima cita</h3>
-        <div class="plan-grid-moderno">
-            <label class="plan-campo">
-                <span>Fecha</span>
-                <input type="date" id="planFecha" class="plan-input">
-            </label>
-            <label class="plan-campo">
-                <span>Hora</span>
-                <div class="plan-hora-grupo">
-                    <select id="planHoraH" class="plan-input"></select>
-                    <span class="plan-hora-separador">:</span>
-                    <select id="planHoraM" class="plan-input"></select>
-                </div>
-            </label>
-            <label class="plan-campo">
-                <span>Tipo de sesión</span>
-                <select id="planTipoSesion" class="plan-input"></select>
-            </label>
+        <div class="acciones-copia">
+            <button type="button" class="btn-copiar" data-target="motivoTexto">Copiar MOTIVO</button>
         </div>
-    </div>
+    </section>
 
-    <div class="subseccion">
-        <h3>Otras indicaciones</h3>
-        <textarea id="planNotas" class="campo-texto-libre" rows="2" placeholder="Texto adicional opcional…"></textarea>
-    </div>
+    <!-- 2. ANAMNESIS -->
+    <section class="seccion-fisioap" id="seccionAnamnesis">
+        <h2>2. Anamnesis</h2>
+        <div id="anamnesisCampos" class="campos-anamnesis"></div>
 
-    <div class="bloque-texto-final">
-        <div class="cabecera-texto-final">
-            <label class="campo-final-label" for="planTexto">Texto final (editable)</label>
-            <button type="button" class="btn-regenerar" id="regenerarPlan" hidden>↻ Regenerar desde los campos</button>
+        <div class="bloque-texto-final">
+            <div class="cabecera-texto-final">
+                <label class="campo-final-label" for="anamnesisTexto">Texto final (editable)</label>
+                <button type="button" class="btn-regenerar" id="regenerarAnamnesis" hidden>↻ Regenerar desde los campos</button>
+            </div>
+            <textarea id="anamnesisTexto" class="texto-final" rows="6"></textarea>
         </div>
-        <textarea id="planTexto" class="texto-final" rows="6"></textarea>
-    </div>
-    <div class="acciones-copia">
-        <button type="button" class="btn-copiar" data-target="planTexto">Copiar PLAN DE ACTUACIÓN</button>
-    </div>
-</section>
+        <div class="acciones-copia">
+            <button type="button" class="btn-copiar" data-target="anamnesisTexto">Copiar ANAMNESIS</button>
+        </div>
+    </section>
+
+    <!-- 3. EXPLORACIÓN FÍSICA -->
+    <section class="seccion-fisioap" id="seccionExploracion">
+        <h2>3. Exploración física</h2>
+
+        <div class="subseccion" id="subInspeccionPalpacion"></div>
+        <div class="subseccion" id="subMovilidadArticular"></div>
+        <div class="subseccion" id="subBalanceMuscular"></div>
+        <div class="subseccion" id="subActitudPostural"></div>
+        <div class="subseccion" id="subSensibilidad"></div>
+        <div class="subseccion" id="subTestsEspecificos"></div>
+
+        <div class="bloque-texto-final">
+            <div class="cabecera-texto-final">
+                <label class="campo-final-label" for="exploracionTexto">Texto final (editable)</label>
+                <button type="button" class="btn-regenerar" id="regenerarExploracion" hidden>↻ Regenerar desde los campos</button>
+            </div>
+            <textarea id="exploracionTexto" class="texto-final" rows="8"></textarea>
+        </div>
+        <div class="acciones-copia">
+            <button type="button" class="btn-copiar" data-target="exploracionTexto">Copiar EXPLORACIÓN FÍSICA</button>
+        </div>
+    </section>
+
+    <!-- 4. PLAN DE ACTUACIÓN -->
+    <section class="seccion-fisioap" id="seccionPlan">
+        <h2>4. Plan de actuación</h2>
+
+        <div class="subseccion" id="subRecomendaciones"></div>
+
+        <div class="subseccion">
+            <h3>Programación</h3>
+            <div class="plan-grid-moderno">
+                <label class="plan-campo">
+                    <span>Sesiones individuales</span>
+                    <input type="number" id="planSesionesIndividuales" min="0" step="1" class="plan-input" placeholder="0">
+                </label>
+                <label class="plan-campo">
+                    <span>Sesiones grupales</span>
+                    <input type="number" id="planSesionesGrupales" min="0" step="1" class="plan-input" placeholder="0">
+                </label>
+            </div>
+        </div>
+
+        <div class="subseccion">
+            <h3>Próxima cita</h3>
+            <div class="plan-grid-moderno">
+                <label class="plan-campo">
+                    <span>Fecha</span>
+                    <input type="date" id="planFecha" class="plan-input">
+                </label>
+                <label class="plan-campo">
+                    <span>Hora</span>
+                    <div class="plan-hora-grupo">
+                        <select id="planHoraH" class="plan-input"></select>
+                        <span class="plan-hora-separador">:</span>
+                        <select id="planHoraM" class="plan-input"></select>
+                    </div>
+                </label>
+                <label class="plan-campo">
+                    <span>Tipo de sesión</span>
+                    <select id="planTipoSesion" class="plan-input"></select>
+                </label>
+            </div>
+        </div>
+
+        <div class="subseccion">
+            <h3>Otras indicaciones</h3>
+            <textarea id="planNotas" class="campo-texto-libre" rows="2" placeholder="Texto adicional opcional…"></textarea>
+        </div>
+
+        <div class="bloque-texto-final">
+            <div class="cabecera-texto-final">
+                <label class="campo-final-label" for="planTexto">Texto final (editable)</label>
+                <button type="button" class="btn-regenerar" id="regenerarPlan" hidden>↻ Regenerar desde los campos</button>
+            </div>
+            <textarea id="planTexto" class="texto-final" rows="6"></textarea>
+        </div>
+        <div class="acciones-copia">
+            <button type="button" class="btn-copiar" data-target="planTexto">Copiar PLAN DE ACTUACIÓN</button>
+        </div>
+    </section>
+
+</div>
+
+<!-- ================= SESIÓN INDIVIDUAL (próximamente) ================= -->
+<div class="fisioap-panel" data-panel="individual" hidden>
+    <p class="fisioap-placeholder">Esta pestaña se construirá en un próximo paso (texto libre de evolución + Plan de actuación).</p>
+</div>
+
+<!-- ================= ALTA TRAS SESIÓN GRUPAL (próximamente) ================= -->
+<div class="fisioap-panel" data-panel="alta" hidden>
+    <p class="fisioap-placeholder">Esta pestaña se construirá en un próximo paso.</p>
+</div>
 
 <script src="js/fisio-ap.js"></script>
 
