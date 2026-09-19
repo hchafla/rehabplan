@@ -64,11 +64,26 @@
             if (listaPatologias.length === 0) throw new Error('patologias.js no definió ninguna patología');
             poblarSelectorPatologias();
             await cargarPatologia(listaPatologias[0].id);
+            iniciarInterconsulta();
+            iniciarPestañas();
+            iniciarBorrarTodo();
             el('errorCarga').hidden = true;
         } catch (err) {
             console.error('Fisio+AP: error al cargar los datos', err);
             el('errorCarga').hidden = false;
         }
+    }
+
+    // Asegura que los datos de una patología están cargados en
+    // window.FISIOAP_DATOS[id] (los carga por <script> si hace falta) y
+    // los devuelve. Común a la pestaña Valoración y a Interconsulta.
+    async function asegurarDatosPatologia(id) {
+        const meta = listaPatologias.find((p) => p.id === id);
+        if (!meta) return null;
+        if (!window.FISIOAP_DATOS || !window.FISIOAP_DATOS[id]) {
+            await cargarScript(RUTA_DATOS + meta.archivo);
+        }
+        return (window.FISIOAP_DATOS && window.FISIOAP_DATOS[id]) || null;
     }
 
     function poblarSelectorPatologias() {
@@ -84,12 +99,7 @@
     }
 
     async function cargarPatologia(id) {
-        const meta = listaPatologias.find((p) => p.id === id);
-        if (!meta) return;
-        if (!window.FISIOAP_DATOS || !window.FISIOAP_DATOS[id]) {
-            await cargarScript(RUTA_DATOS + meta.archivo);
-        }
-        config = window.FISIOAP_DATOS && window.FISIOAP_DATOS[id];
+        config = await asegurarDatosPatologia(id);
         if (!config) throw new Error('No se han encontrado datos para la patología "' + id + '"');
         estado = estadoInicial();
         renderTodo();
@@ -123,15 +133,13 @@
        AVISOS / CRITERIOS DE DERIVACIÓN
        ========================================================== */
 
-    function renderAvisos() {
-        const cont = el('contenedorAvisos');
-        const a = config.avisos;
-        if (!a) { cont.innerHTML = ''; return; }
-
+    // Construye el HTML de los avisos/criterios de derivación a partir de
+    // los datos de una patología. Reutilizado por Valoración e Interconsulta.
+    function construirAvisosHTML(a) {
+        if (!a) return '';
         const inclusion = (a.criteriosInclusion || []).map((t) => `<li>${escapeHTML(t)}</li>`).join('');
         const exclusion = (a.criteriosExclusion || []).map((t) => `<li>${escapeHTML(t)}</li>`).join('');
-
-        cont.innerHTML = `
+        return `
             <details class="aviso-derivacion">
                 <summary>⚠️ Criterios de derivación / alarma</summary>
                 <div class="aviso-contenido">
@@ -140,6 +148,10 @@
                     ${a.sesionesMaximas ? `<p class="aviso-sesiones">Número máximo de sesiones: <strong>${a.sesionesMaximas}</strong>.</p>` : ''}
                 </div>
             </details>`;
+    }
+
+    function renderAvisos() {
+        el('contenedorAvisos').innerHTML = construirAvisosHTML(config.avisos);
     }
 
     /* ==========================================================
@@ -258,6 +270,147 @@
 
     function regenerarMotivo(forzar) {
         aplicarTextoGenerado('motivoTexto', estado.motivo, generarTextoMotivo(), forzar, 'regenerarMotivo');
+    }
+
+    /* ==========================================================
+       VALORACIÓN DE INTERCONSULTA
+       ==========================================================
+       Pestaña independiente: tiene su propia patología (puede ser un
+       paciente distinto al de la pestaña Valoración) y solo usa, de
+       momento, el bloque MOTIVO — reutilizando los mismos campos y
+       plantilla de la patología, más una decisión de aceptar/no
+       aceptar que se añade a la frase final. "Centro" comparte el
+       mismo localStorage que en Valoración (es el mismo centro de
+       trabajo); Diagnóstico/Motivo y la decisión nunca se guardan.
+       ========================================================== */
+
+    let configInterconsulta = null;
+    let estadoInterconsulta = null;
+
+    function estadoInicialInterconsulta() {
+        return { motivo: { campos: {}, ultimoGenerado: '' } };
+    }
+
+    function iniciarInterconsulta() {
+        const select = el('interSelectorPatologia');
+        select.innerHTML = '';
+        listaPatologias.forEach((p) => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.nombre;
+            select.appendChild(opt);
+        });
+        select.addEventListener('change', () => cargarPatologiaInterconsulta(select.value));
+        cargarPatologiaInterconsulta(listaPatologias[0].id);
+    }
+
+    async function cargarPatologiaInterconsulta(id) {
+        configInterconsulta = await asegurarDatosPatologia(id);
+        if (!configInterconsulta) return;
+        estadoInterconsulta = estadoInicialInterconsulta();
+        el('interAvisos').innerHTML = construirAvisosHTML(configInterconsulta.avisos);
+        renderMotivoInterconsulta();
+    }
+
+    function renderMotivoInterconsulta() {
+        const cont = el('interMotivoCampos');
+        cont.innerHTML = '';
+
+        const lista = document.createElement('div');
+        lista.className = 'campo-lista';
+        (configInterconsulta.motivo.campos || []).forEach((campo) => {
+            const elementoCampo = construirCampoGenerico(campo, estadoInterconsulta.motivo.campos, regenerarMotivoInterconsulta, 'inter_');
+            if (campo.persistirLocal) {
+                const input = elementoCampo.querySelector('input, textarea, select');
+                const valorGuardado = leerCentroGuardado();
+                if (valorGuardado) {
+                    input.value = valorGuardado;
+                    estadoInterconsulta.motivo.campos[campo.id] = valorGuardado;
+                }
+                input.addEventListener('input', () => guardarCentro(input.value));
+                input.addEventListener('change', () => guardarCentro(input.value));
+            }
+            lista.appendChild(elementoCampo);
+        });
+        cont.appendChild(lista);
+
+        const contDecision = el('interDecisionContenedor');
+        contDecision.innerHTML = '';
+        contDecision.appendChild(construirGrupoBotones({
+            id: 'inter_decision',
+            opciones: ['Se acepta el proceso', 'No se acepta el proceso'],
+            sinEtiqueta: true,
+            mapaValores: { 'Se acepta el proceso': 'aceptado', 'No se acepta el proceso': 'no_aceptado' }
+        }, estadoInterconsulta.motivo.campos, regenerarMotivoInterconsulta));
+
+        configurarTextoFinal('interMotivoTexto', 'interRegenerarMotivo', estadoInterconsulta.motivo, regenerarMotivoInterconsulta);
+        regenerarMotivoInterconsulta(true);
+    }
+
+    function generarTextoMotivoInterconsulta() {
+        const p = configInterconsulta.motivo.plantilla;
+        const campos = estadoInterconsulta.motivo.campos;
+        const centro = limpio(campos[p.campoCentro]);
+        const clausula = (p.clausulas || []).find((c) => limpio(campos[c.campo]));
+        const decision = campos.inter_decision;
+        const textosDecision = (configInterconsulta.avisos && configInterconsulta.avisos.decisionInterconsulta) || {};
+
+        if (!centro && !clausula && !decision) return '';
+
+        let texto = p.base + (centro ? p.fragmentoCentro.replace('{valor}', centro) : '');
+        if (clausula) texto += ' ' + clausula.texto.replace('{valor}', limpio(campos[clausula.campo]));
+        texto += p.sufijo;
+
+        if (decision === 'aceptado' && textosDecision.textoAceptado) {
+            texto += ' ' + textosDecision.textoAceptado;
+        } else if (decision === 'no_aceptado' && textosDecision.textoNoAceptado) {
+            texto += ' ' + textosDecision.textoNoAceptado;
+        }
+        return texto;
+    }
+
+    function regenerarMotivoInterconsulta(forzar) {
+        aplicarTextoGenerado('interMotivoTexto', estadoInterconsulta.motivo, generarTextoMotivoInterconsulta(), forzar, 'interRegenerarMotivo');
+    }
+
+    /* ==========================================================
+       PESTAÑAS (Interconsulta / Valoración / Sesión Individual / Alta)
+       ========================================================== */
+
+    let pestañaActiva = 'interconsulta';
+
+    function iniciarPestañas() {
+        document.querySelectorAll('.fisioap-tab').forEach((boton) => {
+            boton.addEventListener('click', () => activarPestaña(boton.dataset.tab));
+        });
+    }
+
+    function activarPestaña(tab) {
+        pestañaActiva = tab;
+        document.querySelectorAll('.fisioap-tab').forEach((boton) => {
+            const activo = boton.dataset.tab === tab;
+            boton.classList.toggle('activo', activo);
+            boton.setAttribute('aria-selected', activo ? 'true' : 'false');
+        });
+        document.querySelectorAll('.fisioap-panel').forEach((panel) => {
+            panel.hidden = panel.dataset.panel !== tab;
+        });
+    }
+
+    // "Borrar todo": limpia SOLO los datos de la pestaña que está activa
+    // en ese momento, no las otras. Pide confirmación para evitar que un
+    // misclick borre una valoración a medio rellenar.
+    function iniciarBorrarTodo() {
+        el('btnBorrarTodo').addEventListener('click', () => {
+            const confirmado = window.confirm('¿Borrar todos los datos de esta pestaña? Esta acción no se puede deshacer.');
+            if (!confirmado) return;
+            if (pestañaActiva === 'interconsulta') {
+                cargarPatologiaInterconsulta(el('interSelectorPatologia').value);
+            } else if (pestañaActiva === 'valoracion') {
+                cargarPatologia(el('selectorPatologia').value);
+            }
+            // "individual" y "alta" no tienen datos que borrar todavía.
+        });
     }
 
     /* ==========================================================
@@ -691,7 +844,8 @@
        Constructores de campos genéricos (data-driven)
        ========================================================== */
 
-    function construirCampoGenerico(campo, almacen, onCambio) {
+    function construirCampoGenerico(campo, almacen, onCambio, prefijoId) {
+        prefijoId = prefijoId || '';
         const wrap = document.createElement('label');
         wrap.className = 'campo-simple';
         if (campo.ayuda) wrap.title = campo.ayuda;
@@ -734,7 +888,7 @@
             input = document.createElement('input');
             input.type = 'text';
         }
-        input.id = 'campo_' + campo.id;
+        input.id = prefijoId + 'campo_' + campo.id;
         if (campo.ayuda) input.title = campo.ayuda;
         input.addEventListener('input', () => {
             almacen[campo.id] = input.value;
