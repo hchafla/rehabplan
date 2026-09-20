@@ -57,6 +57,8 @@
         });
     }
 
+    let datosGenerales = null;
+
     async function iniciar() {
         try {
             await cargarScript(RUTA_DATOS + 'patologias.js');
@@ -64,6 +66,8 @@
             if (listaPatologias.length === 0) throw new Error('patologias.js no definió ninguna patología');
             poblarSelectorPatologias();
             await cargarPatologia(listaPatologias[0].id);
+            await cargarScript(RUTA_DATOS + 'general.js');
+            datosGenerales = window.FISIOAP_GENERAL || null;
             iniciarInterconsulta();
             iniciarPestañas();
             iniciarBorrarTodo();
@@ -106,7 +110,6 @@
     }
 
     function renderTodo() {
-        renderAvisos();
         renderObjetivos();
         renderMotivo();
         renderAnamnesis();
@@ -129,12 +132,25 @@
         return (valor || '').toString().trim();
     }
 
+    // Rellena una pareja de <select> hora/minuto (minutos solo 00/15/30/45,
+    // para que el desplegable limite de verdad la granularidad, algo que
+    // un <input type="time"> no garantiza en todos los navegadores).
+    function poblarSelectoresHora(selectH, selectM) {
+        selectH.innerHTML = '<option value="">--</option>' +
+            Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0'))
+                .map((h) => `<option value="${h}">${h}</option>`).join('');
+        selectM.innerHTML = '<option value="">--</option>' +
+            ['00', '15', '30', '45'].map((m) => `<option value="${m}">${m}</option>`).join('');
+    }
+
     /* ==========================================================
        AVISOS / CRITERIOS DE DERIVACIÓN
+       (solo viven en la pestaña Interconsulta: en Valoración el caso
+       ya ha sido aceptado, así que no hace falta repetirlos)
        ========================================================== */
 
-    // Construye el HTML de los avisos/criterios de derivación a partir de
-    // los datos de una patología. Reutilizado por Valoración e Interconsulta.
+    // Construye el HTML de los avisos/criterios de derivación de UNA
+    // patología concreta.
     function construirAvisosHTML(a) {
         if (!a) return '';
         const inclusion = (a.criteriosInclusion || []).map((t) => `<li>${escapeHTML(t)}</li>`).join('');
@@ -148,10 +164,6 @@
                     ${a.sesionesMaximas ? `<p class="aviso-sesiones">Número máximo de sesiones: <strong>${a.sesionesMaximas}</strong>.</p>` : ''}
                 </div>
             </details>`;
-    }
-
-    function renderAvisos() {
-        el('contenedorAvisos').innerHTML = construirAvisosHTML(config.avisos);
     }
 
     /* ==========================================================
@@ -206,21 +218,32 @@
        siguiente sería un riesgo real de mezclar historias clínicas. */
 
     const CLAVE_LOCALSTORAGE_CENTRO = 'fisioap_centro';
+    const CLAVE_LOCALSTORAGE_GESTION_CITA = 'fisioap_gestion_cita';
 
-    function leerCentroGuardado() {
+    // Genéricas: cualquier preferencia del CENTRO/CONSULTA (no del paciente)
+    // puede guardarse así, pasando su propia clave.
+    function leerValorGuardado(clave) {
         try {
-            return window.localStorage.getItem(CLAVE_LOCALSTORAGE_CENTRO) || '';
+            return window.localStorage.getItem(clave) || '';
         } catch (err) {
             return '';
         }
     }
 
-    function guardarCentro(valor) {
+    function guardarValorGuardado(clave, valor) {
         try {
-            window.localStorage.setItem(CLAVE_LOCALSTORAGE_CENTRO, valor);
+            window.localStorage.setItem(clave, valor);
         } catch (err) {
             // Si el navegador bloquea localStorage (modo privado, etc.) simplemente lo omitimos.
         }
+    }
+
+    function leerCentroGuardado() {
+        return leerValorGuardado(CLAVE_LOCALSTORAGE_CENTRO);
+    }
+
+    function guardarCentro(valor) {
+        guardarValorGuardado(CLAVE_LOCALSTORAGE_CENTRO, valor);
     }
 
     function renderMotivo() {
@@ -301,7 +324,39 @@
             select.appendChild(opt);
         });
         select.addEventListener('change', () => cargarPatologiaInterconsulta(select.value));
+
+        // Los criterios generales son iguales para todas las patologías:
+        // se pintan una sola vez, no dependen de la selección.
+        el('interCriteriosGenerales').innerHTML = construirCriteriosGeneralesHTML();
+
         cargarPatologiaInterconsulta(listaPatologias[0].id);
+    }
+
+    function construirCriteriosGeneralesHTML() {
+        const g = datosGenerales && datosGenerales.criteriosDerivacionGenerales;
+        if (!g) return '';
+
+        const inclusion = (g.clinicosInclusion || []).map((zona) => {
+            if (!zona.items || zona.items.length === 0) {
+                return `<li>${escapeHTML(zona.zona)}</li>`;
+            }
+            if (zona.items.length === 1) {
+                return `<li>${escapeHTML(zona.zona)}: ${escapeHTML(zona.items[0])}</li>`;
+            }
+            const subitems = zona.items.map((i) => `<li>${escapeHTML(i)}</li>`).join('');
+            return `<li>${escapeHTML(zona.zona)}<ul class="aviso-sublista">${subitems}</ul></li>`;
+        }).join('');
+
+        const exclusion = (g.criteriosExclusion || []).map((t) => `<li>${escapeHTML(t)}</li>`).join('');
+
+        return `
+            <details class="aviso-derivacion">
+                <summary>⚠️ Criterios de derivación generales (comunes a todas las patologías)</summary>
+                <div class="aviso-contenido">
+                    ${inclusion ? `<p class="aviso-subtitulo">Clínicos de inclusión</p><ul>${inclusion}</ul>` : ''}
+                    ${exclusion ? `<p class="aviso-subtitulo">Criterios de exclusión</p><ul>${exclusion}</ul>` : ''}
+                </div>
+            </details>`;
     }
 
     async function cargarPatologiaInterconsulta(id) {
@@ -341,10 +396,91 @@
             opciones: ['Se acepta el proceso', 'No se acepta el proceso'],
             sinEtiqueta: true,
             mapaValores: { 'Se acepta el proceso': 'aceptado', 'No se acepta el proceso': 'no_aceptado' }
-        }, estadoInterconsulta.motivo.campos, regenerarMotivoInterconsulta));
+        }, estadoInterconsulta.motivo.campos, () => {
+            actualizarVisibilidadGestionCita();
+            regenerarMotivoInterconsulta();
+        }));
+
+        renderGestionCitaInterconsulta();
+        actualizarVisibilidadGestionCita();
 
         configurarTextoFinal('interMotivoTexto', 'interRegenerarMotivo', estadoInterconsulta.motivo, regenerarMotivoInterconsulta);
         regenerarMotivoInterconsulta(true);
+    }
+
+    // El bloque "Próxima cita" (quién llama, cuándo) solo tiene sentido
+    // una vez se ha aceptado el proceso; se oculta en cualquier otro caso
+    // (y se limpia, para que no quede una frase suelta sin decisión).
+    function actualizarVisibilidadGestionCita() {
+        const contenedor = el('interGestionCitaContenedor');
+        const aceptado = estadoInterconsulta.motivo.campos.inter_decision === 'aceptado';
+        contenedor.hidden = !aceptado;
+    }
+
+    function renderGestionCitaInterconsulta() {
+        const g = datosGenerales && datosGenerales.gestionCita;
+        const cont = el('interGestionCitaCampos');
+        cont.innerHTML = '';
+        if (!g) return;
+
+        const campoOpcion = g.campoOpcion;
+        const wrapSelect = document.createElement('label');
+        wrapSelect.className = 'campo-simple';
+        const span = document.createElement('span');
+        span.textContent = campoOpcion.etiqueta;
+        wrapSelect.appendChild(span);
+        const select = document.createElement('select');
+        select.id = 'inter_' + campoOpcion.id;
+        select.innerHTML = '<option value="">Seleccionar…</option>' +
+            g.opciones.map((o) => `<option value="${escapeHTML(o.id)}">${escapeHTML(o.etiqueta)}</option>`).join('');
+        wrapSelect.appendChild(select);
+        cont.appendChild(wrapSelect);
+
+        const wrapFechaHora = document.createElement('div');
+        wrapFechaHora.className = 'plan-grid-moderno';
+        wrapFechaHora.hidden = true;
+        wrapFechaHora.innerHTML = `
+            <label class="plan-campo">
+                <span>Fecha</span>
+                <input type="date" id="inter_gestion_fecha" class="plan-input">
+            </label>
+            <label class="plan-campo">
+                <span>Hora</span>
+                <div class="plan-hora-grupo">
+                    <select id="inter_gestion_hora_h" class="plan-input"></select>
+                    <span class="plan-hora-separador">:</span>
+                    <select id="inter_gestion_hora_m" class="plan-input"></select>
+                </div>
+            </label>`;
+        cont.appendChild(wrapFechaHora);
+        poblarSelectoresHora(el('inter_gestion_hora_h'), el('inter_gestion_hora_m'));
+
+        if (campoOpcion.persistirLocal) {
+            const valorGuardado = leerValorGuardado(CLAVE_LOCALSTORAGE_GESTION_CITA);
+            if (valorGuardado) select.value = valorGuardado;
+        }
+
+        const actualizarFechaHoraVisible = () => {
+            const opcion = g.opciones.find((o) => o.id === select.value);
+            wrapFechaHora.hidden = !(opcion && opcion.necesitaFechaHora);
+        };
+        actualizarFechaHoraVisible();
+
+        const onCambioOpcion = () => {
+            estadoInterconsulta.motivo.campos.inter_gestion_opcion = select.value;
+            if (campoOpcion.persistirLocal) guardarValorGuardado(CLAVE_LOCALSTORAGE_GESTION_CITA, select.value);
+            actualizarFechaHoraVisible();
+            regenerarMotivoInterconsulta();
+        };
+        select.addEventListener('change', onCambioOpcion);
+        if (select.value) onCambioOpcion();
+
+        ['inter_gestion_fecha', 'inter_gestion_hora_h', 'inter_gestion_hora_m'].forEach((id) => {
+            el(id).addEventListener('change', () => {
+                estadoInterconsulta.motivo.campos[id] = el(id).value;
+                regenerarMotivoInterconsulta();
+            });
+        });
     }
 
     function generarTextoMotivoInterconsulta() {
@@ -363,10 +499,32 @@
 
         if (decision === 'aceptado' && textosDecision.textoAceptado) {
             texto += ' ' + textosDecision.textoAceptado;
+            texto += generarFraseGestionCita(campos);
         } else if (decision === 'no_aceptado' && textosDecision.textoNoAceptado) {
             texto += ' ' + textosDecision.textoNoAceptado;
         }
         return texto;
+    }
+
+    // Frase de "quién llama/cita al paciente", solo si hay opción elegida
+    // y, cuando hace falta fecha/hora, solo si ambas están rellenas (si no,
+    // no se inventa una cita a medias).
+    function generarFraseGestionCita(campos) {
+        const g = datosGenerales && datosGenerales.gestionCita;
+        if (!g) return '';
+        const opcion = (g.opciones || []).find((o) => o.id === campos.inter_gestion_opcion);
+        if (!opcion) return '';
+
+        if (!opcion.necesitaFechaHora) {
+            return ' ' + opcion.texto;
+        }
+        const fecha = limpio(campos.inter_gestion_fecha);
+        const horaH = campos.inter_gestion_hora_h;
+        const horaM = campos.inter_gestion_hora_m;
+        if (!fecha || !horaH || !horaM) return '';
+        return ' ' + opcion.texto
+            .replace('{fecha}', formatearFecha(fecha))
+            .replace('{hora}', `${horaH}:${horaM}`);
     }
 
     function regenerarMotivoInterconsulta(forzar) {
@@ -765,13 +923,7 @@
         // Hora en dos <select> (hora / minutos de 15 en 15): un <input type="time">
         // deja elegir cualquier minuto en el teclado o en algunos navegadores,
         // así que se sustituye por dos desplegables con las opciones exactas.
-        const selectHoraH = el('planHoraH');
-        selectHoraH.innerHTML = '<option value="">--</option>' +
-            Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0'))
-                .map((h) => `<option value="${h}">${h}</option>`).join('');
-        const selectHoraM = el('planHoraM');
-        selectHoraM.innerHTML = '<option value="">--</option>' +
-            ['00', '15', '30', '45'].map((m) => `<option value="${m}">${m}</option>`).join('');
+        poblarSelectoresHora(el('planHoraH'), el('planHoraM'));
 
         ['planSesionesIndividuales', 'planSesionesGrupales', 'planFecha', 'planHoraH', 'planHoraM', 'planTipoSesion', 'planNotas']
             .forEach((id) => {
