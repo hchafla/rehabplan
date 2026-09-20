@@ -225,9 +225,67 @@
 
 </div>
 
-<!-- ================= SESIÓN INDIVIDUAL (próximamente) ================= -->
+<!-- ================= SESIÓN INDIVIDUAL ================= -->
 <div class="fisioap-panel" data-panel="individual" hidden>
-    <p class="fisioap-placeholder">Esta pestaña se construirá en un próximo paso (texto libre de evolución + Plan de actuación).</p>
+
+    <!-- MOTIVO -->
+    <section class="seccion-fisioap">
+        <h2>Motivo</h2>
+        <div id="indivMotivoCampos" class="campo-lista"></div>
+
+        <div class="bloque-texto-final">
+            <div class="cabecera-texto-final">
+                <label class="campo-final-label" for="indivMotivoTexto">Texto final (editable)</label>
+                <button type="button" class="btn-regenerar" id="indivRegenerarMotivo" hidden>↻ Regenerar desde los campos</button>
+            </div>
+            <textarea id="indivMotivoTexto" class="texto-final" rows="3"></textarea>
+        </div>
+        <div class="acciones-copia">
+            <button type="button" class="btn-copiar" data-target="indivMotivoTexto">Copiar MOTIVO</button>
+        </div>
+    </section>
+
+    <!-- ANAMNESIS (nota de evolución) -->
+    <section class="seccion-fisioap">
+        <h2>Anamnesis</h2>
+        <div id="indivAnamnesisCampos" class="campo-lista"></div>
+
+        <div class="bloque-texto-final">
+            <div class="cabecera-texto-final">
+                <label class="campo-final-label" for="indivAnamnesisTexto">Texto final (editable)</label>
+                <button type="button" class="btn-regenerar" id="indivRegenerarAnamnesis" hidden>↻ Regenerar desde los campos</button>
+            </div>
+            <textarea id="indivAnamnesisTexto" class="texto-final" rows="5"></textarea>
+        </div>
+        <div class="acciones-copia">
+            <button type="button" class="btn-copiar" data-target="indivAnamnesisTexto">Copiar ANAMNESIS</button>
+        </div>
+    </section>
+
+    <!-- PLAN DE ACTUACIÓN -->
+    <section class="seccion-fisioap">
+        <h2>Plan de actuación</h2>
+
+        <div class="subseccion" id="indivIntervenciones"></div>
+
+        <div class="subseccion" id="indivRespuestaContenedor"></div>
+
+        <div class="subseccion" id="indivContinuidadContenedor"></div>
+
+        <div class="subseccion" id="indivPlanNotasContenedor"></div>
+
+        <div class="bloque-texto-final">
+            <div class="cabecera-texto-final">
+                <label class="campo-final-label" for="indivPlanTexto">Texto final (editable)</label>
+                <button type="button" class="btn-regenerar" id="indivRegenerarPlan" hidden>↻ Regenerar desde los campos</button>
+            </div>
+            <textarea id="indivPlanTexto" class="texto-final" rows="6"></textarea>
+        </div>
+        <div class="acciones-copia">
+            <button type="button" class="btn-copiar" data-target="indivPlanTexto">Copiar PLAN DE ACTUACIÓN</button>
+        </div>
+    </section>
+
 </div>
 
 <!-- ================= ALTA TRAS SESIÓN GRUPAL (próximamente) ================= -->
