@@ -855,28 +855,38 @@
         regenerarExploracion(true);
     }
 
-    function renderInspeccionPalpacion(datos) {
-        const cont = el('subInspeccionPalpacion');
+    // Todas las subsecciones de Exploración física son opcionales: no toda
+    // patología necesita, por ejemplo, "sensibilidad" (EPOC) o tests
+    // específicos ortopédicos. Si la clave no existe en los datos, se omite
+    // limpiamente en vez de romper.
+    function limpiarContenedor(idContenedor) {
+        const cont = el(idContenedor);
         cont.innerHTML = '';
+        return cont;
+    }
+
+    function renderInspeccionPalpacion(datos) {
+        const cont = limpiarContenedor('subInspeccionPalpacion');
+        if (!datos) return;
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
         const grid = document.createElement('div');
         grid.className = 'campo-grid';
-        datos.campos.forEach((campo) => {
+        (datos.campos || []).forEach((campo) => {
             grid.appendChild(construirCampoGenerico(campo, estado.exploracion.campos, regenerarExploracion));
         });
         cont.appendChild(grid);
     }
 
     function renderMovilidadArticular(datos) {
-        const cont = el('subMovilidadArticular');
-        cont.innerHTML = '';
+        const cont = limpiarContenedor('subMovilidadArticular');
+        if (!datos) return;
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
 
-        datos.movimientos.forEach((mov) => {
+        (datos.movimientos || []).forEach((mov) => {
             cont.appendChild(construirGrupoBotones({
                 id: mov.id,
                 etiqueta: mov.etiqueta,
@@ -893,8 +903,8 @@
     }
 
     function renderBalanceMuscular(datos) {
-        const cont = el('subBalanceMuscular');
-        cont.innerHTML = '';
+        const cont = limpiarContenedor('subBalanceMuscular');
+        if (!datos) return;
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
@@ -906,7 +916,7 @@
         cont.appendChild(ayuda);
 
         const opciones = [...datos.escala.map((e) => e.valor), 'No valorado'];
-        datos.movimientos.forEach((mov) => {
+        (datos.movimientos || []).forEach((mov) => {
             const fila = construirGrupoBotones({
                 id: mov.id,
                 etiqueta: mov.etiqueta,
@@ -918,8 +928,8 @@
     }
 
     function renderActitudPostural(datos) {
-        const cont = el('subActitudPostural');
-        cont.innerHTML = '';
+        const cont = limpiarContenedor('subActitudPostural');
+        if (!datos) return;
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
@@ -930,8 +940,8 @@
     }
 
     function renderSensibilidad(datos) {
-        const cont = el('subSensibilidad');
-        cont.innerHTML = '';
+        const cont = limpiarContenedor('subSensibilidad');
+        if (!datos) return;
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
@@ -943,13 +953,13 @@
     }
 
     function renderTestsEspecificos(datos) {
-        const cont = el('subTestsEspecificos');
-        cont.innerHTML = '';
+        const cont = limpiarContenedor('subTestsEspecificos');
+        if (!datos) return;
         const h3 = document.createElement('h3');
         h3.textContent = datos.titulo;
         cont.appendChild(h3);
 
-        datos.tests.forEach((test) => {
+        (datos.tests || []).forEach((test) => {
             const fila = document.createElement('div');
             fila.className = 'test-fila';
 
@@ -979,57 +989,70 @@
         const partes = [];
 
         // Los títulos de cada bloque van en MAYÚSCULAS en el texto copiado
-        // (así se distinguen mejor al pegarlo en DRAGOAP).
+        // (así se distinguen mejor al pegarlo en DRAGOAP). Cada bloque es
+        // opcional: si la patología no define esa sección, se salta.
 
         // Inspección y palpación
-        const insp = [];
-        ef.inspeccionPalpacion.campos.forEach((campo) => {
-            const t = formatearValorCampo(campo, campos[campo.id]);
-            if (t) insp.push(t);
-        });
-        if (insp.length) partes.push(`INSPECCIÓN Y PALPACIÓN: ${insp.join('; ')}.`);
+        if (ef.inspeccionPalpacion) {
+            const insp = [];
+            ef.inspeccionPalpacion.campos.forEach((campo) => {
+                const t = formatearValorCampo(campo, campos[campo.id]);
+                if (t) insp.push(t);
+            });
+            if (insp.length) partes.push(`INSPECCIÓN Y PALPACIÓN: ${insp.join('; ')}.`);
+        }
 
         // Movilidad articular
-        const mov = [];
-        ef.movilidadArticular.movimientos.forEach((m) => {
-            const v = campos[m.id];
-            if (v) mov.push(`${m.etiqueta.toLowerCase()} - ${v.toLowerCase()}`);
-        });
-        if (mov.length) partes.push(`MOVILIDAD ARTICULAR: ${mov.join('; ')}.`);
-        if (ef.movilidadArticular.campoEspecificaciones) {
-            const especCampo = ef.movilidadArticular.campoEspecificaciones;
-            const especTexto = limpio(campos[especCampo.id]);
-            if (especTexto) partes.push(`${especTexto}.`);
+        if (ef.movilidadArticular) {
+            const mov = [];
+            ef.movilidadArticular.movimientos.forEach((m) => {
+                const v = campos[m.id];
+                if (v) mov.push(`${m.etiqueta.toLowerCase()} - ${v.toLowerCase()}`);
+            });
+            if (mov.length) partes.push(`MOVILIDAD ARTICULAR: ${mov.join('; ')}.`);
+            if (ef.movilidadArticular.campoEspecificaciones) {
+                const especCampo = ef.movilidadArticular.campoEspecificaciones;
+                const especTexto = limpio(campos[especCampo.id]);
+                if (especTexto) partes.push(`${especTexto}.`);
+            }
         }
 
         // Balance muscular (Daniels) — nunca se incluye "No valorado"
-        const fuerza = [];
-        ef.balanceMuscular.movimientos.forEach((m) => {
-            const v = campos[m.id];
-            if (v && v !== 'No valorado') fuerza.push(`${m.etiqueta.toLowerCase()} ${v}/5`);
-        });
-        if (fuerza.length) partes.push(`BALANCE MUSCULAR: ${unirConY(fuerza)} según escala de Daniels.`);
+        if (ef.balanceMuscular) {
+            const fuerza = [];
+            ef.balanceMuscular.movimientos.forEach((m) => {
+                const v = campos[m.id];
+                if (v && v !== 'No valorado') fuerza.push(`${m.etiqueta.toLowerCase()} ${v}/5`);
+            });
+            if (fuerza.length) partes.push(`BALANCE MUSCULAR: ${unirConY(fuerza)} según escala de Daniels.`);
+        }
 
         // Actitud postural
-        const actitudValor = limpio(campos[ef.actitudPostural.campo.id]);
-        if (actitudValor) partes.push(`ACTITUD POSTURAL GENERAL: ${actitudValor}.`);
+        if (ef.actitudPostural) {
+            const actitudValor = limpio(campos[ef.actitudPostural.campo.id]);
+            if (actitudValor) partes.push(`ACTITUD POSTURAL GENERAL: ${actitudValor}.`);
+        }
 
         // Sensibilidad
-        const sens = campos[ef.sensibilidad.campo.id];
-        if (sens) {
-            const obs = limpio(campos[ef.sensibilidad.campoObservaciones.id]);
-            partes.push(`SENSIBILIDAD: ${sens.toLowerCase()}.${obs ? ' Observaciones: ' + obs + '.' : ''}`);
+        if (ef.sensibilidad) {
+            const sens = campos[ef.sensibilidad.campo.id];
+            if (sens) {
+                const obs = limpio(campos[ef.sensibilidad.campoObservaciones.id]);
+                partes.push(`SENSIBILIDAD: ${sens.toLowerCase()}.${obs ? ' Observaciones: ' + obs + '.' : ''}`);
+            }
         }
 
         // Tests específicos — "No realizada" no se documenta
-        const tests = [];
-        ef.testsEspecificos.tests.forEach((t) => {
-            const v = campos[t.id];
-            if (v === 'Positiva' || v === 'Negativa') {
-                tests.push(`${t.nombre} ${v.toLowerCase()}`);
-            }
-        });
-        if (tests.length) partes.push(`TESTS ESPECÍFICOS: ${tests.join('; ')}.`);
+        if (ef.testsEspecificos) {
+            const tests = [];
+            (ef.testsEspecificos.tests || []).forEach((t) => {
+                const v = campos[t.id];
+                if (v === 'Positiva' || v === 'Negativa') {
+                    tests.push(`${t.nombre} ${v.toLowerCase()}`);
+                }
+            });
+            if (tests.length) partes.push(`TESTS ESPECÍFICOS: ${tests.join('; ')}.`);
+        }
 
         return partes.join('\n');
     }
