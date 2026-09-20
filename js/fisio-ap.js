@@ -69,6 +69,7 @@
             await cargarScript(RUTA_DATOS + 'general.js');
             datosGenerales = window.FISIOAP_GENERAL || null;
             iniciarInterconsulta();
+            iniciarIndividual();
             iniciarPestañas();
             iniciarBorrarTodo();
             el('errorCarga').hidden = true;
@@ -532,6 +533,144 @@
     }
 
     /* ==========================================================
+       SESIÓN INDIVIDUAL
+       ==========================================================
+       Sin selector de patología: la nota de evolución es genérica y
+       vale para cualquier proceso (el diagnóstico va como texto libre
+       en MOTIVO). Sus datos viven en general.js, bajo "sesionIndividual".
+       ========================================================== */
+
+    let datosIndividual = null;
+    let estadoIndividual = null;
+
+    function estadoInicialIndividual() {
+        return {
+            motivo: { campos: {}, ultimoGenerado: '' },
+            anamnesis: { campos: {}, ultimoGenerado: '' },
+            plan: { campos: {}, ultimoGenerado: '' }
+        };
+    }
+
+    function iniciarIndividual() {
+        datosIndividual = datosGenerales && datosGenerales.sesionIndividual;
+        if (!datosIndividual) return;
+        estadoIndividual = estadoInicialIndividual();
+        renderMotivoIndividual();
+        renderAnamnesisIndividual();
+        renderPlanIndividual();
+    }
+
+    // ---- Motivo ----
+
+    function renderMotivoIndividual() {
+        const cont = el('indivMotivoCampos');
+        cont.innerHTML = '';
+        (datosIndividual.motivo.campos || []).forEach((campo) => {
+            const elementoCampo = construirCampoGenerico(campo, estadoIndividual.motivo.campos, regenerarMotivoIndividual, 'indiv_');
+            if (campo.persistirLocal) {
+                const input = elementoCampo.querySelector('input, textarea, select');
+                const valorGuardado = leerCentroGuardado();
+                if (valorGuardado) {
+                    input.value = valorGuardado;
+                    estadoIndividual.motivo.campos[campo.id] = valorGuardado;
+                }
+                input.addEventListener('input', () => guardarCentro(input.value));
+                input.addEventListener('change', () => guardarCentro(input.value));
+            }
+            cont.appendChild(elementoCampo);
+        });
+        configurarTextoFinal('indivMotivoTexto', 'indivRegenerarMotivo', estadoIndividual.motivo, regenerarMotivoIndividual);
+        regenerarMotivoIndividual(true);
+    }
+
+    function generarTextoMotivoIndividual() {
+        const p = datosIndividual.motivo.plantilla;
+        const campos = estadoIndividual.motivo.campos;
+        const centro = limpio(campos[p.campoCentro]);
+        const clausula = (p.clausulas || []).find((c) => limpio(campos[c.campo]));
+        if (!centro && !clausula) return '';
+        let texto = p.base + (centro ? p.fragmentoCentro.replace('{valor}', centro) : '');
+        if (clausula) texto += ' ' + clausula.texto.replace('{valor}', limpio(campos[clausula.campo]));
+        return texto + p.sufijo;
+    }
+
+    function regenerarMotivoIndividual(forzar) {
+        aplicarTextoGenerado('indivMotivoTexto', estadoIndividual.motivo, generarTextoMotivoIndividual(), forzar, 'indivRegenerarMotivo');
+    }
+
+    // ---- Anamnesis (nota de evolución) ----
+
+    function renderAnamnesisIndividual() {
+        const cont = el('indivAnamnesisCampos');
+        cont.innerHTML = '';
+        (datosIndividual.anamnesis.campos || []).forEach((campo) => {
+            cont.appendChild(construirCampoGenerico(campo, estadoIndividual.anamnesis.campos, regenerarAnamnesisIndividual, 'indiv_'));
+        });
+        configurarTextoFinal('indivAnamnesisTexto', 'indivRegenerarAnamnesis', estadoIndividual.anamnesis, regenerarAnamnesisIndividual);
+        regenerarAnamnesisIndividual(true);
+    }
+
+    function generarTextoAnamnesisIndividual() {
+        return generarTextoSeccionNarrativa(datosIndividual.anamnesis, estadoIndividual.anamnesis.campos);
+    }
+
+    function regenerarAnamnesisIndividual(forzar) {
+        aplicarTextoGenerado('indivAnamnesisTexto', estadoIndividual.anamnesis, generarTextoAnamnesisIndividual(), forzar, 'indivRegenerarAnamnesis');
+    }
+
+    // ---- Plan de actuación ----
+
+    function renderPlanIndividual() {
+        const pa = datosIndividual.planActuacion;
+
+        const contInt = el('indivIntervenciones');
+        contInt.innerHTML = '';
+        const h3Int = document.createElement('h3');
+        h3Int.textContent = pa.intervenciones.titulo;
+        contInt.appendChild(h3Int);
+        contInt.appendChild(construirChecklist(pa.intervenciones, estadoIndividual.plan.campos, regenerarPlanIndividual));
+
+        const contResp = el('indivRespuestaContenedor');
+        contResp.innerHTML = '';
+        contResp.appendChild(construirCampoGenerico(pa.respuesta.campo, estadoIndividual.plan.campos, regenerarPlanIndividual, 'indiv_'));
+
+        const contCont = el('indivContinuidadContenedor');
+        contCont.innerHTML = '';
+        contCont.appendChild(construirCampoGenerico(pa.continuidad.campo, estadoIndividual.plan.campos, regenerarPlanIndividual, 'indiv_'));
+
+        const contNotas = el('indivPlanNotasContenedor');
+        contNotas.innerHTML = '';
+        contNotas.appendChild(construirCampoGenerico(pa.notasCampo, estadoIndividual.plan.campos, regenerarPlanIndividual, 'indiv_'));
+
+        configurarTextoFinal('indivPlanTexto', 'indivRegenerarPlan', estadoIndividual.plan, regenerarPlanIndividual);
+        regenerarPlanIndividual(true);
+    }
+
+    function generarTextoPlanIndividual() {
+        const pa = datosIndividual.planActuacion;
+        const campos = estadoIndividual.plan.campos;
+        const partes = [];
+
+        const textoInt = generarTextoSeccionChecklist(pa.intervenciones, campos);
+        if (textoInt) partes.push(textoInt);
+
+        const respuesta = campos[pa.respuesta.campo.id];
+        if (respuesta && pa.respuesta.frases[respuesta]) partes.push(pa.respuesta.frases[respuesta]);
+
+        const continuidad = campos[pa.continuidad.campo.id];
+        if (continuidad && pa.continuidad.frases[continuidad]) partes.push(pa.continuidad.frases[continuidad]);
+
+        const notas = limpio(campos[pa.notasCampo.id]);
+        if (notas) partes.push(notas);
+
+        return partes.join('\n');
+    }
+
+    function regenerarPlanIndividual(forzar) {
+        aplicarTextoGenerado('indivPlanTexto', estadoIndividual.plan, generarTextoPlanIndividual(), forzar, 'indivRegenerarPlan');
+    }
+
+    /* ==========================================================
        PESTAÑAS (Interconsulta / Valoración / Sesión Individual / Alta)
        ========================================================== */
 
@@ -566,8 +705,10 @@
                 cargarPatologiaInterconsulta(el('interSelectorPatologia').value);
             } else if (pestañaActiva === 'valoracion') {
                 cargarPatologia(el('selectorPatologia').value);
+            } else if (pestañaActiva === 'individual') {
+                iniciarIndividual();
             }
-            // "individual" y "alta" no tienen datos que borrar todavía.
+            // "alta" no tiene datos que borrar todavía.
         });
     }
 
@@ -622,6 +763,24 @@
             const v = campos[grupo.campo];
             if (v === 'si') return grupo.textoSi || '';
             if (v === 'no') return grupo.textoNo || '';
+            return '';
+        }
+        // Traduce el valor elegido (una "opción") a una frase fija ya
+        // redactada. Nunca genera nada si no hay opción seleccionada.
+        if (grupo.tipo === 'mapaFrases') {
+            const v = campos[grupo.campo];
+            return (v && grupo.frases && grupo.frases[v]) || '';
+        }
+        // Binario (Sí/No) con un texto fijo para "No" y, para "Sí", una
+        // frase con o sin detalle según se haya escrito algo o no.
+        if (grupo.tipo === 'binarioDetalle') {
+            const v = campos[grupo.campo];
+            if (v === 'no') return grupo.textoNo || '';
+            if (v === 'si') {
+                const detalle = limpio(campos[grupo.campoDetalle]);
+                if (detalle && grupo.textoSiConDetalle) return grupo.textoSiConDetalle.replace('{valor}', detalle);
+                return grupo.textoSiSinDetalle || '';
+            }
             return '';
         }
         const partes = (grupo.fragmentos || [])
@@ -1014,6 +1173,23 @@
                 id: campo.id,
                 sinEtiqueta: true,
                 ...opcionesBinarias
+            }, almacen, onCambio));
+            if (campo.ayuda) wrap.appendChild(construirAyudaVisible(campo.ayuda));
+            return wrap;
+        }
+
+        // Botones de una sola opción, con la lista que diga cada campo
+        // (p. ej. Mejor/Igual/Peor, o Sí/Parcial/No). El valor guardado es
+        // literalmente el texto de la opción elegida.
+        if (campo.tipo === 'opciones') {
+            wrap.classList.add('campo-tristate');
+            const span = document.createElement('span');
+            span.textContent = campo.etiqueta;
+            wrap.appendChild(span);
+            wrap.appendChild(construirGrupoBotones({
+                id: campo.id,
+                sinEtiqueta: true,
+                opciones: campo.opciones
             }, almacen, onCambio));
             if (campo.ayuda) wrap.appendChild(construirAyudaVisible(campo.ayuda));
             return wrap;
