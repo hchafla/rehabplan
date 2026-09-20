@@ -1307,6 +1307,13 @@ textarea:focus-visible {
     color: var(--ink);
 }
 
+.aviso-sublista {
+    margin: 2px 0 4px;
+    padding-left: 18px;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+}
+
 .aviso-sesiones {
     font-size: 0.85rem;
     margin: 10px 0 0;
