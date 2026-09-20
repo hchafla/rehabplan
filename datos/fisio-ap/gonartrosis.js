@@ -6,15 +6,19 @@ window.FISIOAP_DATOS['gonartrosis'] = {
   "objetivos": {
     "fuente": "protocolo",
     "general": [
-      "Restaurar la funcionalidad de la rodilla y mantener la autonomía en la deambulación, adaptando al paciente a una vida activa."
+      "Mejorar la calidad de vida del usuario.",
+      "Aumentar su capacidad funcional.",
+      "Disminuir los síntomas de su patología de rodilla.",
+      "Fomentar la responsabilidad del usuario en el autocuidado."
     ],
     "especificos": [
-      "Disminuir el dolor y la inflamación.",
-      "Mejorar/normalizar la movilidad articular (flexo-extensión).",
-      "Recuperar el balance muscular (fuerza y tono de la musculatura periarticular).",
-      "Corregir alteraciones de la marcha y actitudes posturales antiálgicas.",
-      "Prevenir la discapacidad conservando la independencia funcional en las AVD.",
-      "Fomentar el autocuidado, el control ponderal y el ejercicio regular."
+      "Disminuir el dolor.",
+      "Mantener y mejorar la movilidad.",
+      "Recuperar el tono, fuerza o potencia muscular.",
+      "Prevenir la discapacidad, conservando la independencia del usuario.",
+      "Fomentar la responsabilidad del usuario en el autocuidado.",
+      "Educar al usuario en ejercicios terapéuticos y técnicas de protección articular para las rodillas.",
+      "Prevenir complicaciones y recidivas."
     ]
   },
   "avisos": {
