@@ -4,12 +4,11 @@ window.FISIOAP_PATOLOGIAS = [
     "nombre": "Hombro doloroso - Tendinopatías de hombro",
     "archivo": "hombro-doloroso.js"
   },
-  {
-    "id": "epicondilalgias",
-    "nombre": "Codo - Epicondilalgias",
-    "archivo": "epicondilalgias.js"
+  { "id": "codo-epicondilalgia", 
+   "nombre": "Codo - Epicondilalgias", 
+   "archivo": "epicondilalgias.js" 
   },
-  {
+    {
     "id": "gonartrosis",
     "nombre": "Rodilla - Gonartrosis",
     "archivo": "gonartrosis.js"
