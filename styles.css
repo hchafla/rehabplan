@@ -1196,6 +1196,15 @@ textarea:focus-visible {
    Fisio+AP
    ============================== */
 
+/* Blindaje: cualquier elemento con el atributo [hidden] debe quedar
+   siempre oculto, gane la especificidad que gane cualquier otra regla
+   de esta hoja (display: flex/grid/block de una clase, etc.). Sin esto,
+   basta con que una clase fije "display" para que [hidden] deje de
+   funcionar y el elemento se quede visible aunque el JS diga que no. */
+[hidden] {
+    display: none !important;
+}
+
 .fisioap-cabecera {
     max-width: 720px;
     margin: 0 auto 20px;
@@ -1517,6 +1526,10 @@ textarea:focus-visible {
     gap: 14px;
 }
 
+.plan-grid-moderno[hidden] {
+    display: none;
+}
+
 .plan-campo {
     display: flex;
     flex-direction: column;
@@ -1684,6 +1697,12 @@ textarea:focus-visible {
     z-index: 100;
 }
 
+/* El atributo [hidden] debe ganar siempre a "display: flex" de arriba;
+   si no, el modal se queda visible aunque el JS lo marque como oculto. */
+.modal-overlay[hidden] {
+    display: none;
+}
+
 .modal-caja {
     position: relative;
     background: var(--surface);
@@ -1734,6 +1753,10 @@ textarea:focus-visible {
     margin-bottom: 14px;
 }
 
+.modal-imagen[hidden] {
+    display: none;
+}
+
 .modal-test-ayuda {
     font-size: 0.9rem;
     line-height: 1.55;
@@ -1750,6 +1773,10 @@ textarea:focus-visible {
     border-radius: var(--radius-sm);
     padding: 9px 16px;
     text-decoration: none;
+}
+
+.modal-video-link[hidden] {
+    display: none;
 }
 
 .modal-video-link:hover {
