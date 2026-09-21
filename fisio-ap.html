@@ -30,12 +30,15 @@
 
 <div id="errorCarga" class="fisioap-error" hidden>
     <strong>No se han podido cargar los datos de la patología.</strong>
+    <p id="errorCargaDetalle" class="fisioap-error-detalle"></p>
     <p>
-        Si has abierto este archivo con doble clic (protocolo <code>file://</code>), el navegador bloquea
-        por seguridad la carga de los archivos JSON. Ejecuta un servidor local sencillo desde la carpeta
+        Si has abierto este archivo con doble clic (protocolo <code>file://</code>) y el error de arriba
+        menciona <code>fetch</code> o <code>CORS</code>, ejecuta un servidor local sencillo desde la carpeta
         del proyecto, por ejemplo:
     </p>
     <p><code>python3 -m http.server</code> y abre después <code>http://localhost:8000/fisio-ap.html</code></p>
+    <p>Si el error de arriba es otra cosa (una clave que falta, un JSON mal formado…), revisa el archivo
+        <code>.js</code> de la patología que tuvieras seleccionada la última vez.</p>
 </div>
 
 <div class="fisioap-tabs-barra">
