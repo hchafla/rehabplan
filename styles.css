@@ -1240,6 +1240,17 @@ textarea:focus-visible {
     font-size: 0.82rem;
 }
 
+.fisioap-error-detalle {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: var(--surface);
+    border: 1px solid var(--danger);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
 .patologia-selector {
     max-width: 720px;
     margin: 0 auto 20px;
