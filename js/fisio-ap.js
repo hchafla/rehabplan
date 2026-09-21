@@ -70,6 +70,7 @@
             datosGenerales = window.FISIOAP_GENERAL || null;
             iniciarInterconsulta();
             iniciarIndividual();
+            iniciarModalTest();
             iniciarPestañas();
             iniciarBorrarTodo();
             el('errorCarga').hidden = true;
@@ -965,12 +966,16 @@
 
             const info = document.createElement('div');
             info.className = 'test-info';
-            info.innerHTML = `<span class="test-nombre">${escapeHTML(test.nombre)}</span>
-                               <span class="test-estructura">${escapeHTML(test.estructura)}</span>`;
-            if (test.ayuda) {
-                info.title = test.ayuda;
-                info.classList.add('con-ayuda');
-            }
+            const btnNombre = document.createElement('button');
+            btnNombre.type = 'button';
+            btnNombre.className = 'test-nombre-btn';
+            btnNombre.innerHTML = `<span class="test-nombre">${escapeHTML(test.nombre)}</span> ℹ️`;
+            btnNombre.addEventListener('click', () => abrirModalTest(test));
+            const estructura = document.createElement('span');
+            estructura.className = 'test-estructura';
+            estructura.textContent = test.estructura;
+            info.appendChild(btnNombre);
+            info.appendChild(estructura);
             fila.appendChild(info);
 
             fila.appendChild(construirGrupoBotones({
@@ -981,6 +986,60 @@
 
             cont.appendChild(fila);
         });
+    }
+
+    /* ==========================================================
+       MODAL DE INFORMACIÓN DE TEST (imagen + vídeo)
+       ==========================================================
+       Genérico: sirve para los tests de cualquier patología. Cada test
+       puede traer "imagen" (archivo dentro de datos/fisio-ap/img/) y
+       "video" (una URL). Si falta cualquiera de los dos, esa parte del
+       popup simplemente no se muestra.
+       ========================================================== */
+
+    const RUTA_IMG = 'datos/fisio-ap/img/';
+
+    function iniciarModalTest() {
+        el('modalCerrarBtn').addEventListener('click', cerrarModalTest);
+        el('modalTest').addEventListener('click', (e) => {
+            if (e.target.id === 'modalTest') cerrarModalTest();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') cerrarModalTest();
+        });
+    }
+
+    function abrirModalTest(test) {
+        el('modalTestNombre').textContent = test.nombre;
+        el('modalTestEstructura').textContent = test.estructura || '';
+
+        const img = el('modalTestImagen');
+        if (test.imagen) {
+            img.src = RUTA_IMG + test.imagen;
+            img.alt = 'Imagen del ' + test.nombre;
+            img.hidden = false;
+            img.onerror = () => { img.hidden = true; };
+        } else {
+            img.hidden = true;
+            img.removeAttribute('src');
+        }
+
+        el('modalTestAyuda').textContent = test.ayuda || '';
+
+        const enlaceVideo = el('modalTestVideo');
+        if (test.video) {
+            enlaceVideo.href = test.video;
+            enlaceVideo.hidden = false;
+        } else {
+            enlaceVideo.hidden = true;
+            enlaceVideo.removeAttribute('href');
+        }
+
+        el('modalTest').hidden = false;
+    }
+
+    function cerrarModalTest() {
+        el('modalTest').hidden = true;
     }
 
     function generarTextoExploracion() {
