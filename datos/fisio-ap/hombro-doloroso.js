@@ -485,7 +485,7 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
           "id": "test_jobe",
           "nombre": "Jobe",
           "estructura": "Supraespinoso",
-          "ayuda": "Abducción de 90°, antepulsión de 30° y rotación interna máxima (pulgares hacia abajo); se aplica resistencia descendente sobre los brazos.",
+          "ayuda": "Prueba utilizada principalmente para valorar la función del **músculo supraespinoso y de su tendón**, especialmente ante sospecha de lesión del manguito rotador.\n\nEl paciente coloca ambos brazos aproximadamente a **90° de abducción**, unos **30° de flexión anterior** respecto al plano frontal (plano de la escápula) y con los pulgares orientados hacia abajo mediante rotación interna. El fisioterapeuta se sitúa frente al paciente y aplica una fuerza hacia abajo sobre los brazos mientras el paciente intenta mantener la posición.\n\n**Se considera positivo cuando aparece dolor o existe una disminución significativa de la fuerza** respecto al lado contralateral. La pérdida marcada de fuerza puede ser compatible con una lesión importante del supraespinoso, aunque el resultado debe interpretarse junto con el resto de la exploración.\n\n**Posición:** hombro a 90° de abducción y aproximadamente 30° de antepulsión, codo extendido y pulgar hacia abajo.\n\n**Maniobra:** resistencia hacia abajo mientras el paciente intenta mantener los brazos elevados.\n\n**Valora:** principalmente supraespinoso.\n\n**Positivo:** dolor y/o debilidad durante la resistencia.",
           "imagen": "jobe.webp",
           "video": null
         },
