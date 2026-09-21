@@ -1646,14 +1646,114 @@ textarea:focus-visible {
     color: var(--ink);
 }
 
-.test-info.con-ayuda .test-nombre {
-    cursor: help;
-    border-bottom: 1px dotted var(--ink-faint);
+.test-nombre-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-body);
+    cursor: pointer;
+    text-align: left;
+}
+
+.test-nombre-btn .test-nombre {
+    border-bottom: 1px dotted var(--brand);
+}
+
+.test-nombre-btn:hover .test-nombre {
+    color: var(--brand-dark);
 }
 
 .test-estructura {
     font-size: 0.78rem;
     color: var(--ink-faint);
+}
+
+/* Modal de información de test (imagen + vídeo) */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 20, 20, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+
+.modal-caja {
+    position: relative;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 26px 24px;
+    max-width: 480px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.modal-caja h3 {
+    margin: 0 0 2px;
+    padding-right: 24px;
+}
+
+.modal-test-estructura {
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+    margin: 0 0 14px;
+}
+
+.modal-cerrar {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-size: 1.4rem;
+    line-height: 1;
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.modal-cerrar:hover {
+    color: var(--ink);
+}
+
+.modal-imagen {
+    display: block;
+    width: 100%;
+    max-height: 260px;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    background: var(--surface-alt);
+    margin-bottom: 14px;
+}
+
+.modal-test-ayuda {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0 0 14px;
+}
+
+.modal-video-link {
+    display: inline-block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: white;
+    background: var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 9px 16px;
+    text-decoration: none;
+}
+
+.modal-video-link:hover {
+    background: var(--accent-dark);
 }
 
 /* Frases predefinidas (MOTIVO) */
