@@ -76,6 +76,7 @@
             el('errorCarga').hidden = true;
         } catch (err) {
             console.error('Fisio+AP: error al cargar los datos', err);
+            el('errorCargaDetalle').textContent = 'Detalle técnico: ' + (err && err.message ? err.message : err);
             el('errorCarga').hidden = false;
         }
     }
