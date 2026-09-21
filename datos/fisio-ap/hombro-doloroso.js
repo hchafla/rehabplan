@@ -485,43 +485,49 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
           "id": "test_jobe",
           "nombre": "Jobe",
           "estructura": "Supraespinoso",
-          "ayuda": "Abducción de 90°, antepulsión de 30° y rotación interna máxima (pulgares hacia abajo); se aplica resistencia descendente sobre los brazos."
+          "ayuda": "Abducción de 90°, antepulsión de 30° y rotación interna máxima (pulgares hacia abajo); se aplica resistencia descendente sobre los brazos.",
+          "imagen": "jobe.webp",
+          "video": null
         },
         {
           "id": "test_yergason",
           "nombre": "Yergason",
           "estructura": "Bíceps braquial (porción larga)",
-          "ayuda": "Brazo pegado al cuerpo, codo en flexión de 90° y mano en pronación; se resiste la flexo-supinación del codo y se valora el dolor en el canal bicipital."
+          "ayuda": "Brazo pegado al cuerpo, codo en flexión de 90° y mano en pronación; se resiste la flexo-supinación del codo y se valora el dolor en el canal bicipital.",
+          "imagen": "yergason.webp",
+          "video": null
         },
         {
           "id": "test_neer",
           "nombre": "Neer",
           "estructura": "Síndrome subacromial",
-          "ayuda": "Se estabiliza la escápula y se realiza una abducción pasiva en rotación interna; es positivo si aparece dolor entre 70° y 120°."
+          "ayuda": "Se estabiliza la escápula y se realiza una abducción pasiva en rotación interna; es positivo si aparece dolor entre 70° y 120°.",
+          "imagen": "neer.webp",
+          "video": null
         },
         {
           "id": "test_gerber",
           "nombre": "Gerber (lift-off test)",
           "estructura": "Subescapular",
-          "ayuda": "Mano del paciente tras la espalda, en rotación interna; se retira la mano de la zona lumbar contra resistencia."
+          "ayuda": "Mano del paciente tras la espalda, en rotación interna; se retira la mano de la zona lumbar contra resistencia.",
+          "imagen": "gerber.webp",
+          "video": null
         },
         {
           "id": "test_patte",
           "nombre": "Patte",
           "estructura": "Infraespinoso / redondo menor",
-          "ayuda": "90° de abducción, 30° de anteversión y codo en 90° apoyado sobre el antebrazo del explorador; se solicita rotación externa activa contra resistencia, comparando con el lado contrario."
+          "ayuda": "90° de abducción, 30° de anteversión y codo en 90° apoyado sobre el antebrazo del explorador; se solicita rotación externa activa contra resistencia, comparando con el lado contrario.",
+          "imagen": "patte.webp",
+          "video": null
         },
         {
           "id": "test_palmup",
           "nombre": "Palm-up test (Speed)",
-          "estructura": "Porción larga del bíceps braquial",
-          "ayuda": "Codo en extensión, antebrazo en supinación y hombro en flexión de 90°; se resiste la flexión del hombro y se valora el dolor en la corredera bicipital."
-        },
-        {
-          "id": "test_palm_up",
-          "nombre": "Palm-up test (Speed)",
-          "estructura": "Bíceps braquial (porción larga) / labrum",
-          "ayuda": "Codo en extensión, antebrazo supinado (palma hacia arriba) y hombro en flexión anterior de unos 90°; se aplica resistencia descendente. El dolor en la corredera bicipital sugiere afectación de la porción larga del bíceps."
+          "estructura": "Bíceps braquial (porción larga)",
+          "ayuda": "Codo en extensión, antebrazo supinado (palma hacia arriba) y hombro en flexión anterior de unos 90°; se aplica resistencia descendente. El dolor en la corredera bicipital sugiere afectación de la porción larga del bíceps.",
+          "imagen": "palm-up.webp",
+          "video": null
         }
       ]
     }
