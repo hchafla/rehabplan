@@ -1025,7 +1025,10 @@
             img.removeAttribute('src');
         }
 
-        el('modalTestAyuda').textContent = test.ayuda || '';
+        // innerHTML a propósito: el campo "ayuda" lo escribes tú mismo en el
+        // .js de cada patología (no es texto de un paciente ni de un
+        // formulario), así que puedes usar <b>, <br>, etc. con seguridad.
+        el('modalTestAyuda').innerHTML = test.ayuda || '';
 
         const enlaceVideo = el('modalTestVideo');
         if (test.video) {
