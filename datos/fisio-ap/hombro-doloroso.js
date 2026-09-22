@@ -490,44 +490,40 @@ window.FISIOAP_DATOS['hombro-doloroso'] = {
           "video": "https://www.youtube.com/watch?v=gbnF6WGPnGU",
         },
         {
-          "id": "test_yergason",
-          "nombre": "Yergason",
-          "estructura": "Bíceps braquial (porción larga)",
-          "ayuda": "Brazo pegado al cuerpo, codo en flexión de 90° y mano en pronación; se resiste la flexo-supinación del codo y se valora el dolor en el canal bicipital.",
-          "imagen": "yergason.webp",
-          "video": null
+          "id": "test_patte",
+          "nombre": "Patte",
+          "estructura": "Infraespinoso / redondo menor",
+          "ayuda": "Prueba utilizada principalmente para valorar la función de los <b>rotadores externos del hombro</b>, especialmente el <b>infraespinoso y el redondo menor</b>, componentes del manguito rotador.<br><br>El paciente coloca el hombro aproximadamente a <b>90° de abducción</b>, con unos <b>30° de flexión anterior respecto al plano frontal (plano de la escápula)</b> y el codo flexionado a <b>90°</b>. El fisioterapeuta sostiene el antebrazo del paciente y aplica una resistencia que intenta llevar el antebrazo hacia la rotación interna, mientras el paciente realiza una <b>rotación externa contra resistencia</b>.<br><br>Se compara la fuerza y la aparición de dolor con respecto al <b>hombro contralateral</b>. Una disminución significativa de la fuerza o la aparición de dolor puede indicar una alteración de los rotadores externos, aunque el resultado debe interpretarse junto con el resto de la exploración.<br><br><b>Posición:</b> hombro a 90° de abducción y aproximadamente 30° de antepulsión, codo flexionado a 90° y antebrazo inicialmente en posición neutra.<br><br><b>Maniobra:</b> el paciente realiza rotación externa del hombro contra la resistencia aplicada por el fisioterapeuta.<br><br><b>Valora:</b> principalmente infraespinoso y redondo menor.<br><br><b>Positivo:</b> dolor y/o disminución de la fuerza respecto al lado contralateral.",          "imagen": "patte.webp",
+          "video": "https://www.youtube.com/watch?v=YI9hCfBaiAc",
+        },
+       {
+          "id": "test_gerber",
+          "nombre": "Gerber (lift-off test)",
+          "estructura": "Subescapular",
+          "ayuda": "Prueba utilizada principalmente para valorar la función del <b>músculo subescapular</b>, especialmente ante sospecha de lesión de su tendón.<br><br>El paciente coloca la mano del lado a explorar <b>detrás de la espalda</b>, aproximadamente a la altura de la región lumbar, realizando rotación interna del hombro con el codo flexionado. Desde esta posición, se solicita al paciente que <b>separe la mano de la espalda</b>, realizando una extensión del hombro, mientras mantiene el codo flexionado. La capacidad para realizar y mantener este movimiento se compara con el lado contralateral.<br><br>En la versión clásica, el fisioterapeuta puede aplicar una <b>resistencia hacia la espalda</b> mientras el paciente intenta mantener la mano separada. La incapacidad para levantar la mano de la espalda o para mantenerla separada, especialmente cuando no puede realizar la posición inicial, puede ser indicativa de una alteración importante del subescapular.<br><br><b>Posición:</b> mano detrás de la espalda, en la región lumbar, con el hombro en rotación interna y el codo flexionado aproximadamente 90°.<br><br><b>Maniobra:</b> el paciente separa la mano de la espalda y mantiene el brazo en esa posición.<br><br><b>Valora:</b> principalmente subescapular.<br><br><b>Positivo:</b> incapacidad para separar o mantener la mano alejada de la espalda, o aparición de debilidad/dolor durante la maniobra.",          "imagen": "gerber.webp",
+          "video": "https://www.youtube.com/watch?v=n9PQM16_iww",
         },
         {
           "id": "test_neer",
           "nombre": "Neer",
           "estructura": "Síndrome subacromial",
-          "ayuda": "Se estabiliza la escápula y se realiza una abducción pasiva en rotación interna; es positivo si aparece dolor entre 70° y 120°.",
+          "ayuda": "Prueba utilizada principalmente para valorar la presencia de <b>dolor relacionado con estructuras subacromiales</b>, especialmente en el contexto de un posible síndrome de dolor subacromial.<br><br>El paciente permanece de pie mientras el fisioterapeuta <b>estabiliza la escápula y la región superior del hombro con una mano</b>. Con la otra mano, eleva pasivamente el brazo del paciente en <b>flexión anterior</b>, manteniendo el hombro en <b>rotación interna</b>. El movimiento se realiza de forma progresiva hasta alcanzar la máxima elevación posible.<br><br>La maniobra reduce el espacio subacromial y puede provocar dolor cuando existe irritación de las estructuras implicadas. El dolor suele aparecer durante la elevación, especialmente en el arco comprendido aproximadamente entre <b>70° y 120°</b>, aunque el ángulo no debe utilizarse de forma aislada para establecer un diagnóstico.<br><br><b>Posición:</b> paciente de pie, brazo relajado, codo extendido y hombro en rotación interna.<br><br><b>Maniobra:</b> el fisioterapeuta estabiliza la escápula y realiza una elevación pasiva del brazo en flexión anterior, manteniendo la rotación interna.<br><br><b>Valora:</b> principalmente dolor relacionado con estructuras subacromiales.<br><br><b>Positivo:</b> reproducción del dolor habitual del paciente durante la elevación pasiva del brazo.",
           "imagen": "neer.webp",
-          "video": null
-        },
-        {
-          "id": "test_gerber",
-          "nombre": "Gerber (lift-off test)",
-          "estructura": "Subescapular",
-          "ayuda": "Mano del paciente tras la espalda, en rotación interna; se retira la mano de la zona lumbar contra resistencia.",
-          "imagen": "gerber.webp",
-          "video": null
-        },
-        {
-          "id": "test_patte",
-          "nombre": "Patte",
-          "estructura": "Infraespinoso / redondo menor",
-          "ayuda": "90° de abducción, 30° de anteversión y codo en 90° apoyado sobre el antebrazo del explorador; se solicita rotación externa activa contra resistencia, comparando con el lado contrario.",
-          "imagen": "patte.webp",
-          "video": null
+          "video": "https://www.youtube.com/watch?v=Gg_NyOG3AGw",
         },
         {
           "id": "test_palmup",
           "nombre": "Palm-up test (Speed)",
           "estructura": "Bíceps braquial (porción larga)",
-          "ayuda": "Codo en extensión, antebrazo supinado (palma hacia arriba) y hombro en flexión anterior de unos 90°; se aplica resistencia descendente. El dolor en la corredera bicipital sugiere afectación de la porción larga del bíceps.",
-          "imagen": "palm-up.webp",
-          "video": null
+          "ayuda": "Prueba utilizada principalmente para valorar el <b>tendón de la porción larga del bíceps braquial</b>, especialmente ante sospecha de tendinopatía o irritación en la corredera bicipital.<br><br>El paciente coloca el brazo extendido hacia delante aproximadamente a <b>90° de flexión de hombro</b>, con el codo completamente extendido y el antebrazo en <b>supinación</b>, de manera que la palma de la mano quede orientada hacia arriba. El fisioterapeuta aplica una resistencia hacia abajo sobre el antebrazo o la muñeca mientras el paciente intenta mantener o elevar la posición del brazo.<br><br>Se considera positivo cuando aparece <b>dolor localizado en la región anterior del hombro</b>, especialmente en la zona de la corredera bicipital, durante la contracción contra resistencia. La presencia de dolor debe interpretarse junto con el resto de la exploración clínica.<br><br><b>Posición:</b> hombro aproximadamente a 90° de flexión, codo extendido y antebrazo en supinación, con la palma hacia arriba.<br><br><b>Maniobra:</b> resistencia hacia abajo mientras el paciente mantiene el brazo elevado.<br><br><b>Valora:</b> principalmente la porción larga del bíceps braquial.<br><br><b>Positivo:</b> aparición o reproducción del dolor en la región anterior del hombro durante la resistencia.",          "imagen": "palm-up.webp",
+          "video": "https://www.youtube.com/watch?v=3QED6euSz-s",
+        },
+        {
+          "id": "test_yergason",
+          "nombre": "Yergason",
+          "estructura": "Bíceps braquial (porción larga)",
+          "ayuda": "Prueba utilizada principalmente para valorar la <b>porción larga del bíceps braquial y su tendón</b>, especialmente en relación con la estabilidad del tendón en la corredera bicipital.<br><br>El paciente mantiene el codo flexionado a <b>90°</b>, con el brazo junto al tronco y el antebrazo inicialmente en <b>pronación</b>. El fisioterapeuta estabiliza el codo y solicita al paciente que realice simultáneamente <b>supinación del antebrazo y rotación externa del hombro contra resistencia</b>.<br><br>Se considera positivo cuando aparece <b>dolor en la región anterior del hombro</b>, especialmente sobre la corredera bicipital, o cuando se aprecia una sensación de <b>resalte o desplazamiento del tendón</b> durante la maniobra. El resultado debe interpretarse junto con el resto de la exploración clínica.<br><br><b>Posición:</b> hombro junto al tronco, codo flexionado a 90° y antebrazo en pronación.<br><br><b>Maniobra:</b> supinación del antebrazo y rotación externa del hombro contra resistencia.<br><br><b>Valora:</b> principalmente la porción larga del bíceps braquial y la estabilidad de su tendón en la corredera bicipital.<br><br><b>Positivo:</b> dolor en la región anterior del hombro y/o resalte o desplazamiento del tendón durante la maniobra.",          "imagen": "yergason.webp",
+          "video": "https://www.youtube.com/watch?v=0a6b0kfCH4U",
         }
       ]
     }
