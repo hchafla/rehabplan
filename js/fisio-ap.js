@@ -65,9 +65,12 @@
             listaPatologias = window.FISIOAP_PATOLOGIAS || [];
             if (listaPatologias.length === 0) throw new Error('patologias.js no definió ninguna patología');
             poblarSelectorPatologias();
-            await cargarPatologia(listaPatologias[0].id);
+            // general.js (tablas normativas, gestión de cita, sesión individual...) debe
+            // cargarse ANTES de la primera patología, porque su renderizado (p. ej. la
+            // dinamometría de prensión) puede necesitar datosGenerales ya disponible.
             await cargarScript(RUTA_DATOS + 'general.js');
             datosGenerales = window.FISIOAP_GENERAL || null;
+            await cargarPatologia(listaPatologias[0].id);
             iniciarInterconsulta();
             iniciarIndividual();
             iniciarModalTest();
@@ -849,6 +852,7 @@
         renderInspeccionPalpacion(ef.inspeccionPalpacion);
         renderMovilidadArticular(ef.movilidadArticular);
         renderBalanceMuscular(ef.balanceMuscular);
+        renderDinamometria(ef.dinamometriaPrension);
         renderActitudPostural(ef.actitudPostural);
         renderSensibilidad(ef.sensibilidad);
         renderTestsEspecificos(ef.testsEspecificos);
@@ -927,6 +931,334 @@
             }, estado.exploracion.campos, regenerarExploracion);
             cont.appendChild(fila);
         });
+    }
+
+    /* ==========================================================
+       DINAMOMETRÍA DE PRENSIÓN MANUAL
+       ==========================================================
+       Opcional (como el resto de subsecciones): solo aparece si la
+       patología define ef.dinamometriaPrension. La tabla normativa
+       (Steiber N. 2016, PLOS ONE, DOI 10.1371/journal.pone.0163917)
+       vive en general.js, en datosGenerales.normativaDinamometria,
+       porque no es específica de ninguna patología y así se puede
+       reutilizar sin duplicar los 196 valores en cada .js.
+       ========================================================== */
+
+    // "32.5" -> "32,5" (coma decimal, como en el ejemplo del texto pedido)
+    function formatearNumeroEs(numero, decimales) {
+        return numero.toFixed(decimales).replace('.', ',');
+    }
+
+    // Grupos de edad EXACTOS de las tablas originales de Steiber (17-90 años).
+    function buscarGrupoEdadSteiber(edad) {
+        const rangos = [
+            [17, 19, '17-19'], [20, 24, '20-24'], [25, 29, '25-29'], [30, 34, '30-34'],
+            [35, 39, '35-39'], [40, 44, '40-44'], [45, 49, '45-49'], [50, 54, '50-54'],
+            [55, 59, '55-59'], [60, 64, '60-64'], [65, 69, '65-69'], [70, 74, '70-74'],
+            [75, 79, '75-79'], [80, 90, '80-90']
+        ];
+        const r = rangos.find(([min, max]) => edad >= min && edad <= max);
+        return r ? r[2] : null;
+    }
+
+    // Grupos de talla EXACTOS de la tabla (distintos para hombres/mujeres:
+    // hombres tiene un grupo abierto "190+"; mujeres no pasa de 180-184,
+    // porque la muestra del estudio no incluyó mujeres más altas).
+    function buscarGrupoTallaSteiber(sexo, talla) {
+        const tabla = datosGenerales && datosGenerales.normativaDinamometria && datosGenerales.normativaDinamometria.steiber2016;
+        if (!tabla) return null;
+        const bloque = sexo === 'Hombre' ? tabla.hombres : tabla.mujeres;
+        if (!bloque) return null;
+        if (talla < bloque.tallaMinCm) return null;
+        if (sexo === 'Hombre') {
+            if (talla >= 190) return '190+';
+            const base = Math.floor((talla - 160) / 5) * 5 + 160;
+            return `${base}-${base + 4}`;
+        }
+        if (talla > bloque.tallaMaxCm) return null;
+        const base = Math.floor((talla - 150) / 5) * 5 + 150;
+        return `${base}-${base + 4}`;
+    }
+
+    // Devuelve { grupoEdad, grupoTalla, valor } — valor es {media, umbralRiesgo}
+    // o null si esa combinación exacta no consta en la tabla original (nunca
+    // se inventa ni se interpola).
+    function buscarValorReferenciaSteiber(sexo, edad, talla) {
+        const tabla = datosGenerales && datosGenerales.normativaDinamometria && datosGenerales.normativaDinamometria.steiber2016;
+        if (!tabla || !sexo || !Number.isFinite(edad) || !Number.isFinite(talla)) {
+            return { grupoEdad: null, grupoTalla: null, valor: null };
+        }
+        const grupoEdad = buscarGrupoEdadSteiber(edad);
+        const grupoTalla = buscarGrupoTallaSteiber(sexo, talla);
+        if (!grupoEdad || !grupoTalla) return { grupoEdad, grupoTalla, valor: null };
+        const bloque = sexo === 'Hombre' ? tabla.hombres : tabla.mujeres;
+        const valor = (bloque.valores[grupoEdad] && bloque.valores[grupoEdad][grupoTalla]) || null;
+        return { grupoEdad, grupoTalla, valor };
+    }
+
+    function renderDinamometria(datos) {
+        const cont = limpiarContenedor('subDinamometria');
+        if (!datos) return;
+        const h3 = document.createElement('h3');
+        h3.textContent = datos.titulo;
+        cont.appendChild(h3);
+
+        const onCambio = () => { actualizarResultadoDinamometria(); regenerarExploracion(); };
+        const campos = estado.exploracion.campos;
+
+        // Datos para la referencia
+        const gridRef = document.createElement('div');
+        gridRef.className = 'campo-grid';
+        gridRef.appendChild(construirCampoGenerico(
+            { id: 'dina_sexo', tipo: 'select', etiqueta: 'Sexo', opciones: ['Hombre', 'Mujer'] }, campos, onCambio));
+        gridRef.appendChild(construirCampoGenerico(
+            { id: 'dina_edad', tipo: 'numero', etiqueta: 'Edad (años)', min: 0, max: 120,
+              ayuda: 'El grupo de edad de la tabla de referencia se determina automáticamente.' }, campos, onCambio));
+        gridRef.appendChild(construirCampoGenerico(
+            { id: 'dina_talla', tipo: 'numero', etiqueta: 'Talla (cm)', min: 100, max: 230,
+              ayuda: 'Opcional; solo hace falta para comparar con la tabla de referencia.' }, campos, onCambio));
+        gridRef.appendChild(construirCampoGenerico(
+            { id: 'dina_mano_dominante', tipo: 'select', etiqueta: 'Mano dominante', opciones: ['Derecha', 'Izquierda'] }, campos, onCambio));
+        cont.appendChild(gridRef);
+
+        // Dispositivo (con "Otro" -> marca/modelo libre). Predeterminado a
+        // SAEHAN Smedley, pero nunca bloquea registrar la medición si es otro.
+        const gridDispositivo = document.createElement('div');
+        gridDispositivo.className = 'campo-grid';
+
+        const labelDisp = document.createElement('label');
+        labelDisp.className = 'campo-simple';
+        const spanDisp = document.createElement('span');
+        spanDisp.textContent = 'Dinamómetro utilizado';
+        const selectDisp = document.createElement('select');
+        selectDisp.innerHTML = ['SAEHAN Smedley', 'Otro'].map((o) => `<option value="${o}">${o}</option>`).join('');
+        selectDisp.value = 'SAEHAN Smedley';
+        campos.dina_dispositivo = 'SAEHAN Smedley';
+        labelDisp.appendChild(spanDisp);
+        labelDisp.appendChild(selectDisp);
+        gridDispositivo.appendChild(labelDisp);
+
+        const labelOtro = document.createElement('label');
+        labelOtro.className = 'campo-simple';
+        labelOtro.hidden = true;
+        const spanOtro = document.createElement('span');
+        spanOtro.textContent = 'Marca / modelo';
+        const inputOtro = document.createElement('input');
+        inputOtro.type = 'text';
+        labelOtro.appendChild(spanOtro);
+        labelOtro.appendChild(inputOtro);
+        gridDispositivo.appendChild(labelOtro);
+
+        selectDisp.addEventListener('change', () => {
+            campos.dina_dispositivo = selectDisp.value;
+            labelOtro.hidden = selectDisp.value !== 'Otro';
+            if (selectDisp.value !== 'Otro') {
+                campos.dina_dispositivo_otro = '';
+                inputOtro.value = '';
+            }
+            onCambio();
+        });
+        inputOtro.addEventListener('input', () => {
+            campos.dina_dispositivo_otro = inputOtro.value;
+            onCambio();
+        });
+        cont.appendChild(gridDispositivo);
+
+        // Medición: dos columnas (derecha / izquierda), mismos campos cada una
+        const filaManos = document.createElement('div');
+        filaManos.className = 'dinamometria-manos';
+        ['Derecha', 'Izquierda'].forEach((lado) => {
+            const prefijo = lado === 'Derecha' ? 'dina_der' : 'dina_izq';
+            const col = document.createElement('div');
+            col.className = 'dinamometria-columna';
+            const tituloCol = document.createElement('h4');
+            tituloCol.textContent = 'Mano ' + lado.toLowerCase();
+            col.appendChild(tituloCol);
+            col.appendChild(construirCampoGenerico(
+                { id: `${prefijo}_valor`, tipo: 'numero', etiqueta: 'Prensión máxima (kg)', min: 0, max: 150, step: 0.1 }, campos, onCambio));
+            col.appendChild(construirCampoGenerico(
+                { id: `${prefijo}_dolor`, tipo: 'binario', etiqueta: 'Dolor durante la prueba' }, campos, onCambio));
+            col.appendChild(construirCampoGenerico(
+                { id: `${prefijo}_obs`, tipo: 'texto', etiqueta: 'Observaciones' }, campos, onCambio));
+            filaManos.appendChild(col);
+        });
+        cont.appendChild(filaManos);
+
+        // Paneles calculados (no son campos, se recalculan solos)
+        const resultado = document.createElement('div');
+        resultado.id = 'dinamometriaResultado';
+        resultado.className = 'dinamometria-panel';
+        cont.appendChild(resultado);
+
+        const referencia = document.createElement('div');
+        referencia.id = 'dinamometriaReferencia';
+        referencia.className = 'dinamometria-panel';
+        cont.appendChild(referencia);
+
+        // Reproducibilidad + nota metodológica + cita, plegado por defecto
+        const info = document.createElement('details');
+        info.className = 'dinamometria-info';
+        const fuenteSteiber = datosGenerales && datosGenerales.normativaDinamometria && datosGenerales.normativaDinamometria.steiber2016;
+        info.innerHTML = `
+            <summary>ℹ️ Sobre esta medición y su referencia</summary>
+            <p><strong>Para que la medición sea comparable entre sesiones:</strong></p>
+            <ul>
+                <li>Realiza la medición en ambas manos.</li>
+                <li>Utiliza siempre el mismo dinamómetro y la misma configuración.</li>
+                <li>Mantén una posición de medición constante.</li>
+                <li>Mantén un número de intentos constante.</li>
+                <li>Mantén tiempos de descanso constantes.</li>
+                <li>Registra el valor máximo obtenido según el protocolo de tu centro.</li>
+            </ul>
+            ${fuenteSteiber ? `
+                <p class="dinamometria-nota-metodologica">${escapeHTML(fuenteSteiber.fuente.notaMetodologica)}</p>
+                <p class="dinamometria-cita">${escapeHTML(fuenteSteiber.fuente.cita)}</p>` : ''}
+        `;
+        cont.appendChild(info);
+
+        actualizarResultadoDinamometria();
+    }
+
+    function actualizarResultadoDinamometria() {
+        const contResultado = el('dinamometriaResultado');
+        const contReferencia = el('dinamometriaReferencia');
+        if (!contResultado || !contReferencia) return;
+
+        const campos = estado.exploracion.campos;
+        const derVal = parseFloat(campos.dina_der_valor);
+        const izqVal = parseFloat(campos.dina_izq_valor);
+        const derValida = Number.isFinite(derVal);
+        const izqValida = Number.isFinite(izqVal);
+
+        if (!derValida && !izqValida) {
+            contResultado.innerHTML = '';
+            contReferencia.innerHTML = '';
+            return;
+        }
+
+        const dominante = campos.dina_mano_dominante;
+        const filas = [];
+        if (derValida) filas.push(`Derecha: <strong>${formatearNumeroEs(derVal, 1)} kg</strong>`);
+        if (izqValida) filas.push(`Izquierda: <strong>${formatearNumeroEs(izqVal, 1)} kg</strong>`);
+
+        let lineaBilateral = '';
+        if (derValida && izqValida && (dominante === 'Derecha' || dominante === 'Izquierda')) {
+            const dominanteKg = dominante === 'Derecha' ? derVal : izqVal;
+            const noDominanteKg = dominante === 'Derecha' ? izqVal : derVal;
+            const diffKg = Math.abs(derVal - izqVal);
+            const maxKg = Math.max(derVal, izqVal);
+            const diffPct = maxKg > 0 ? (diffKg / maxKg) * 100 : 0;
+            lineaBilateral = `
+                <p>Dominante: <strong>${formatearNumeroEs(dominanteKg, 1)} kg</strong> ·
+                   No dominante: <strong>${formatearNumeroEs(noDominanteKg, 1)} kg</strong></p>
+                <p>Diferencia entre manos: <strong>${formatearNumeroEs(diffKg, 1)} kg (${formatearNumeroEs(diffPct, 1)}%)</strong></p>`;
+        } else if (derValida && izqValida) {
+            lineaBilateral = '<p class="dinamometria-aviso-suave">Indica la mano dominante para calcular la diferencia bilateral.</p>';
+        }
+
+        contResultado.innerHTML = `
+            <p class="dinamometria-panel-titulo">Resultado</p>
+            <p>${filas.join(' · ')}</p>
+            ${lineaBilateral}
+        `;
+
+        // Referencia normativa
+        const sexo = campos.dina_sexo;
+        const edad = parseFloat(campos.dina_edad);
+        const talla = parseFloat(campos.dina_talla);
+        const edadValida = Number.isFinite(edad);
+        const tallaValida = Number.isFinite(talla);
+        const dominanteValida = dominante === 'Derecha' ? derValida : (dominante === 'Izquierda' ? izqValida : false);
+
+        const faltantes = [];
+        if (!sexo) faltantes.push('el sexo');
+        if (!edadValida) faltantes.push('la edad');
+        if (!tallaValida) faltantes.push('la talla');
+        if (!dominante) faltantes.push('la mano dominante');
+        if (dominante && !dominanteValida) faltantes.push(`la medición de la mano ${dominante.toLowerCase()}`);
+
+        if (faltantes.length > 0) {
+            contReferencia.innerHTML = `<p class="dinamometria-panel-titulo">Referencia publicada</p>
+                <p class="dinamometria-aviso-suave">Introduzca ${unirConY(faltantes)} para mostrar el valor de referencia.</p>`;
+            return;
+        }
+
+        const ref = buscarValorReferenciaSteiber(sexo, edad, talla);
+        const fuenteSteiber = datosGenerales && datosGenerales.normativaDinamometria && datosGenerales.normativaDinamometria.steiber2016;
+        if (!fuenteSteiber) { contReferencia.innerHTML = ''; return; }
+
+        if (!ref.grupoEdad || !ref.grupoTalla) {
+            contReferencia.innerHTML = `<p class="dinamometria-panel-titulo">Referencia publicada</p>
+                <p class="dinamometria-aviso-suave">La edad o la talla introducidas quedan fuera del rango de la tabla de referencia. No se muestra comparación.</p>`;
+            return;
+        }
+        if (!ref.valor) {
+            contReferencia.innerHTML = `<p class="dinamometria-panel-titulo">Referencia publicada</p>
+                <p class="dinamometria-aviso-suave">No hay un valor publicado para esta combinación exacta de edad y talla en la tabla original.</p>`;
+            return;
+        }
+
+        const dominanteKg = dominante === 'Derecha' ? derVal : izqVal;
+        const avisoDispositivo = campos.dina_dispositivo === 'Otro'
+            ? '<p class="dinamometria-aviso-suave">La referencia seleccionada procede de mediciones realizadas con un dinamómetro Smedley. La comparabilidad puede verse afectada por el instrumento y el protocolo de medición.</p>'
+            : '';
+
+        contReferencia.innerHTML = `
+            <p class="dinamometria-panel-titulo">${escapeHTML(fuenteSteiber.nombreVisible)}</p>
+            <p>Resultado (mano dominante): <strong>${formatearNumeroEs(dominanteKg, 1)} kg</strong></p>
+            <p>Referencia publicada: <strong>${formatearNumeroEs(ref.valor.media, 1)} kg</strong></p>
+            <p class="dinamometria-referencia-cita">Steiber 2016 · sexo ${sexo === 'Hombre' ? 'masculino' : 'femenino'} · grupo de edad ${ref.grupoEdad} años · grupo de talla ${ref.grupoTalla} cm.</p>
+            ${avisoDispositivo}
+        `;
+    }
+
+    // Texto narrativo para EXPLORACIÓN FÍSICA. Nunca genera nada con datos
+    // vacíos ni emite valoraciones (normal/anormal/déficit...): solo hechos.
+    function generarTextoDinamometria(campos) {
+        const derVal = parseFloat(campos.dina_der_valor);
+        const izqVal = parseFloat(campos.dina_izq_valor);
+        const derValida = Number.isFinite(derVal);
+        const izqValida = Number.isFinite(izqVal);
+        if (!derValida && !izqValida) return '';
+
+        const partes = [];
+
+        if (derValida && izqValida) {
+            partes.push(`Se obtiene una fuerza de prensión de ${formatearNumeroEs(derVal, 1)} kg en la mano derecha y ${formatearNumeroEs(izqVal, 1)} kg en la izquierda.`);
+            const dominante = campos.dina_mano_dominante;
+            if (dominante === 'Derecha' || dominante === 'Izquierda') {
+                const diffKg = Math.abs(derVal - izqVal);
+                const maxKg = Math.max(derVal, izqVal);
+                const diffPct = maxKg > 0 ? (diffKg / maxKg) * 100 : 0;
+                partes.push(`La mano dominante es la ${dominante.toLowerCase()}, observándose una diferencia entre ambas manos de ${formatearNumeroEs(diffKg, 1)} kg (${formatearNumeroEs(diffPct, 1)}%).`);
+            }
+        } else if (derValida) {
+            partes.push(`Se obtiene una fuerza de prensión de ${formatearNumeroEs(derVal, 1)} kg en la mano derecha.`);
+        } else {
+            partes.push(`Se obtiene una fuerza de prensión de ${formatearNumeroEs(izqVal, 1)} kg en la mano izquierda.`);
+        }
+
+        const manosConDolor = [];
+        if (campos.dina_der_dolor === 'si') manosConDolor.push('derecha');
+        if (campos.dina_izq_dolor === 'si') manosConDolor.push('izquierda');
+        if (manosConDolor.length === 2) partes.push('Durante la medición se reproduce dolor en ambas manos.');
+        else if (manosConDolor.length === 1) partes.push(`Durante la medición se reproduce dolor en la mano ${manosConDolor[0]}.`);
+
+        const dominante = campos.dina_mano_dominante;
+        const dominanteValida = dominante === 'Derecha' ? derValida : (dominante === 'Izquierda' ? izqValida : false);
+        if (dominanteValida) {
+            const ref = buscarValorReferenciaSteiber(campos.dina_sexo, parseFloat(campos.dina_edad), parseFloat(campos.dina_talla));
+            if (ref.valor) {
+                partes.push('El resultado de la mano dominante se compara con los valores de referencia publicados por Steiber et al. para población alemana según sexo, edad y talla.');
+            }
+        }
+
+        const obsDer = limpio(campos.dina_der_obs);
+        if (obsDer) partes.push(`Observaciones (mano derecha): ${obsDer}.`);
+        const obsIzq = limpio(campos.dina_izq_obs);
+        if (obsIzq) partes.push(`Observaciones (mano izquierda): ${obsIzq}.`);
+
+        return partes.join(' ');
     }
 
     function renderActitudPostural(datos) {
@@ -1088,6 +1420,12 @@
                 if (v && v !== 'No valorado') fuerza.push(`${m.etiqueta.toLowerCase()} ${v}/5`);
             });
             if (fuerza.length) partes.push(`BALANCE MUSCULAR: ${unirConY(fuerza)} según escala de Daniels.`);
+        }
+
+        // Dinamometría de prensión manual
+        if (ef.dinamometriaPrension) {
+            const textoDina = generarTextoDinamometria(campos);
+            if (textoDina) partes.push(`DINAMOMETRÍA DE PRENSIÓN MANUAL: ${textoDina}`);
         }
 
         // Actitud postural
@@ -1291,6 +1629,7 @@
             input.type = 'number';
             if (campo.min !== undefined) input.min = campo.min;
             if (campo.max !== undefined) input.max = campo.max;
+            if (campo.step !== undefined) input.step = campo.step;
         } else if (campo.tipo === 'select') {
             input = document.createElement('select');
             input.innerHTML = '<option value="">Seleccionar…</option>' +
