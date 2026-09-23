@@ -496,6 +496,17 @@ window.FISIOAP_DATOS['codo-epicondilalgia'] = {
         }
       ]
     },
+    "dinamometriaPrension": {
+      "titulo": "Dinamometría de prensión manual",
+      "dispositivo": {
+        "marca": "SAEHAN",
+        "modelo": "Smedley",
+        "referencia": "08-010401",
+        "tipo": "resorte",
+        "rangoKg": "0-100",
+        "notaDispositivo": "No confundir con el Saehan SH5001 (hidráulico); esta sección está pensada para el Smedley de resorte."
+      }
+    },
     "actitudPostural": {
       "titulo": "Actitud postural general",
       "campo": {
@@ -531,31 +542,41 @@ window.FISIOAP_DATOS['codo-epicondilalgia'] = {
           "id": "test_thomson",
           "nombre": "Maniobra de Thomson",
           "estructura": "Epicóndilo lateral / Musculatura extensora",
-          "ayuda": "Dolor al realizar la extensión contra resistencia de la muñeca con el puño cerrado y el codo en extensión completa. Positivo: dolor en epicóndilo lateral/musculatura radial."
+          "ayuda": "Dolor al realizar la extensión contra resistencia de la muñeca con el puño cerrado y el codo en extensión completa. Positivo: dolor en epicóndilo lateral/musculatura radial.",
+          "imagen": "thomson.webp",
+          "video": null
         },
         {
           "id": "test_mill",
           "nombre": "Maniobra de Mill",
           "estructura": "Epicóndilo lateral / Musculatura extensora",
-          "ayuda": "Con codo flexionado y pronado, el paciente intenta la supinación contra resistencia del explorador. Positivo: dolor en epicóndilo lateral o musculatura extensora."
+          "ayuda": "Con codo flexionado y pronado, el paciente intenta la supinación contra resistencia del explorador. Positivo: dolor en epicóndilo lateral o musculatura extensora.",
+          "imagen": "mill.webp",
+          "video": null
         },
         {
           "id": "test_cozen",
           "nombre": "Maniobra de Cozen",
           "estructura": "Epicóndilo lateral / Extensores radiales",
-          "ayuda": "Con codo en flexión, el paciente realiza extensión de muñeca contra resistencia. Positivo: dolor en epicóndilo lateral."
+          "ayuda": "Con codo en flexión, el paciente realiza extensión de muñeca contra resistencia. Positivo: dolor en epicóndilo lateral.",
+          "imagen": "cozen.webp",
+          "video": null
         },
         {
           "id": "test_cozen_invertida",
           "nombre": "Maniobra de Cozen invertida",
           "estructura": "Epicóndilo medial / Musculatura flexora",
-          "ayuda": "El paciente intenta flexionar la mano (extendida) contra resistencia. Positivo: dolor agudo y punzante en epicóndilo medial."
+          "ayuda": "El paciente intenta flexionar la mano (extendida) contra resistencia. Positivo: dolor agudo y punzante en epicóndilo medial.",
+          "imagen": "cozen-invertida.webp",
+          "video": null
         },
         {
           "id": "test_codo_golfista",
           "nombre": "Signo del codo de golfista",
           "estructura": "Epicóndilo medial / Musculatura flexora-pronadora",
-          "ayuda": "Codo flexionado, intenta flexión palmar y extender el brazo contra resistencia. Positivo: dolor en epicóndilo medial y masa flexora."
+          "ayuda": "Codo flexionado, intenta flexión palmar y extender el brazo contra resistencia. Positivo: dolor en epicóndilo medial y masa flexora.",
+          "imagen": "codo-golfista.webp",
+          "video": null
         }
       ]
     }
