@@ -575,7 +575,7 @@ window.FISIOAP_DATOS['codo-epicondilalgia'] = {
           "nombre": "Signo del codo de golfista",
           "estructura": "Epicóndilo medial / Musculatura flexora-pronadora",
           "ayuda": "Prueba utilizada principalmente para valorar estructuras relacionadas con la <b>epicondilalgia medial</b>, especialmente la <b>musculatura flexora del antebrazo</b> y su origen tendinoso en el <b>epicóndilo medial</b>.<br><br><b>Posición:</b> el paciente mantiene el <b>codo flexionado</b> y realiza una <b>flexión palmar de la muñeca</b>, llevando la mano hacia abajo. El fisioterapeuta sujeta la mano del paciente con una mano y <b>estabiliza el brazo con la otra</b>.<br><br><b>Maniobra:</b> desde esta posición, se solicita al paciente que <b>intente extender el brazo contra resistencia</b> mientras mantiene la posición de flexión palmar de la mano. El fisioterapeuta fija el brazo y se opone al intento de extensión.<br><br><b>Valora:</b> principalmente la <b>musculatura flexora del antebrazo</b> y las estructuras relacionadas con el <b>epicóndilo medial</b>.<br><br><b>Resultado positivo:</b> aparición de <b>dolor en el epicóndilo medial</b> y/o en la <b>musculatura flexora del antebrazo</b>.",
-          "imagen": "codo-golfista.webp",
+          "imagen": "golfista.webp",
           "video": "https://www.facebook.com/watch/?v=757576985063504",
         }
       ]
