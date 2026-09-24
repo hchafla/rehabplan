@@ -721,6 +721,19 @@
        2. ANAMNESIS
        ========================================================== */
 
+    // Botón genérico para enlazar un recurso descargable (p. ej. un PDF
+    // imprimible de una escala) desde cualquier sección de anamnesis. No
+    // guarda ningún dato del paciente: solo abre/descarga el archivo.
+    function construirBotonRecurso(recurso) {
+        const a = document.createElement('a');
+        a.className = 'btn-recurso-pdf';
+        a.href = recurso.archivo;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.textContent = '📄 ' + recurso.etiqueta;
+        return a;
+    }
+
     function renderAnamnesis() {
         const cont = el('anamnesisCampos');
         cont.innerHTML = '';
@@ -750,6 +763,9 @@
                     lista.appendChild(construirCampoGenerico(campo, estado.anamnesis.campos, regenerarAnamnesis));
                 });
                 box.appendChild(lista);
+            }
+            if (seccion.recursoDescargable) {
+                box.appendChild(construirBotonRecurso(seccion.recursoDescargable));
             }
             cont.appendChild(box);
         });
@@ -1244,14 +1260,9 @@
         if (manosConDolor.length === 2) partes.push('Durante la medición se reproduce dolor en ambas manos.');
         else if (manosConDolor.length === 1) partes.push(`Durante la medición se reproduce dolor en la mano ${manosConDolor[0]}.`);
 
-        const dominante = campos.dina_mano_dominante;
-        const dominanteValida = dominante === 'Derecha' ? derValida : (dominante === 'Izquierda' ? izqValida : false);
-        if (dominanteValida) {
-            const ref = buscarValorReferenciaSteiber(campos.dina_sexo, parseFloat(campos.dina_edad), parseFloat(campos.dina_talla));
-            if (ref.valor) {
-                partes.push('El resultado de la mano dominante se compara con los valores de referencia publicados por Steiber et al. para población alemana según sexo, edad y talla.');
-            }
-        }
+        // Nota: la comparación con la referencia de Steiber se muestra solo en el
+        // panel visual ("Referencia publicada"), no se traslada al texto copiable
+        // de la HC — no aporta al informe clínico y Héctor pidió quitarla de ahí.
 
         const obsDer = limpio(campos.dina_der_obs);
         if (obsDer) partes.push(`Observaciones (mano derecha): ${obsDer}.`);
