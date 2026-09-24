@@ -352,7 +352,11 @@ window.FISIOAP_DATOS['codo-epicondilalgia'] = {
             ],
             "sufijo": "."
           }
-        ]
+        ],
+        "recursoDescargable": {
+          "etiqueta": "PRTEE (versión imprimible)",
+          "archivo": "pdf/prtee.pdf"
+        }
       }
     ]
   },
@@ -544,7 +548,7 @@ window.FISIOAP_DATOS['codo-epicondilalgia'] = {
           "estructura": "Epicóndilo lateral / Musculatura extensora",
           "ayuda": "Prueba utilizada principalmente para provocar síntomas relacionados con la <b>musculatura extensora de la muñeca</b> y el <b>origen tendinoso común de los extensores en el epicóndilo lateral</b>, especialmente en la valoración de una posible epicondilalgia lateral.<br><br>El paciente permanece sentado o de pie, con el brazo del lado a explorar y el <b>codo completamente extendido</b>. El antebrazo se mantiene en una posición neutra o ligeramente pronada y la mano permanece cerrada en forma de <b>puño</b>. El fisioterapeuta estabiliza el antebrazo y aplica una resistencia sobre el dorso de la mano, mientras solicita al paciente que realice una <b>extensión de la muñeca contra resistencia</b>.<br><br>La maniobra provoca una contracción de la musculatura extensora de la muñeca y aumenta la tensión sobre su origen en la región del epicóndilo lateral. La prueba se considera positiva cuando <b>reproduce el dolor habitual del paciente</b>, especialmente si aparece de forma localizada en el epicóndilo lateral o se extiende por la región proximal de la musculatura extensora del antebrazo.<br><br><b>Posición:</b> paciente con el codo completamente extendido, antebrazo en posición neutra o ligeramente pronada y mano cerrada en puño.<br><br><b>Maniobra:</b> el paciente realiza una extensión de la muñeca contra resistencia aplicada por el fisioterapeuta sobre el dorso de la mano.<br><br><b>Valora:</b> principalmente la musculatura extensora de la muñeca y su origen tendinoso común en el epicóndilo lateral.<br><br><b>Positivo:</b> reproducción del dolor en el epicóndilo lateral y/o en la región proximal de la musculatura extensora del antebrazo durante la extensión resistida de la muñeca.",
           "imagen": "thomson.webp",
-          "video": "https://youtu.be/lETOBVzE1Qo?si=TOA7Ed3kzQbc1hN-",
+          "video": "https://youtu.be/lETOBVzE1Qo?si=TOA7Ed3kzQbc1hN-"
         },
         {
           "id": "test_mill",
@@ -560,7 +564,7 @@ window.FISIOAP_DATOS['codo-epicondilalgia'] = {
           "estructura": "Epicóndilo lateral / Extensores radiales",
           "ayuda": "Prueba utilizada principalmente para valorar estructuras relacionadas con la <b>epicondilalgia lateral</b>, especialmente la <b>musculatura extensora de la muñeca</b> y su origen en el <b>epicóndilo lateral</b>.<br><br><b>Posición:</b> paciente sentado o de pie, con el <b>codo flexionado</b>, el antebrazo en <b>pronación</b> y la mano cerrada en puño.<br><br><b>Maniobra:</b> se solicita al paciente que realice una <b>extensión de la muñeca contra resistencia</b>, mientras el fisioterapeuta aplica resistencia sobre el dorso de la mano y estabiliza el antebrazo.<br><br><b>Valora:</b> principalmente la <b>musculatura extensora de la muñeca</b> y las estructuras tendinosas próximas al <b>epicóndilo lateral</b>.<br><br><b>Resultado positivo:</b> <b>reproducción de dolor intenso en el epicóndilo lateral</b> y/o en la musculatura extensora radial del antebrazo.",
           "imagen": "cozen.webp",
-          "video": "https://www.youtube.com/watch?v=4fx4scbG5Hs",
+          "video": "https://www.youtube.com/watch?v=4fx4scbG5Hs"
         },
         {
           "id": "test_cozen_invertida",
@@ -568,7 +572,7 @@ window.FISIOAP_DATOS['codo-epicondilalgia'] = {
           "estructura": "Epicóndilo medial / Musculatura flexora",
           "ayuda": "Prueba utilizada principalmente para valorar estructuras relacionadas con la <b>epicondilalgia medial</b>, especialmente la <b>musculatura flexora de la muñeca</b> y su origen tendinoso en el <b>epicóndilo medial</b>.<br><br><b>Posición:</b> el paciente mantiene el <b>codo flexionado</b> y el antebrazo en una posición estable. La <b>muñeca se encuentra extendida</b>, con los dedos extendidos.<br><br><b>Maniobra:</b> se solicita al paciente que realice una <b>flexión de la muñeca contra resistencia</b>, intentando llevar la mano hacia abajo desde la posición de extensión. El fisioterapeuta aplica resistencia sobre la <b>superficie palmar de la mano</b>, oponiéndose al movimiento.<br><br><b>Valora:</b> principalmente la <b>musculatura flexora de la muñeca</b> y las estructuras tendinosas próximas al <b>epicóndilo medial</b>.<br><br><b>Resultado positivo:</b> aparición de <b>dolor agudo y punzante en el epicóndilo medial</b>, que puede extenderse hacia la musculatura flexora del antebrazo.",
           "imagen": "cozen-invertida.webp",
-          "video": "https://www.youtube.com/watch?v=ETrXk-tqzFk",
+          "video": "https://www.youtube.com/watch?v=ETrXk-tqzFk"
         },
         {
           "id": "test_codo_golfista",
@@ -576,7 +580,7 @@ window.FISIOAP_DATOS['codo-epicondilalgia'] = {
           "estructura": "Epicóndilo medial / Musculatura flexora-pronadora",
           "ayuda": "Prueba utilizada principalmente para valorar estructuras relacionadas con la <b>epicondilalgia medial</b>, especialmente la <b>musculatura flexora del antebrazo</b> y su origen tendinoso en el <b>epicóndilo medial</b>.<br><br><b>Posición:</b> el paciente mantiene el <b>codo flexionado</b> y realiza una <b>flexión palmar de la muñeca</b>, llevando la mano hacia abajo. El fisioterapeuta sujeta la mano del paciente con una mano y <b>estabiliza el brazo con la otra</b>.<br><br><b>Maniobra:</b> desde esta posición, se solicita al paciente que <b>intente extender el brazo contra resistencia</b> mientras mantiene la posición de flexión palmar de la mano. El fisioterapeuta fija el brazo y se opone al intento de extensión.<br><br><b>Valora:</b> principalmente la <b>musculatura flexora del antebrazo</b> y las estructuras relacionadas con el <b>epicóndilo medial</b>.<br><br><b>Resultado positivo:</b> aparición de <b>dolor en el epicóndilo medial</b> y/o en la <b>musculatura flexora del antebrazo</b>.",
           "imagen": "golfista.webp",
-          "video": "https://www.facebook.com/watch/?v=757576985063504",
+          "video": "https://www.facebook.com/watch/?v=757576985063504"
         }
       ]
     }
