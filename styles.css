@@ -1882,6 +1882,24 @@ textarea:focus-visible {
     display: none;
 }
 
+.btn-recurso-pdf {
+    display: inline-block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--brand-dark);
+    background: var(--brand-soft);
+    border: 1px solid var(--brand);
+    border-radius: var(--radius-sm);
+    padding: 7px 13px;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.btn-recurso-pdf:hover {
+    background: var(--brand);
+    color: white;
+}
+
 .modal-video-link:hover {
     background: var(--accent-dark);
 }
