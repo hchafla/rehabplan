@@ -1111,26 +1111,24 @@
         referencia.className = 'dinamometria-panel';
         cont.appendChild(referencia);
 
-        // Reproducibilidad + nota metodológica + cita, plegado por defecto
+        // Guía de medición + valores de referencia: el contenido enriquecido
+        // (con negritas, encabezados y la imagen del dinamómetro) vive en
+        // general.js como HTML, no aquí — así se puede editar sin tocar código.
         const info = document.createElement('details');
         info.className = 'dinamometria-info';
         const fuenteSteiber = datosGenerales && datosGenerales.normativaDinamometria && datosGenerales.normativaDinamometria.steiber2016;
         info.innerHTML = `
-            <summary>ℹ️ Sobre esta medición y su referencia</summary>
-            <p><strong>Para que la medición sea comparable entre sesiones:</strong></p>
-            <ul>
-                <li>Realiza la medición en ambas manos.</li>
-                <li>Utiliza siempre el mismo dinamómetro y la misma configuración.</li>
-                <li>Mantén una posición de medición constante.</li>
-                <li>Mantén un número de intentos constante.</li>
-                <li>Mantén tiempos de descanso constantes.</li>
-                <li>Registra el valor máximo obtenido según el protocolo de tu centro.</li>
-            </ul>
-            ${fuenteSteiber ? `
-                <p class="dinamometria-nota-metodologica">${escapeHTML(fuenteSteiber.fuente.notaMetodologica)}</p>
-                <p class="dinamometria-cita">${escapeHTML(fuenteSteiber.fuente.cita)}</p>` : ''}
+            <summary>ℹ️ Sobre la medición y los valores de referencia</summary>
+            ${fuenteSteiber && fuenteSteiber.guiaMedicionHTML ? fuenteSteiber.guiaMedicionHTML : ''}
         `;
         cont.appendChild(info);
+
+        // La imagen del dinamómetro es opcional: si aún no se ha subido,
+        // se oculta con elegancia en vez de mostrar un icono roto.
+        const imgDina = info.querySelector('.dinamometria-imagen-info');
+        if (imgDina) {
+            imgDina.onerror = () => { imgDina.style.display = 'none'; };
+        }
 
         actualizarResultadoDinamometria();
     }
