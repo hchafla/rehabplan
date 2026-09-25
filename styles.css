@@ -1734,6 +1734,39 @@ textarea:focus-visible {
     color: var(--ink-faint);
 }
 
+.dinamometria-info h4 {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--brand-dark);
+    margin: 16px 0 6px;
+}
+
+.dinamometria-info h4:first-of-type {
+    margin-top: 10px;
+}
+
+.dinamometria-info p {
+    margin: 6px 0;
+}
+
+.dinamometria-imagen-info-wrap {
+    margin: 12px 0;
+}
+
+.dinamometria-imagen-info {
+    display: block;
+    max-width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    margin: 0 auto;
+}
+
 /* Tests específicos */
 
 .test-fila {
