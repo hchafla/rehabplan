@@ -391,15 +391,106 @@
   },
   {
     "id": 31,
-    "nombre": "Rotación externa hombro",
+    "nombre": "Rotación externa de hombro con banda/cable",
     "region": "Hombro",
-    "objetivo": "fortalecer",
+    "objetivo": "Fortalecimiento",
     "material": "Banda elástica",
-    "imagen": "/img/hombro/rotextbanda.webp",
-    "youtube": "https://www.youtube.com/watch?v=wQdfeB80fqo",
-    "descripcion": "Ejercicio para fortalecer",
+    "imagen": "/img/hombro/rotacion-externa-de-hombro-con-banda-cable.webp",
+    "youtube": "https://youtu.be/wQdfeB80fqo?si=vVsowXmqJXS89lKL",
+    "descripcion": "Con el codo pegado al cuerpo y flexionado a 90°, gira el antebrazo hacia fuera manteniendo el codo junto al tronco y vuelve lentamente a la posición inicial.",
     "etiquetas": [
-      "Prevención"
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 32,
+    "nombre": "Rotación interna de hombro con banda/cable",
+    "region": "Hombro",
+    "objetivo": "Fortalecimiento",
+    "material": "Banda elástica",
+    "imagen": "/img/hombro/rotacion-interna-de-hombro-con-banda-cable.webp",
+    "youtube": "https://youtu.be/F-x7OBhfTbE?si=48MprvC-Moq7JIan",
+    "descripcion": "De pie, mantén el codo derecho pegado al cuerpo y flexionado a 90°, y lleva la mano derecha desde el lateral hacia el abdomen mientras mantienes el brazo fijo.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 33,
+    "nombre": "Remo sentado en máquina",
+    "region": "Espalda",
+    "objetivo": "Fortalecimiento",
+    "material": "Máquinas",
+    "imagen": "/img/espalda/remo-sentado-en-maquina.webp",
+    "youtube": "https://www.youtube.com/watch?v=VWyhefUKTp4",
+    "descripcion": "Sentado en la máquina, tira de las asas hacia el abdomen llevando los codos hacia atrás y manteniendo la espalda estable y el pecho erguido.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 34,
+    "nombre": "Flexión de brazos en pared con protracción escapular",
+    "region": "Hombro",
+    "objetivo": "Fortalecimiento",
+    "material": "Sin material",
+    "imagen": "/img/hombro/flexion-de-brazos-en-pared-con-protraccion-escapular.webp",
+    "youtube": "https://youtube.com/shorts/p8ZpiJTMKew?si=zBq-6Fz_Vbd0Sh-k",
+    "descripcion": "Apoya las manos en la pared, flexiona ligeramente los codos acercando el pecho y, al volver, empuja la pared separando los omóplatos sin encoger los hombros.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 35,
+    "nombre": "Elevación de brazos en plano escapular",
+    "region": "Hombro",
+    "objetivo": "Fortalecimiento",
+    "material": "Sin material",
+    "imagen": "/img/hombro/elevacion-de-brazos-en-plano-escapular.webp",
+    "youtube": "https://youtu.be/Q5m5SRZoWgw?si=458gXOY4xhsXaMcM",
+    "descripcion": "Eleva lentamente los brazos hacia delante y ligeramente hacia los lados, siguiendo el plano de los omóplatos, y vuelve a bajarlos de forma controlada.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 36,
+    "nombre": "Elevación de brazos asistida con bastón en supino",
+    "region": "Hombro",
+    "objetivo": "Fortalecimiento",
+    "material": "Pica",
+    "imagen": "/img/hombro/elevacion-asistida-con-baston-en-supino.webp",
+    "youtube": "https://www.youtube.com/watch?v=wSP6f0ZodB0",
+    "descripcion": "Tumbado boca arriba, sujeta un bastón con ambas manos y utiliza el brazo izquierdo para ayudar al derecho a elevarse por encima de la cabeza de forma lenta y controlada.",
+    "etiquetas": [
+      "Movilidad"
+    ]
+  },
+  {
+    "id": 37,
+    "nombre": "Curl de bíceps",
+    "region": "Codo",
+    "objetivo": "Fortalecimiento",
+    "material": "Mancuerna",
+    "imagen": "/img/codo/curl-de-biceps.webp",
+    "youtube": "https://youtube.com/shorts/WrpQYs_n_Pw?si=EXs3s5m04-D57fWA",
+    "descripcion": "Flexiona los codos llevando las mancuernas hacia los hombros y vuelve lentamente a la posición inicial, manteniendo los brazos junto al cuerpo.",
+    "etiquetas": [
+      "Tonificación"
+    ]
+  },
+  {
+    "id": 38,
+    "nombre": "Extensión de codos en polea",
+    "region": "Codo",
+    "objetivo": "Fortalecimiento",
+    "material": "Polea",
+    "imagen": "/img/codo/extension-de-codo-en-polea.webp",
+    "youtube": "https://youtu.be/8bT39MQVaCI?si=-39aVfk3EXCysr2d",
+    "descripcion": "Empuja la barra hacia abajo extendiendo los codos y vuelve lentamente a la posición inicial sin separar los codos del cuerpo.",
+    "etiquetas": [
+      "Tonificación"
     ]
   }
 ]
