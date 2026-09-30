@@ -516,7 +516,7 @@ window.FISIOAP_DATOS['rodilla-otras'] = {
       },
       {
         "id": "rec_ejercicios_pautados",
-        "texto": "Se pautan ejercicios domiciliarios (fortalecimiento isométrico/excéntrico, trabajo de glúteo medio y estiramientos) y se explican al paciente."
+        "texto": "Se pautan ejercicios domiciliarios y se explican al paciente."
       },
       {
         "id": "rec_hoja_ejercicios",
