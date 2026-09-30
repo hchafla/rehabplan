@@ -430,8 +430,16 @@ window.FISIOAP_DATOS['gonartrosis'] = {
           "etiqueta": "Abductores de cadera / Glúteo medio"
         },
         {
-          "id": "fuerza_psoas_gluteomax",
-          "etiqueta": "Flexores / Extensores de cadera"
+          "id": "fuerza_flexores_cadera",
+          "etiqueta": "Flexores de cadera"
+        },
+        {
+          "id": "fuerza_extensores_cadera",
+          "etiqueta": "Extensores de cadera (Glúteo mayor)"
+        },
+        {
+          "id": "fuerza_aductores_cadera",
+          "etiqueta": "Aductores de cadera"
         }
       ]
     },
@@ -505,7 +513,7 @@ window.FISIOAP_DATOS['gonartrosis'] = {
       },
       {
         "id": "rec_ejercicios_pautados",
-        "texto": "Se pautan ejercicios domiciliarios (potenciación isométrica/isotónica cuádriceps, movilidad y estiramientos) y se explican al paciente."
+        "texto": "Se pautan ejercicios domiciliarios y se explican al paciente."
       },
       {
         "id": "rec_hoja_ejercicios",
