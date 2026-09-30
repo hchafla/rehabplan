@@ -326,7 +326,7 @@ window.FISIOAP_DATOS['rodilla-otras'] = {
         {
           "id": "insp_deformidad",
           "tipo": "texto",
-          "etiqueta": "Alineación y deaxaciones",
+          "etiqueta": "Alineación y desviaciones",
           "ayuda": "Ej.: Genu valgo, genu varo, genu recurvatum, rotación patelar, estrabismo rotuliano..."
         },
         {
@@ -422,7 +422,7 @@ window.FISIOAP_DATOS['rodilla-otras'] = {
       "movimientos": [
         {
           "id": "fuerza_cuadriceps",
-          "etiqueta": "Cuádriceps (extensión de rodilla / VMO)"
+          "etiqueta": "Cuádriceps (extensión de rodilla)"
         },
         {
           "id": "fuerza_isquiotibiales",
@@ -430,11 +430,19 @@ window.FISIOAP_DATOS['rodilla-otras'] = {
         },
         {
           "id": "fuerza_gluteo_medio",
-          "etiqueta": "Glúteo medio / Abductores de cadera"
+          "etiqueta": "Abductores de cadera (glúteo medio)"
+        },
+        {
+          "id": "fuerza_aductores_cadera",
+          "etiqueta": "Aductores de cadera"
+        },
+        {
+          "id": "fuerza_extensores_cadera",
+          "etiqueta": "Extensores de cadera (glúteo mayor)"
         },
         {
           "id": "fuerza_triceps_sural",
-          "etiqueta": "Tríceps sural / Flexores plantares"
+          "etiqueta": "Tríceps sural (flexión plantar)"
         }
       ]
     },
