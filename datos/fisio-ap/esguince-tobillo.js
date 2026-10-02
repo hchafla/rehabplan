@@ -604,8 +604,16 @@ window.FISIOAP_DATOS['esguince-tobillo'] = {
           "id": "test_beighton_tronco",
           "nombre": "Flexión de tronco (palmas al suelo)",
           "estructura": "Escala de Beighton — criterio 5 (bilateral, 1 punto)",
-          "ayuda": "Flexión del tronco hacia delante, con las rodillas extendidas, de modo que las palmas de las manos se apoyan fácilmente sobre el suelo. 1 punto si se cumple. Puntuación total de la escala de Beighton: máximo 9 puntos. La mayoría de los individuos normales se hallan entre 0 y 2 puntos; a partir de 4 puntos se puede considerar que el sujeto tiene laxitud articular.",
+          "ayuda": "Flexión del tronco hacia delante, con las rodillas extendidas, de modo que las palmas de las manos se apoyan fácilmente sobre el suelo. 1 punto si se cumple.",
           "imagen": "beighton-tronco.webp",
+          "video": null
+        },
+        {
+          "id": "test_beighton_puntuacion_total",
+          "nombre": "Puntuación total y baremo",
+          "estructura": "Escala de Beighton — Puntuación total",
+          "ayuda": "Puntuación total de la escala de Beighton: máximo 9 puntos. La mayoría de los individuos normales se hallan entre 0 y 2 puntos; a partir de 4 puntos se puede considerar que el sujeto tiene laxitud articular.",
+          "imagen": null,
           "video": null
         }
       ]
