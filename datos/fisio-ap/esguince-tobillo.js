@@ -532,32 +532,81 @@ window.FISIOAP_DATOS['esguince-tobillo'] = {
       }
     },
     "testsEspecificos": {
-      "titulo": "Tests específicos de estabilidad y laxitud articular",
-      "fuente": "protocolo",
+      "titulo": "Escala de Beighton (laxitud articular generalizada)",
+      "fuente": "editable",
+      "notaFuente": "Los demás tests (cajón anterior, bostezo en varo/valgo) se han retirado por no figurar en el protocolo SCS. La escala de Beighton se ha desglosado en sus 9 criterios individuales para registrar cada uno por separado, con su propia explicación.",
       "tests": [
         {
-          "id": "test_cajon_anterior",
-          "nombre": "Prueba del Cajón Anterior",
-          "estructura": "Ligamento Peroneoastragalino Anterior (LFA)",
-          "ayuda": "Fijar tibia con una mano y traccionar el calcáneo hacia anterior con codo/tobillo en ligera flexión plantar. Positivo: traslación anterior excesiva o suave 'tope' blando (sugiere rotura/laxitud LFA)."
+          "id": "test_beighton_menique_der",
+          "nombre": "5º dedo >90° (der.)",
+          "estructura": "Escala de Beighton — criterio 1 (mano derecha)",
+          "ayuda": "Escala de Beighton: valora la laxitud articular generalizada mediante 9 criterios (puntuación 0-9). Este criterio: dorsiflexión pasiva del 5º dedo de la mano derecha que sobrepasa los 90°, con la mano apoyada en una mesa. 1 punto si se cumple.",
+          "imagen": "beighton-menique-derecha.webp",
+          "video": null
         },
         {
-          "id": "test_bostezo_varo",
-          "nombre": "Prueba de Bostezo / Estrés en Varo (Inversión forzada)",
-          "estructura": "Ligamento Calcaneoperoneo (LCF)",
-          "ayuda": "Fijar tibia y forzar la inversión del calcáneo. Positivo: inclinación astragalina excesiva o dolor agudo sin tope firme (sugiere rotura/laxitud LCF)."
+          "id": "test_beighton_menique_izq",
+          "nombre": "5º dedo >90° (izq.)",
+          "estructura": "Escala de Beighton — criterio 1 (mano izquierda)",
+          "ayuda": "Dorsiflexión pasiva del 5º dedo de la mano izquierda que sobrepasa los 90°, con la mano apoyada en una mesa. 1 punto si se cumple.",
+          "imagen": "beighton-menique-izquierda.webp",
+          "video": null
         },
         {
-          "id": "test_bostezo_valgo",
-          "nombre": "Prueba de Bostezo / Estrés en Valgo (Eversión forzada)",
-          "estructura": "Ligamento Deltoideo (medial)",
-          "ayuda": "Fijar tibia y forzar la eversión del calcáneo. Positivo: apertura medial o dolor agudo."
+          "id": "test_beighton_pulgar_der",
+          "nombre": "Pulgar-antebrazo (der.)",
+          "estructura": "Escala de Beighton — criterio 2 (mano derecha)",
+          "ayuda": "Oposición pasiva del pulgar derecho a la cara flexora del antebrazo. 1 punto si se cumple.",
+          "imagen": "beighton-pulgar-derecha.webp",
+          "video": null
         },
         {
-          "id": "test_beighton_scale",
-          "nombre": "Escala de Beighton (Laxitud ligamentaria sistémica - ANEXO V)",
-          "estructura": "Hipermovilidad articular / factor de cronicidad",
-          "ayuda": "Valoración de laxitud articular generalizada (0 a 9 puntos). Un resultado de >= 4/9 indica hiperlaxitud articular, factor predisponente a esguinces recidivantes."
+          "id": "test_beighton_pulgar_izq",
+          "nombre": "Pulgar-antebrazo (izq.)",
+          "estructura": "Escala de Beighton — criterio 2 (mano izquierda)",
+          "ayuda": "Oposición pasiva del pulgar izquierdo a la cara flexora del antebrazo. 1 punto si se cumple.",
+          "imagen": "beighton-pulgar-izquierda.webp",
+          "video": null
+        },
+        {
+          "id": "test_beighton_codo_der",
+          "nombre": "Hiperextensión codo (der.)",
+          "estructura": "Escala de Beighton — criterio 3 (codo derecho)",
+          "ayuda": "Hiperextensión activa del codo derecho que sobrepasa los 10°. 1 punto si se cumple.",
+          "imagen": "beighton-codo-derecha.webp",
+          "video": null
+        },
+        {
+          "id": "test_beighton_codo_izq",
+          "nombre": "Hiperextensión codo (izq.)",
+          "estructura": "Escala de Beighton — criterio 3 (codo izquierdo)",
+          "ayuda": "Hiperextensión activa del codo izquierdo que sobrepasa los 10°. 1 punto si se cumple.",
+          "imagen": "beighton-codo-izquierda.webp",
+          "video": null
+        },
+        {
+          "id": "test_beighton_rodilla_der",
+          "nombre": "Hiperextensión rodilla (der.)",
+          "estructura": "Escala de Beighton — criterio 4 (rodilla derecha)",
+          "ayuda": "Hiperextensión de la rodilla derecha que sobrepasa los 10°. 1 punto si se cumple.",
+          "imagen": "beighton-rodilla-derecha.webp",
+          "video": null
+        },
+        {
+          "id": "test_beighton_rodilla_izq",
+          "nombre": "Hiperextensión rodilla (izq.)",
+          "estructura": "Escala de Beighton — criterio 4 (rodilla izquierda)",
+          "ayuda": "Hiperextensión de la rodilla izquierda que sobrepasa los 10°. 1 punto si se cumple.",
+          "imagen": "beighton-rodilla-izquierda.webp",
+          "video": null
+        },
+        {
+          "id": "test_beighton_tronco",
+          "nombre": "Flexión de tronco (palmas al suelo)",
+          "estructura": "Escala de Beighton — criterio 5 (bilateral, 1 punto)",
+          "ayuda": "Flexión del tronco hacia delante, con las rodillas extendidas, de modo que las palmas de las manos se apoyan fácilmente sobre el suelo. 1 punto si se cumple. Puntuación total de la escala de Beighton: máximo 9 puntos. La mayoría de los individuos normales se hallan entre 0 y 2 puntos; a partir de 4 puntos se puede considerar que el sujeto tiene laxitud articular.",
+          "imagen": "beighton-tronco.webp",
+          "video": null
         }
       ]
     }
@@ -571,7 +620,7 @@ window.FISIOAP_DATOS['esguince-tobillo'] = {
       },
       {
         "id": "rec_ejercicios_propiocepcion",
-        "texto": "Se pautan ejercicios domiciliarios de reeducación propioceptiva (equilibrio monopodal), movilidad activa y fortalecimiento de eversores/peroneos."
+        "texto": "Se pautan ejercicios domiciliarios."
       },
       {
         "id": "rec_hoja_ejercicios",
