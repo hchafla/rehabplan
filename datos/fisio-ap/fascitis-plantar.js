@@ -210,6 +210,30 @@ window.FISIOAP_DATOS['fascitis-plantar'] = {
         ]
       },
       {
+        "id": "historiaLaboralProfesion",
+        "titulo": "Profesión / puesto de trabajo",
+        "tipo": "narrativa",
+        "campos": [
+          {
+            "id": "laboral_profesion",
+            "tipo": "texto",
+            "etiqueta": "Profesión / puesto de trabajo",
+            "ayuda": "Tipo de trabajo o profesión del paciente (lo que pide el protocolo), independientemente de las demandas físicas concretas del puesto."
+          }
+        ],
+        "gruposNarrativos": [
+          {
+            "fragmentos": [
+              {
+                "campo": "laboral_profesion",
+                "texto": "Trabaja como {valor}"
+              }
+            ],
+            "sufijo": "."
+          }
+        ]
+      },
+      {
         "id": "historiaLaboral",
         "titulo": "Historia laboral",
         "tipo": "checklist",
@@ -355,9 +379,20 @@ window.FISIOAP_DATOS['fascitis-plantar'] = {
       "titulo": "Inspección, palpación y alineación del pie",
       "campos": [
         {
-          "id": "insp_alineacion_pie",
+          "id": "insp_alineacion_pie_derecho",
           "tipo": "select",
-          "etiqueta": "Posición en bipedestación y alineación del pie",
+          "etiqueta": "Alineación en bipedestación — pie/tobillo derecho",
+          "opciones": [
+            "Alineación neutra",
+            "Pie plano / Pronación excesiva del retropié",
+            "Pie cavo / Supinación del retropié",
+            "Otras deaxaciones (ej.: hallux valgus)"
+          ]
+        },
+        {
+          "id": "insp_alineacion_pie_izquierdo",
+          "tipo": "select",
+          "etiqueta": "Alineación en bipedestación — pie/tobillo izquierdo",
           "opciones": [
             "Alineación neutra",
             "Pie plano / Pronación excesiva del retropié",
@@ -530,19 +565,34 @@ window.FISIOAP_DATOS['fascitis-plantar'] = {
     },
     "testsEspecificos": {
       "titulo": "Tests específicos",
-      "fuente": "protocolo",
+      "fuente": "mixta — ver el campo \"fuente\" de cada test",
       "tests": [
         {
           "id": "test_compresion_talon",
           "nombre": "Prueba de compresión del talón (Heel Squeeze Test)",
           "estructura": "Calcáneo / Diagnóstico diferencial de dolor de talón",
-          "ayuda": "El fisioterapeuta ejerce presión bimanual sobre ambos lados del calcáneo utilizando las eminencias tenares. Positivo: aparición de dolor agudo (orienta a dolor óseo/fractura por estrés del calcáneo o patología de la almohadilla grasa)."
+          "fuente": "protocolo",
+          "ayuda": "<b>Cómo se realiza:</b> Con el pie relajado, el fisioterapeuta estabiliza el retropié y comprime el calcáneo entre ambas manos, aplicando presión sobre sus caras medial y lateral. La presión debe ser firme y progresiva.<br><br><b>Resultado positivo:</b> La prueba es positiva cuando la compresión reproduce un dolor claro, especialmente si coincide con el dolor habitual del paciente.<br><br><b>Interpretación:</b> Un resultado positivo orienta hacia una posible fuente ósea o profunda del dolor del talón, como una lesión por sobrecarga o una fractura por estrés del calcáneo. Debe interpretarse junto con la anamnesis y el resto de la exploración y no confirma por sí solo una fractura.",
+          "imagen": "compresion-calcaneo.webp",
+          "video": null
         },
         {
-          "id": "test_windlass",
-          "nombre": "Prueba de Windlass (Mecanismo de Windlass)",
-          "estructura": "Fascia plantar / Tensión biomecánica",
-          "ayuda": "Dorsiflexión pasiva del primer dedo en carga y/o en descarga. Positivo: provocación o reproducción del dolor característico en la inserción calcánea de la fascia plantar."
+          "id": "test_windlass_descarga",
+          "nombre": "Windlass en descarga",
+          "estructura": "Fascia plantar / Mecanismo de Windlass (sin carga)",
+          "fuente": "complementario — no figura en el protocolo SCS aportado",
+          "ayuda": "<b>Cómo se realiza:</b> Con el pie relajado y el retropié estabilizado, el fisioterapeuta realiza dorsiflexión pasiva del primer dedo.<br><br><b>Resultado positivo:</b> Reproducción del dolor habitual del paciente, especialmente en la región de la inserción proximal de la fascia plantar en el calcáneo.<br><br><b>Interpretación:</b> Un resultado positivo apoya la participación de la fascia plantar en el dolor, pero no establece por sí solo el diagnóstico de fascitis plantar.",
+          "imagen": "windlass-descarga.webp",
+          "video": null
+        },
+        {
+          "id": "test_windlass_carga",
+          "nombre": "Windlass en carga",
+          "estructura": "Fascia plantar / Mecanismo de Windlass (en carga)",
+          "fuente": "complementario — no figura en el protocolo SCS aportado",
+          "ayuda": "<b>Cómo se realiza:</b> Con el paciente en bipedestación y el pie apoyado, se realiza dorsiflexión del primer dedo manteniendo la carga sobre el pie.<br><br><b>Resultado positivo:</b> Reproducción del dolor habitual del paciente, especialmente en la región de la inserción proximal de la fascia plantar en el calcáneo.<br><br><b>Interpretación:</b> Un resultado positivo apoya la participación de la fascia plantar en el dolor, pero no establece por sí solo el diagnóstico de fascitis plantar.",
+          "imagen": "windlass-carga.webp",
+          "video": null
         }
       ]
     }
