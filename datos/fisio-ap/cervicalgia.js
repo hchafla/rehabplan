@@ -459,19 +459,27 @@ window.FISIOAP_DATOS['cervicalgia'] = {
       "movimientos": [
         {
           "id": "fuerza_flexores_profundos",
-          "etiqueta": "Flexores profundos cervicales (estabilidad anterior)"
+          "etiqueta": "Flexores profundos cervicales (estabilidad anterior)",
+          "estructura": "Longus colli y longus capitis (flexión craneocervical)",
+          "ayuda": "<b>Posición:</b> decúbito supino, cabeza apoyada, cuello neutro.<br><b>Gesto:</b> pedir un <b>asentimiento suave</b> (\"hacer doble mentón\") y, desde ahí, despegar la cabeza de la camilla manteniendo la barbilla recogida.<br><b>Grado 3:</b> levanta la cabeza contra la gravedad manteniendo la barbilla recogida.<br><b>Grados 4-5:</b> resistencia suave y progresiva en la frente, sin dejar que la barbilla se adelante.<br><b>Grado 2:</b> en decúbito lateral con la cabeza sostenida (gravedad eliminada).<br><b>Ojo:</b> si la barbilla se proyecta hacia delante o el paciente \"saca\" el cuello, están compensando los flexores superficiales (ECOM, escalenos): anótalo como observación.<br><br><b>Grados:</b> 1 = contracción palpable sin movimiento · 2 = recorrido completo con la gravedad eliminada · 3 = recorrido completo contra la gravedad · 4 = contra resistencia moderada · 5 = contra resistencia máxima."
         },
         {
           "id": "fuerza_extensores",
-          "etiqueta": "Extensores cervicales"
+          "etiqueta": "Extensores cervicales",
+          "estructura": "Extensores cervicales (esplenios, semiespinosos, erectores)",
+          "ayuda": "<b>Posición:</b> decúbito prono, frente fuera de la almohada, o sentado si no tolera el prono.<br><b>Gesto:</b> extender el cuello llevando la mirada hacia el frente, sin hiperextender.<br><b>Grado 3:</b> levanta la cabeza contra la gravedad y completa el recorrido.<br><b>Grados 4-5:</b> resistencia progresiva sobre el occipital, dirigida hacia abajo.<br><b>Grado 2:</b> en decúbito lateral con la cabeza sostenida (gravedad eliminada).<br><b>Ojo:</b> que la extensión sea cervical y no un arqueo del tronco superior.<br><br><b>Grados:</b> 1 = contracción palpable sin movimiento · 2 = recorrido completo con la gravedad eliminada · 3 = recorrido completo contra la gravedad · 4 = contra resistencia moderada · 5 = contra resistencia máxima."
         },
         {
           "id": "fuerza_trapecios",
-          "etiqueta": "Trapecio superior / Angular de la escápula"
+          "etiqueta": "Trapecio superior / Angular de la escápula",
+          "estructura": "Elevadores de la escápula (se valoran juntos con el encogimiento de hombros)",
+          "ayuda": "<b>Posición:</b> sentado, brazos relajados.<br><b>Gesto:</b> <b>encoger los hombros</b> hacia las orejas. Trapecio superior y angular de la escápula elevan la escápula y no se aíslan bien: se valoran juntos y se anota un único grado por lado.<br><b>Grado 3:</b> completa el encogimiento sin resistencia (el peso del brazo ya cuenta como carga).<br><b>Grados 4-5:</b> manos sobre el acromion, empujando hacia abajo de forma progresiva, mientras el paciente \"aguanta\".<br><b>Grado 2:</b> en decúbito supino (gravedad eliminada).<br><b>Ojo:</b> que eleve el hombro y no incline el tronco. Compara siempre con el lado contrario.<br><br><b>Grados:</b> 1 = contracción palpable sin movimiento · 2 = recorrido completo con la gravedad eliminada · 3 = recorrido completo contra la gravedad · 4 = contra resistencia moderada · 5 = contra resistencia máxima."
         },
         {
           "id": "fuerza_rotadores",
-          "etiqueta": "Rotadores e inclinadores (ECOM, Escalenos)"
+          "etiqueta": "Rotadores e inclinadores (ECOM, Escalenos)",
+          "estructura": "Esternocleidomastoideo (rotación contralateral + flexión) y escalenos (inclinación lateral)",
+          "ayuda": "<b>ECOM:</b> decúbito supino, cabeza girada hacia un lado; pedir que levante la cabeza. Se activa el ECOM del lado <b>contrario</b> al giro. Resistencia suave en la zona temporal, hacia la camilla.<br><b>Escalenos (inclinación lateral):</b> decúbito lateral; pedir que lleve la oreja hacia el hombro de arriba. Resistencia en el lateral de la cabeza, por encima de la oreja.<br><b>Grado 3:</b> recorrido completo contra la gravedad.<br><b>Grado 2:</b> gravedad eliminada (en supino, deslizando la cabeza lateralmente sobre la camilla).<br><b>Ojo:</b> evita resistencias en el mentón o con tracción del cuello; en pacientes con dolor, aumenta la resistencia poco a poco.<br><br><b>Grados:</b> 1 = contracción palpable sin movimiento · 2 = recorrido completo con la gravedad eliminada · 3 = recorrido completo contra la gravedad · 4 = contra resistencia moderada · 5 = contra resistencia máxima."
         }
       ]
     },
