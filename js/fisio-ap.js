@@ -946,6 +946,26 @@
                 opciones,
                 claseExtra: 'grupo-daniels'
             }, estado.exploracion.campos, regenerarExploracion);
+            // Ayuda emergente opcional por grupo muscular (ayuda/estructura/imagen/video)
+            if (mov.ayuda) {
+                const etiqueta = fila.querySelector('.grupo-botones-etiqueta');
+                if (etiqueta) {
+                    const info = document.createElement('button');
+                    info.type = 'button';
+                    info.className = 'btn-info-mov';
+                    info.textContent = 'ⓘ';
+                    info.title = 'Cómo valorarlo';
+                    info.setAttribute('aria-label', 'Cómo valorar: ' + mov.etiqueta);
+                    info.addEventListener('click', () => abrirModalTest({
+                        nombre: mov.etiqueta,
+                        estructura: mov.estructura,
+                        ayuda: mov.ayuda,
+                        imagen: mov.imagen,
+                        video: mov.video
+                    }));
+                    etiqueta.appendChild(info);
+                }
+            }
             cont.appendChild(fila);
         });
     }
