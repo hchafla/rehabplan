@@ -2180,3 +2180,15 @@ textarea:focus-visible {
     }
 
 }
+
+
+/* ---------- Escalas puntuadas (NDI y similares) ---------- */
+.escala-recurso { margin: 0 0 10px; }
+.escala-items { display: grid; gap: 10px; margin: 12px 0; }
+.escala-item .grupo-botones-fila { flex-wrap: wrap; }
+.escala-resultado {
+    margin-top: 8px; padding: 10px 12px; border-radius: var(--radius-md, 8px);
+    background: var(--surface-2, #f4f6f8); font-weight: 600;
+}
+.escala-resultado-ok { background: var(--brand-soft); color: var(--brand-dark); }
+.escala-resultado-invalido { background: #fdecea; color: var(--danger, #b3261e); }
