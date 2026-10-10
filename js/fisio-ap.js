@@ -872,6 +872,7 @@
         renderActitudPostural(ef.actitudPostural);
         renderSensibilidad(ef.sensibilidad);
         renderTestsEspecificos(ef.testsEspecificos);
+        renderEscalasPuntuadas(ef.escalasPuntuadas);
 
         configurarTextoFinal('exploracionTexto', 'regenerarExploracion', estado.exploracion, regenerarExploracion);
         regenerarExploracion(true);
@@ -1387,6 +1388,134 @@
         el('modalTest').hidden = true;
     }
 
+
+    /* ==========================================================
+       ESCALAS PUNTUADAS (NDI y similares) — último punto de la
+       exploración física. Calculadora de ítems 0-N + botón al PDF
+       imprimible. Nada se guarda: solo estado en memoria.
+       ========================================================== */
+
+    // Calcula el resultado de una escala. Sin ítem seleccionado = sin contestar.
+    function calcularEscala(escala, campos) {
+        const maxItem = escala.puntuacionMaxPorItem || 5;
+        const total = escala.items.length;
+        const maxSin = (typeof escala.maxItemsSinContestar === 'number') ? escala.maxItemsSinContestar : 2;
+        let suma = 0;
+        let contestados = 0;
+        escala.items.forEach((it) => {
+            const v = campos[escala.id + '__' + it.id];
+            if (typeof v === 'number' && v >= 0 && v <= maxItem) {
+                suma += v;
+                contestados += 1;
+            }
+        });
+        const sinContestar = total - contestados;
+        const maximo = contestados * maxItem;
+        return {
+            total, contestados, sinContestar, suma, maximo,
+            valido: contestados > 0 && sinContestar <= maxSin,
+            porcentaje: maximo > 0 ? (suma / maximo) * 100 : null
+        };
+    }
+
+    function textoResultadoEscala(escala, campos) {
+        const r = calcularEscala(escala, campos);
+        if (!r.valido) return '';
+        const pct = formatearNumeroEs(r.porcentaje, 1).replace(/,0$/, '');
+        let txt = `${r.suma}/${r.maximo} (${pct} %)`;
+        if (r.sinContestar > 0) txt += `, calculado sobre ${r.contestados} de ${r.total} ítems contestados`;
+        return txt;
+    }
+
+    function renderEscalasPuntuadas(lista) {
+        const cont = limpiarContenedor('subEscalasPuntuadas');
+        if (!Array.isArray(lista) || !lista.length) return;
+
+        lista.forEach((escala) => {
+            const panel = document.createElement('div');
+            panel.className = 'dinamometria-panel escala-panel';
+
+            const h3 = document.createElement('h3');
+            h3.textContent = escala.titulo;
+            panel.appendChild(h3);
+
+            if (escala.recursoDescargable) {
+                const fila = document.createElement('div');
+                fila.className = 'escala-recurso';
+                fila.appendChild(construirBotonRecurso(escala.recursoDescargable));
+                panel.appendChild(fila);
+            }
+
+            if (escala.guiaHTML) {
+                const det = document.createElement('details');
+                det.className = 'dinamometria-info escala-info';
+                const sum = document.createElement('summary');
+                sum.textContent = 'Cómo usar e interpretar esta escala';
+                det.appendChild(sum);
+                const cuerpo = document.createElement('div');
+                cuerpo.innerHTML = escala.guiaHTML; // texto escrito por el usuario en el .js
+                det.appendChild(cuerpo);
+                panel.appendChild(det);
+            }
+
+            const aviso = document.createElement('p');
+            aviso.className = 'dinamometria-aviso-suave';
+            aviso.textContent = 'Marca la opción (0-' + (escala.puntuacionMaxPorItem || 5) +
+                ') que haya señalado el paciente en cada apartado. Si no consta, déjalo sin marcar.';
+            panel.appendChild(aviso);
+
+            const resultado = document.createElement('div');
+            resultado.className = 'escala-resultado';
+            resultado.setAttribute('aria-live', 'polite');
+
+            const actualizar = () => {
+                const r = calcularEscala(escala, estado.exploracion.campos);
+                resultado.className = 'escala-resultado';
+                if (r.contestados === 0) {
+                    resultado.textContent = 'Sin puntuación todavía.';
+                } else if (!r.valido) {
+                    resultado.classList.add('escala-resultado-invalido');
+                    resultado.textContent = `Resultado no válido: hay ${r.sinContestar} ítems sin contestar ` +
+                        `(se admiten como máximo ${escala.maxItemsSinContestar}). No se incluirá puntuación en el texto.`;
+                } else {
+                    resultado.classList.add('escala-resultado-ok');
+                    resultado.textContent = `Puntuación: ${textoResultadoEscala(escala, estado.exploracion.campos)}`;
+                }
+            };
+            const alCambiar = () => { actualizar(); regenerarExploracion(); };
+
+            const opciones = [];
+            for (let n = 0; n <= (escala.puntuacionMaxPorItem || 5); n++) opciones.push(String(n));
+
+            const lista_items = document.createElement('div');
+            lista_items.className = 'escala-items';
+            escala.items.forEach((it) => {
+                const clave = escala.id + '__' + it.id;
+                // Adaptador: el grupo guarda texto "0".."5"; aquí lo convertimos a número.
+                const proxy = {};
+                const almacen = new Proxy(proxy, {
+                    set(_, prop, valor) {
+                        if (prop === clave) estado.exploracion.campos[clave] = Number(valor);
+                        return true;
+                    },
+                    deleteProperty(_, prop) {
+                        if (prop === clave) delete estado.exploracion.campos[clave];
+                        return true;
+                    }
+                });
+                lista_items.appendChild(construirGrupoBotones(
+                    { id: clave, etiqueta: it.etiqueta, opciones, claseExtra: 'escala-item' },
+                    almacen,
+                    alCambiar
+                ));
+            });
+            panel.appendChild(lista_items);
+            panel.appendChild(resultado);
+            actualizar();
+            cont.appendChild(panel);
+        });
+    }
+
     function generarTextoExploracion() {
         const ef = config.exploracionFisica;
         const campos = estado.exploracion.campos;
@@ -1463,6 +1592,12 @@
             });
             if (tests.length) partes.push(`TESTS ESPECÍFICOS: ${tests.join('; ')}.`);
         }
+
+        // Escalas puntuadas (NDI…): siempre al final. Sin datos válidos no se escribe nada.
+        (ef.escalasPuntuadas || []).forEach((esc) => {
+            const t = textoResultadoEscala(esc, campos);
+            if (t) partes.push(`${esc.tituloTexto || esc.titulo.toUpperCase()}: ${t}.`);
+        });
 
         return partes.join('\n');
     }
