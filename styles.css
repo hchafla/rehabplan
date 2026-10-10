@@ -2192,3 +2192,13 @@ textarea:focus-visible {
 }
 .escala-resultado-ok { background: var(--brand-soft); color: var(--brand-dark); }
 .escala-resultado-invalido { background: #fdecea; color: var(--danger, #b3261e); }
+
+
+/* ---------- Ayuda emergente en balance muscular (ⓘ) ---------- */
+.btn-info-mov {
+    margin-left: 8px; padding: 0 8px; min-width: 26px; height: 26px;
+    border: 1px solid var(--border, #cfd6dd); border-radius: 999px;
+    background: var(--brand-soft); color: var(--brand-dark);
+    font-size: 0.95rem; line-height: 1; cursor: pointer;
+}
+.btn-info-mov:hover { background: var(--brand); color: #fff; }
