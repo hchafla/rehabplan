@@ -503,18 +503,63 @@ window.FISIOAP_DATOS['cervicalgia'] = {
         "ayuda": "Descartar parestesias, hipoestesia, pérdida de fuerza o alteraciones de reflejos osteotendinosos."
       }
     },
-    "testsEspecificos": {
-      "titulo": "Test Específico",
-      "fuente": "protocolo",
-      "tests": [
-        {
-          "id": "test_ndi",
-          "nombre": "Índice de Discapacidad Cervical / Neck Disability Index (NDI) - ANEXO V",
-          "estructura": "Escala funcional para dolor cervical",
-          "ayuda": "Cuestionario de 10 ítems sobre intensidad de dolor, cuidados personales, levantar peso, lectura, dolor de cabeza, concentración, trabajo, conducir, dormir y ocio. Mayor puntuación = mayor discapacidad."
-        }
-      ]
-    }
+    "escalasPuntuadas": [
+      {
+        "id": "ndi",
+        "titulo": "Índice de Discapacidad Cervical (NDI)",
+        "tituloTexto": "ÍNDICE DE DISCAPACIDAD CERVICAL (NDI)",
+        "fuente": "protocolo",
+        "recursoDescargable": {
+          "etiqueta": "NDI (versión imprimible)",
+          "archivo": "pdf/ndi.pdf"
+        },
+        "guiaHTML": "<h4>Índice de Discapacidad Cervical (NDI)</h4><p>Se recomienda cumplimentar el NDI en la <b>primera consulta</b>, para establecer la línea de base, repetirlo <b>cada 2-4 semanas</b> y al finalizar las sesiones de tratamiento para cuantificar la evolución del dolor y la discapacidad cervical. La edad mínima para cumplimentarlo es de <b>15 años</b>.</p><p>El NDI es un <b>autocuestionario que cumplimenta el paciente</b>, por lo que no requiere valorar la fiabilidad interexaminador. El tiempo medio de cumplimentación en castellano es de <b>6-8 minutos</b>.</p><p>Consta de 10 secciones: Intensidad del dolor, Cuidado personal, Levantamiento de peso, Lectura, Dolor de cabeza, Concentración, Trabajo o labores domésticas, Conducir, Dormir, Actividades recreativas.</p><p>Aunque incluye aspectos relacionados con el dolor, el NDI mide principalmente la <b>repercusión funcional</b> de la cervicalgia sobre las actividades del paciente. Solo los apartados 1 y 6 hacen referencia directamente al dolor.</p><h4>Puntuación</h4><p>Cada sección se puntúa de <b>0 a 5 puntos</b>, con un máximo de <b>50 puntos</b>. <b>0</b>: ausencia de dolor o limitación. <b>5</b>: máxima intensidad de dolor o limitación. La primera opción de cada apartado corresponde a 0 y la última a 5.</p><p>Si se deja algún apartado sin responder, la puntuación se calcula sobre el número de ítems contestados: <b>9 ítems contestados → máximo 45 puntos</b>. <b>8 ítems contestados → máximo 40 puntos</b>. Si quedan sin responder <b>más de 2 ítems</b>, el resultado <b>no se considera válido</b>.</p><p>La puntuación puede multiplicarse por 2 para expresarla como porcentaje (%).</p><h4>Interpretación del cambio</h4><p>El NDI es sensible a los cambios producidos durante el tratamiento. <b>Cambio mínimo clínicamente significativo: 5 puntos (10 %)</b> respecto a la puntuación basal. En pacientes con radiculopatía, se recomienda considerar un cambio mínimo de <b>7 puntos (14 %)</b>, pudiendo requerirse hasta <b>10 puntos (20 %)</b> según algunos autores.</p><p>La puntuación no tiene que llegar necesariamente a 0. Durante el tratamiento es frecuente que los pacientes mantengan puntuaciones entre 5 y 15 puntos incluso tras recuperaciones excelentes, por lo que <b>alcanzar 0 no debe considerarse el objetivo terapéutico</b>.</p>",
+        "puntuacionMaxPorItem": 5,
+        "maxItemsSinContestar": 2,
+        "items": [
+          {
+            "id": "ndi_1",
+            "etiqueta": "1. Intensidad del dolor de cuello"
+          },
+          {
+            "id": "ndi_2",
+            "etiqueta": "2. Cuidado personal"
+          },
+          {
+            "id": "ndi_3",
+            "etiqueta": "3. Levantamiento de peso"
+          },
+          {
+            "id": "ndi_4",
+            "etiqueta": "4. Lectura"
+          },
+          {
+            "id": "ndi_5",
+            "etiqueta": "5. Dolor de cabeza"
+          },
+          {
+            "id": "ndi_6",
+            "etiqueta": "6. Concentración"
+          },
+          {
+            "id": "ndi_7",
+            "etiqueta": "7. Trabajo o labores domésticas"
+          },
+          {
+            "id": "ndi_8",
+            "etiqueta": "8. Conducir"
+          },
+          {
+            "id": "ndi_9",
+            "etiqueta": "9. Dormir"
+          },
+          {
+            "id": "ndi_10",
+            "etiqueta": "10. Actividades recreativas"
+          }
+        ]
+      }
+    ]
   },
   "planActuacion": {
     "fuente": "editable",
