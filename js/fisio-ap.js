@@ -754,6 +754,8 @@
 
             if (seccion.tipo === 'checklist') {
                 box.appendChild(construirChecklist(seccion, estado.anamnesis.campos, regenerarAnamnesis));
+            } else if (seccion.tipo === 'escalaPuntuada') {
+                box.appendChild(construirPanelEscala(seccion.escala, estado.anamnesis.campos, regenerarAnamnesis, { sinTitulo: true }));
             } else {
                 // "narrativa" (o cualquier sección basada en campos individuales):
                 // una fila por campo, con espacio de sobra y ayuda contextual.
@@ -847,7 +849,9 @@
         (config.anamnesis.secciones || []).forEach((seccion) => {
             const t = seccion.tipo === 'checklist'
                 ? generarTextoSeccionChecklist(seccion, estado.anamnesis.campos)
-                : generarTextoSeccionNarrativa(seccion, estado.anamnesis.campos);
+                : seccion.tipo === 'escalaPuntuada'
+                    ? generarTextoEscalaAnamnesis(seccion, estado.anamnesis.campos)
+                    : generarTextoSeccionNarrativa(seccion, estado.anamnesis.campos);
             if (t) partes.push(t);
         });
         return partes.join(' ');
@@ -868,6 +872,7 @@
         renderInspeccionPalpacion(ef.inspeccionPalpacion);
         renderMovilidadArticular(ef.movilidadArticular);
         renderBalanceMuscular(ef.balanceMuscular);
+        renderPruebasFuncionales(ef.pruebasFuncionales);
         renderDinamometria(ef.dinamometriaPrension);
         renderActitudPostural(ef.actitudPostural);
         renderSensibilidad(ef.sensibilidad);
@@ -1348,6 +1353,19 @@
             }, estado.exploracion.campos, regenerarExploracion));
 
             cont.appendChild(fila);
+
+            // Campo breve opcional: lado y síntomas reproducidos
+            if (test.detalle) {
+                const caja = document.createElement('div');
+                caja.className = 'test-detalle';
+                caja.appendChild(construirCampoGenerico({
+                    id: test.id + '__detalle',
+                    tipo: 'texto',
+                    etiqueta: 'Lado y síntomas reproducidos',
+                    ayuda: 'Opcional. Ej.: derecha, dolor glúteo y cara posterior del muslo a 40°.'
+                }, estado.exploracion.campos, regenerarExploracion));
+                cont.appendChild(caja);
+            }
         });
     }
 
@@ -1447,93 +1465,156 @@
         return txt;
     }
 
-    function renderEscalasPuntuadas(lista) {
-        const cont = limpiarContenedor('subEscalasPuntuadas');
-        if (!Array.isArray(lista) || !lista.length) return;
+    // Construye el panel completo de una escala (botón PDF, guía, ítems 0-N,
+    // resultado). Es independiente de la sección: recibe el almacén de campos
+    // y la función que regenera el texto de esa sección.
+    function construirPanelEscala(escala, campos, regenerar, opciones) {
+        const sinTitulo = !!(opciones && opciones.sinTitulo);
+        const panel = document.createElement('div');
+        panel.className = 'dinamometria-panel escala-panel';
 
-        lista.forEach((escala) => {
-            const panel = document.createElement('div');
-            panel.className = 'dinamometria-panel escala-panel';
-
+        if (!sinTitulo) {
             const h3 = document.createElement('h3');
             h3.textContent = escala.titulo;
             panel.appendChild(h3);
+        }
 
-            if (escala.recursoDescargable) {
-                const fila = document.createElement('div');
-                fila.className = 'escala-recurso';
-                fila.appendChild(construirBotonRecurso(escala.recursoDescargable));
-                panel.appendChild(fila);
-            }
+        if (escala.recursoDescargable) {
+            const fila = document.createElement('div');
+            fila.className = 'escala-recurso';
+            fila.appendChild(construirBotonRecurso(escala.recursoDescargable));
+            panel.appendChild(fila);
+        }
 
-            if (escala.guiaHTML) {
-                const det = document.createElement('details');
-                det.className = 'dinamometria-info escala-info';
-                const sum = document.createElement('summary');
-                sum.textContent = 'Cómo usar e interpretar esta escala';
-                det.appendChild(sum);
-                const cuerpo = document.createElement('div');
-                cuerpo.innerHTML = escala.guiaHTML; // texto escrito por el usuario en el .js
-                det.appendChild(cuerpo);
-                panel.appendChild(det);
-            }
+        if (escala.guiaHTML) {
+            const det = document.createElement('details');
+            det.className = 'dinamometria-info escala-info';
+            const sum = document.createElement('summary');
+            sum.textContent = 'Cómo usar e interpretar esta escala';
+            det.appendChild(sum);
+            const cuerpo = document.createElement('div');
+            cuerpo.innerHTML = escala.guiaHTML; // texto escrito por el usuario en el .js
+            det.appendChild(cuerpo);
+            panel.appendChild(det);
+        }
 
-            const aviso = document.createElement('p');
-            aviso.className = 'dinamometria-aviso-suave';
-            aviso.textContent = 'Marca la opción (0-' + (escala.puntuacionMaxPorItem || 5) +
-                ') que haya señalado el paciente en cada apartado. Si no consta, déjalo sin marcar.';
-            panel.appendChild(aviso);
+        const maxItem = escala.puntuacionMaxPorItem || 5;
+        const aviso = document.createElement('p');
+        aviso.className = 'dinamometria-aviso-suave';
+        aviso.textContent = 'Marca la opción (0-' + maxItem +
+            ') que haya señalado el paciente en cada apartado. Si no consta, déjalo sin marcar.';
+        panel.appendChild(aviso);
 
-            const resultado = document.createElement('div');
+        const resultado = document.createElement('div');
+        resultado.className = 'escala-resultado';
+        resultado.setAttribute('aria-live', 'polite');
+
+        const actualizar = () => {
+            const r = calcularEscala(escala, campos);
             resultado.className = 'escala-resultado';
-            resultado.setAttribute('aria-live', 'polite');
+            if (r.contestados === 0) {
+                resultado.textContent = 'Sin puntuación todavía.';
+            } else if (!r.valido) {
+                resultado.classList.add('escala-resultado-invalido');
+                resultado.textContent = `Resultado no válido: hay ${r.sinContestar} ítems sin contestar ` +
+                    `(se admiten como máximo ${escala.maxItemsSinContestar}). No se incluirá puntuación en el texto.`;
+            } else {
+                resultado.classList.add('escala-resultado-ok');
+                resultado.textContent = `Puntuación: ${textoResultadoEscala(escala, campos)}`;
+            }
+        };
+        const alCambiar = () => { actualizar(); regenerar(); };
 
-            const actualizar = () => {
-                const r = calcularEscala(escala, estado.exploracion.campos);
-                resultado.className = 'escala-resultado';
-                if (r.contestados === 0) {
-                    resultado.textContent = 'Sin puntuación todavía.';
-                } else if (!r.valido) {
-                    resultado.classList.add('escala-resultado-invalido');
-                    resultado.textContent = `Resultado no válido: hay ${r.sinContestar} ítems sin contestar ` +
-                        `(se admiten como máximo ${escala.maxItemsSinContestar}). No se incluirá puntuación en el texto.`;
+        const opcionesBotones = [];
+        for (let n = 0; n <= maxItem; n++) opcionesBotones.push(String(n));
+
+        const listaItems = document.createElement('div');
+        listaItems.className = 'escala-items';
+        escala.items.forEach((it) => {
+            const clave = escala.id + '__' + it.id;
+            const bloque = document.createElement('div');
+            bloque.className = 'escala-item-bloque';
+
+            // El grupo de botones guarda texto "0".."5"; aquí lo guardamos como número.
+            const almacen = new Proxy({}, {
+                set(_, prop, valor) {
+                    if (prop === clave) campos[clave] = Number(valor);
+                    return true;
+                },
+                deleteProperty(_, prop) {
+                    if (prop === clave) delete campos[clave];
+                    return true;
+                }
+            });
+
+            // Texto de la opción elegida (si el ítem trae sus opciones), para
+            // poder contrastarlo con el cuestionario en papel.
+            const textoItem = document.createElement('p');
+            textoItem.className = 'escala-item-texto';
+            textoItem.hidden = true;
+            const actualizarTextoItem = () => {
+                const v = campos[clave];
+                if (Array.isArray(it.opciones) && typeof v === 'number' && it.opciones[v]) {
+                    textoItem.textContent = v + ' · ' + it.opciones[v];
+                    textoItem.hidden = false;
                 } else {
-                    resultado.classList.add('escala-resultado-ok');
-                    resultado.textContent = `Puntuación: ${textoResultadoEscala(escala, estado.exploracion.campos)}`;
+                    textoItem.textContent = '';
+                    textoItem.hidden = true;
                 }
             };
-            const alCambiar = () => { actualizar(); regenerarExploracion(); };
 
-            const opciones = [];
-            for (let n = 0; n <= (escala.puntuacionMaxPorItem || 5); n++) opciones.push(String(n));
-
-            const lista_items = document.createElement('div');
-            lista_items.className = 'escala-items';
-            escala.items.forEach((it) => {
-                const clave = escala.id + '__' + it.id;
-                // Adaptador: el grupo guarda texto "0".."5"; aquí lo convertimos a número.
-                const proxy = {};
-                const almacen = new Proxy(proxy, {
-                    set(_, prop, valor) {
-                        if (prop === clave) estado.exploracion.campos[clave] = Number(valor);
-                        return true;
-                    },
-                    deleteProperty(_, prop) {
-                        if (prop === clave) delete estado.exploracion.campos[clave];
-                        return true;
-                    }
+            const grupoItem = construirGrupoBotones(
+                { id: clave, etiqueta: it.etiqueta, opciones: opcionesBotones, claseExtra: 'escala-item' },
+                almacen,
+                () => { actualizarTextoItem(); alCambiar(); }
+            );
+            // Al pasar el ratón por cada número se ve la frase del cuestionario
+            // que le corresponde (ayuda a transcribir lo que marcó el paciente).
+            if (Array.isArray(it.opciones)) {
+                grupoItem.querySelectorAll('button').forEach((b, i) => {
+                    if (it.opciones[i]) b.title = i + ' · ' + it.opciones[i];
                 });
-                lista_items.appendChild(construirGrupoBotones(
-                    { id: clave, etiqueta: it.etiqueta, opciones, claseExtra: 'escala-item' },
-                    almacen,
-                    alCambiar
-                ));
-            });
-            panel.appendChild(lista_items);
-            panel.appendChild(resultado);
-            actualizar();
-            cont.appendChild(panel);
+            }
+            bloque.appendChild(grupoItem);
+            bloque.appendChild(textoItem);
+            listaItems.appendChild(bloque);
         });
+        panel.appendChild(listaItems);
+        panel.appendChild(resultado);
+        actualizar();
+        return panel;
+    }
+
+    // Escalas de la exploración física (último punto de la exploración)
+    function renderEscalasPuntuadas(lista) {
+        const cont = limpiarContenedor('subEscalasPuntuadas');
+        if (!Array.isArray(lista) || !lista.length) return;
+        lista.forEach((escala) => {
+            cont.appendChild(construirPanelEscala(escala, estado.exploracion.campos, regenerarExploracion));
+        });
+    }
+
+    // Texto de una escala dentro de la anamnesis (sección tipo "escalaPuntuada")
+    function generarTextoEscalaAnamnesis(seccion, campos) {
+        const t = textoResultadoEscala(seccion.escala, campos);
+        if (!t) return '';
+        const frase = seccion.escala.fraseTexto || (seccion.escala.tituloTexto || seccion.titulo) + ': {valor}.';
+        return frase.replace('{valor}', t);
+    }
+
+    // Pruebas funcionales (p. ej. marcha de puntillas): campos genéricos
+    function renderPruebasFuncionales(datos) {
+        const cont = limpiarContenedor('subPruebasFuncionales');
+        if (!datos) return;
+        const h3 = document.createElement('h3');
+        h3.textContent = datos.titulo;
+        cont.appendChild(h3);
+        const grid = document.createElement('div');
+        grid.className = 'campo-grid';
+        (datos.campos || []).forEach((campo) => {
+            grid.appendChild(construirCampoGenerico(campo, estado.exploracion.campos, regenerarExploracion));
+        });
+        cont.appendChild(grid);
     }
 
     function generarTextoExploracion() {
@@ -1580,6 +1661,16 @@
             if (fuerza.length) partes.push(`BALANCE MUSCULAR: ${unirConY(fuerza)} según escala de Daniels.`);
         }
 
+        // Pruebas funcionales (marcha de puntillas, etc.)
+        if (ef.pruebasFuncionales) {
+            const pf = [];
+            (ef.pruebasFuncionales.campos || []).forEach((campo) => {
+                const t = formatearValorCampo(campo, campos[campo.id]);
+                if (t) pf.push(t);
+            });
+            if (pf.length) partes.push(`${(ef.pruebasFuncionales.tituloTexto || ef.pruebasFuncionales.titulo).toUpperCase()}: ${pf.join('; ')}.`);
+        }
+
         // Dinamometría de prensión manual
         if (ef.dinamometriaPrension) {
             const textoDina = generarTextoDinamometria(campos);
@@ -1607,7 +1698,8 @@
             (ef.testsEspecificos.tests || []).forEach((t) => {
                 const v = campos[t.id];
                 if (v === 'Positiva' || v === 'Negativa') {
-                    tests.push(`${t.nombre} ${v.toLowerCase()}`);
+                    const det = t.detalle ? limpio(campos[t.id + '__detalle']) : '';
+                    tests.push(`${t.nombre} ${v.toLowerCase()}${det ? ' (' + det + ')' : ''}`);
                 }
             });
             if (tests.length) partes.push(`TESTS ESPECÍFICOS: ${tests.join('; ')}.`);
