@@ -887,8 +887,29 @@
     // patología necesita, por ejemplo, "sensibilidad" (EPOC) o tests
     // específicos ortopédicos. Si la clave no existe en los datos, se omite
     // limpiamente en vez de romper.
+    // Orden de las subsecciones de la exploración. Si falta alguno en el HTML
+    // (por ejemplo, un fisio-ap.html antiguo), se crea en su sitio en vez de
+    // romper la carga de la patología.
+    const ORDEN_SUBSECCIONES_EXPLORACION = [
+        'subInspeccionPalpacion', 'subMovilidadArticular', 'subBalanceMuscular',
+        'subPruebasFuncionales', 'subDinamometria', 'subActitudPostural',
+        'subSensibilidad', 'subTestsEspecificos', 'subEscalasPuntuadas'
+    ];
+
     function limpiarContenedor(idContenedor) {
-        const cont = el(idContenedor);
+        let cont = document.getElementById(idContenedor);
+        if (!cont) {
+            const padre = document.getElementById('seccionExploracion');
+            const pos = ORDEN_SUBSECCIONES_EXPLORACION.indexOf(idContenedor);
+            if (!padre || pos < 0) throw new Error('Falta el contenedor #' + idContenedor + ' en fisio-ap.html');
+            cont = document.createElement('div');
+            cont.className = 'subseccion';
+            cont.id = idContenedor;
+            const siguiente = ORDEN_SUBSECCIONES_EXPLORACION.slice(pos + 1)
+                .map((id) => document.getElementById(id)).find(Boolean);
+            if (siguiente && siguiente.parentNode === padre) padre.insertBefore(cont, siguiente);
+            else padre.appendChild(cont);
+        }
         cont.innerHTML = '';
         return cont;
     }
