@@ -139,7 +139,7 @@ window.FISIOAP_DATOS['coxartrosis'] = {
       },
       {
         "id": "historiaDolor",
-        "titulo": "Historia del dolor y escalas",
+        "titulo": "Historia del dolor",
         "tipo": "narrativa",
         "campos": [
           {
@@ -173,12 +173,6 @@ window.FISIOAP_DATOS['coxartrosis'] = {
             "tipo": "texto_area",
             "etiqueta": "Factores de alivio",
             "ayuda": "¿Qué lo mejora? Ej.: reposo en descarga, calor local, analgesia..."
-          },
-          {
-            "id": "womac_score",
-            "tipo": "texto",
-            "etiqueta": "Test de WOMAC (Dolor / Rigidez / Capacidad funcional)",
-            "ayuda": "Puntuación total o por subescalas del cuestionario WOMAC (ANEXO IV)."
           }
         ],
         "gruposNarrativos": [
@@ -215,17 +209,317 @@ window.FISIOAP_DATOS['coxartrosis'] = {
             ],
             "union": " y ",
             "sufijo": "."
-          },
-          {
-            "fragmentos": [
-              {
-                "campo": "womac_score",
-                "texto": "Resultado del cuestionario WOMAC: {valor}"
-              }
-            ],
-            "sufijo": "."
           }
         ]
+      },
+      {
+        "id": "escalaWomac",
+        "titulo": "Cuestionario WOMAC (Dolor / Rigidez / Capacidad funcional - ANEXO IV)",
+        "tipo": "escalaPuntuada",
+        "escala": {
+          "id": "womac",
+          "titulo": "Cuestionario WOMAC (Dolor / Rigidez / Capacidad funcional - ANEXO IV)",
+          "tituloGuia": "Información y administración del WOMAC",
+          "tituloTexto": "CUESTIONARIO WOMAC",
+          "fraseTexto": "Resultado del cuestionario WOMAC: {valor}.",
+          "fuente": "protocolo",
+          "recursoDescargable": {
+            "etiqueta": "WOMAC (versión imprimible)",
+            "archivo": "pdf/womac.pdf"
+          },
+          "guiaHTML": "<p><b>Administración del WOMAC:</b> entregar el cuestionario al paciente y comprobar que se ha cumplimentado correctamente. Si se administra mediante entrevista, leer las preguntas y opciones de respuesta sin inducir la elección. Registrar la puntuación conforme a las instrucciones de la versión utilizada.</p><p>Esta versión (adaptación española para artrosis de cadera y rodilla) tiene <b>24 ítems</b> con cinco casillas por pregunta, de izquierda a derecha: <b>0</b> (Ninguno/Ninguna) a <b>4</b> (Muchísimo/Muchísima). La calculadora suma cada apartado: <b>Dolor</b> (5 ítems, máximo 20), <b>Rigidez</b> (2 ítems, máximo 8) y <b>Capacidad funcional</b> (17 ítems, máximo 68), y el <b>total</b> (máximo 96).</p><p><i>Solo se puntúa un apartado cuando está completo, y el total solo cuando están los 24 ítems. No se normaliza ni se asignan categorías: si tu versión indica otra forma de registro, edítalo en <code>guiaHTML</code>.</i></p>",
+          "puntuacionMaxPorItem": 4,
+          "subescalas": [
+            {
+              "id": "dolor",
+              "titulo": "Apartado A · Dolor",
+              "tituloTexto": "dolor",
+              "instrucciones": "¿Cuánto dolor tiene? Dolor notado en caderas y/o rodillas en los últimos 2 días, en cada situación.",
+              "items": [
+                {
+                  "id": "w_a1",
+                  "etiqueta": "A1. Al andar por un terreno llano.",
+                  "opciones": [
+                    "Ninguno",
+                    "Poco",
+                    "Bastante",
+                    "Mucho",
+                    "Muchísimo"
+                  ]
+                },
+                {
+                  "id": "w_a2",
+                  "etiqueta": "A2. Al subir o bajar escaleras.",
+                  "opciones": [
+                    "Ninguno",
+                    "Poco",
+                    "Bastante",
+                    "Mucho",
+                    "Muchísimo"
+                  ]
+                },
+                {
+                  "id": "w_a3",
+                  "etiqueta": "A3. Por la noche en la cama.",
+                  "opciones": [
+                    "Ninguno",
+                    "Poco",
+                    "Bastante",
+                    "Mucho",
+                    "Muchísimo"
+                  ]
+                },
+                {
+                  "id": "w_a4",
+                  "etiqueta": "A4. Al estar sentado o tumbado.",
+                  "opciones": [
+                    "Ninguno",
+                    "Poco",
+                    "Bastante",
+                    "Mucho",
+                    "Muchísimo"
+                  ]
+                },
+                {
+                  "id": "w_a5",
+                  "etiqueta": "A5. Al estar de pie.",
+                  "opciones": [
+                    "Ninguno",
+                    "Poco",
+                    "Bastante",
+                    "Mucho",
+                    "Muchísimo"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "rigidez",
+              "titulo": "Apartado B · Rigidez",
+              "tituloTexto": "rigidez",
+              "instrucciones": "Rigidez (no dolor): sensación de dificultad inicial para mover con facilidad las articulaciones, en los últimos 2 días.",
+              "items": [
+                {
+                  "id": "w_b1",
+                  "etiqueta": "B1. ¿Cuánta rigidez nota después de despertarse por la mañana?",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_b2",
+                  "etiqueta": "B2. ¿Cuánta rigidez nota durante el resto del día después de estar sentado, tumbado o descansando?",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "funcion",
+              "titulo": "Apartado C · Capacidad funcional",
+              "tituloTexto": "capacidad funcional",
+              "instrucciones": "¿Qué grado de dificultad tiene al...? Dificultad notada en los últimos 2 días como consecuencia de la artrosis.",
+              "items": [
+                {
+                  "id": "w_c1",
+                  "etiqueta": "C1. Bajar las escaleras.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c2",
+                  "etiqueta": "C2. Subir las escaleras.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c3",
+                  "etiqueta": "C3. Levantarse después de estar sentado.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c4",
+                  "etiqueta": "C4. Estar de pie.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c5",
+                  "etiqueta": "C5. Agacharse para coger algo del suelo.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c6",
+                  "etiqueta": "C6. Andar por un terreno llano.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c7",
+                  "etiqueta": "C7. Entrar y salir de un coche.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c8",
+                  "etiqueta": "C8. Ir de compras.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c9",
+                  "etiqueta": "C9. Ponerse las medias o los calcetines.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c10",
+                  "etiqueta": "C10. Levantarse de la cama.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c11",
+                  "etiqueta": "C11. Quitarse las medias o los calcetines.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c12",
+                  "etiqueta": "C12. Estar tumbado en la cama.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c13",
+                  "etiqueta": "C13. Entrar y salir de la ducha/bañera.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c14",
+                  "etiqueta": "C14. Estar sentado.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c15",
+                  "etiqueta": "C15. Sentarse y levantarse del retrete.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c16",
+                  "etiqueta": "C16. Hacer tareas domésticas pesadas.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                },
+                {
+                  "id": "w_c17",
+                  "etiqueta": "C17. Hacer tareas domésticas ligeras.",
+                  "opciones": [
+                    "Ninguna",
+                    "Poca",
+                    "Bastante",
+                    "Mucha",
+                    "Muchísima"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       },
       {
         "id": "historiaLaboral",
@@ -471,23 +765,23 @@ window.FISIOAP_DATOS['coxartrosis'] = {
       "movimientos": [
         {
           "id": "fuerza_gluteo_medio",
-          "etiqueta": "Glúteo medio / Abductores (estabilidad pélvica)"
+          "etiqueta": "Abducción de cadera"
         },
         {
           "id": "fuerza_gluteo_mayor",
-          "etiqueta": "Glúteo mayor / Extensores de cadera"
+          "etiqueta": "Extensión de cadera"
         },
         {
           "id": "fuerza_psoas_iliaco",
-          "etiqueta": "Psoas ilíaco / Flexores de cadera"
+          "etiqueta": "Flexión de cadera"
         },
         {
           "id": "fuerza_aductores",
-          "etiqueta": "Aductores de cadera"
+          "etiqueta": "Aducción de cadera"
         },
         {
           "id": "fuerza_cuadriceps",
-          "etiqueta": "Cuádriceps"
+          "etiqueta": "Extensión de rodilla"
         }
       ]
     },
