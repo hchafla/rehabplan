@@ -145,7 +145,7 @@ window.FISIOAP_DATOS['lumbalgia'] = {
       },
       {
         "id": "historiaDolor",
-        "titulo": "Historia del dolor y cuestionario funcional",
+        "titulo": "Historia del dolor",
         "tipo": "narrativa",
         "campos": [
           {
@@ -179,12 +179,6 @@ window.FISIOAP_DATOS['lumbalgia'] = {
             "tipo": "texto_area",
             "etiqueta": "Factores de alivio",
             "ayuda": "¿Qué lo mejora? Ej.: decúbito supino con piernas flexionadas, calor local, marcha suave..."
-          },
-          {
-            "id": "oswestry_score",
-            "tipo": "texto",
-            "etiqueta": "Escala de incapacidad por dolor lumbar (Oswestry / ODIsp - ANEXO VIII)",
-            "ayuda": "Puntuación del cuestionario Oswestry (% de discapacidad)."
           }
         ],
         "gruposNarrativos": [
@@ -221,17 +215,149 @@ window.FISIOAP_DATOS['lumbalgia'] = {
             ],
             "union": " y ",
             "sufijo": "."
-          },
-          {
-            "fragmentos": [
-              {
-                "campo": "oswestry_score",
-                "texto": "Resultado en el cuestionario de incapacidad de Oswestry (ODIsp): {valor}"
-              }
-            ],
-            "sufijo": "."
           }
         ]
+      },
+      {
+        "id": "escalaOswestry",
+        "titulo": "Escala de incapacidad por dolor lumbar (Oswestry / ODIsp - ANEXO VIII)",
+        "tipo": "escalaPuntuada",
+        "escala": {
+          "id": "oswestry",
+          "titulo": "Escala de incapacidad por dolor lumbar (Oswestry / ODIsp - ANEXO VIII)",
+          "tituloTexto": "CUESTIONARIO DE INCAPACIDAD DE OSWESTRY (ODIsp)",
+          "fraseTexto": "Resultado en el cuestionario de incapacidad de Oswestry (ODIsp): {valor}.",
+          "fuente": "protocolo",
+          "recursoDescargable": {
+            "etiqueta": "Oswestry (versión imprimible)",
+            "archivo": "pdf/oswestry.pdf"
+          },
+          "guiaHTML": "<h4>Cómo se puntúa</h4><p>Cada apartado se puntúa de <b>0 a 5</b>: la <b>primera opción</b> del apartado vale <b>0</b> y la <b>última 5</b>. Suma de los 10 apartados: máximo <b>50 puntos</b>; multiplicada por 2, se expresa como <b>porcentaje (%)</b>.</p><p>Si el paciente deja un apartado sin responder, la puntuación se calcula sobre los apartados contestados (9 apartados → máximo 45). La calculadora no puntúa si falta más de uno.</p><p>Si el paciente marca más de una opción en un apartado, se anota la de <b>mayor puntuación</b>.</p><p><i>Estas reglas son las del instrumento publicado (Fairbank), no un texto del protocolo SCS: edítalas en <code>guiaHTML</code> si tu protocolo indica otra cosa.</i></p>",
+          "puntuacionMaxPorItem": 5,
+          "maxItemsSinContestar": 1,
+          "items": [
+            {
+              "id": "odi_1",
+              "etiqueta": "1. Intensidad de dolor",
+              "opciones": [
+                "Puedo soportar el dolor sin necesidad de tomar calmantes",
+                "El dolor es fuerte pero me arreglo sin tomar calmantes",
+                "Los calmantes me alivian completamente el dolor",
+                "Los calmantes me alivian un poco el dolor",
+                "Los calmantes apenas me alivian el dolor",
+                "Los calmantes no me quitan el dolor y no los tomo"
+              ]
+            },
+            {
+              "id": "odi_2",
+              "etiqueta": "2. Cuidados personales (lavarse, vestirse, etc.)",
+              "opciones": [
+                "Me las puedo arreglar solo sin que me aumente el dolor",
+                "Me las puedo arreglar solo pero esto me aumenta el dolor",
+                "Lavarme, vestirme, etc., me produce dolor y tengo que hacerlo despacio y con cuidado",
+                "Necesito alguna ayuda pero consigo hacer la mayoría de las cosas yo solo",
+                "Necesito ayuda para hacer la mayoría de las cosas",
+                "No puedo vestirme, me cuesta lavarme, y suelo quedarme en la cama"
+              ]
+            },
+            {
+              "id": "odi_3",
+              "etiqueta": "3. Levantar peso",
+              "opciones": [
+                "Puedo levantar objetos pesados sin que me aumente el dolor",
+                "Puedo levantar objetos pesados pero me aumenta el dolor",
+                "El dolor me impide levantar objetos pesados del suelo, pero puedo hacerlo si están en un sitio cómodo (ej. en una mesa)",
+                "El dolor me impide levantar objetos pesados, pero sí puedo levantar objetos ligeros o medianos si están en un sitio cómodo",
+                "Sólo puedo levantar objetos muy ligeros",
+                "No puedo levantar ni elevar ningún objeto"
+              ]
+            },
+            {
+              "id": "odi_4",
+              "etiqueta": "4. Andar",
+              "opciones": [
+                "El dolor no me impide andar",
+                "El dolor me impide andar más de un kilómetro",
+                "El dolor me impide andar más de 500 metros",
+                "El dolor me impide andar más de 250 metros",
+                "Sólo puedo andar con bastón o muletas",
+                "Permanezco en la cama casi todo el tiempo y tengo que ir a rastras al baño"
+              ]
+            },
+            {
+              "id": "odi_5",
+              "etiqueta": "5. Estar sentado",
+              "opciones": [
+                "Puedo estar sentado en cualquier tipo de silla todo el tiempo que quiera",
+                "Puedo estar sentado en mi silla favorita todo el tiempo que quiera",
+                "El dolor me impide estar sentado más de una hora",
+                "El dolor me impide estar sentado más de media hora",
+                "El dolor me impide estar sentado más de diez minutos",
+                "El dolor me impide estar sentado"
+              ]
+            },
+            {
+              "id": "odi_6",
+              "etiqueta": "6. Estar de pie",
+              "opciones": [
+                "Puedo estar de pie tanto tiempo como quiera sin que me aumente el dolor",
+                "Puedo estar de pie tanto tiempo como quiera pero me aumenta el dolor",
+                "El dolor me impide estar de pie más de una hora",
+                "El dolor me impide estar de pie más de media hora",
+                "El dolor me impide estar de pie más de diez minutos",
+                "El dolor me impide estar de pie"
+              ]
+            },
+            {
+              "id": "odi_7",
+              "etiqueta": "7. Dormir",
+              "opciones": [
+                "El dolor no me impide dormir bien",
+                "Sólo puedo dormir si tomo pastillas",
+                "Incluso tomando pastillas duermo menos de seis horas",
+                "Incluso tomando pastillas duermo menos de cuatro horas",
+                "Incluso tomando pastillas duermo menos de dos horas",
+                "El dolor me impide totalmente dormir"
+              ]
+            },
+            {
+              "id": "odi_8",
+              "etiqueta": "8. Actividad sexual",
+              "opciones": [
+                "Mi actividad sexual es normal y no me aumenta el dolor",
+                "Mi actividad sexual es normal pero me aumenta el dolor",
+                "Mi actividad sexual es casi normal pero me aumenta mucho el dolor",
+                "Mi actividad sexual se ha visto muy limitada a causa del dolor",
+                "Mi actividad sexual es casi nula a causa del dolor",
+                "El dolor me impide todo tipo de actividad sexual"
+              ]
+            },
+            {
+              "id": "odi_9",
+              "etiqueta": "9. Vida social",
+              "opciones": [
+                "Mi vida social es normal y no me aumenta el dolor",
+                "Mi vida social es normal, pero me aumenta el dolor",
+                "El dolor no tiene un efecto importante en mi vida social, pero sí impide mis actividades más enérgicas, como bailar, etc.",
+                "El dolor ha limitado mi vida social y no salgo tan a menudo",
+                "El dolor ha limitado mi vida social al hogar",
+                "No tengo vida social a causa del dolor"
+              ]
+            },
+            {
+              "id": "odi_10",
+              "etiqueta": "10. Viajar",
+              "opciones": [
+                "Puedo viajar a cualquier sitio sin que me aumente el dolor",
+                "Puedo viajar a cualquier sitio, pero me aumenta el dolor",
+                "El dolor es fuerte, pero aguanto viajes de más de dos horas",
+                "El dolor me limita a viajes de menos de una hora",
+                "El dolor me limita a viajes cortos y necesarios de menos de media hora",
+                "El dolor me impide viajar excepto para ir al médico o al hospital"
+              ]
+            }
+          ]
+        }
       },
       {
         "id": "historiaLaboral",
@@ -464,19 +590,27 @@ window.FISIOAP_DATOS['lumbalgia'] = {
       "movimientos": [
         {
           "id": "fuerza_core_abdominis",
-          "etiqueta": "Musculatura abdominal / CORE (Transverso y Recto)"
+          "etiqueta": "Musculatura abdominal / CORE (Transverso y Recto)",
+          "estructura": "Recto abdominal (flexión de tronco) y transverso del abdomen",
+          "ayuda": "<b>Recto abdominal (flexión de tronco):</b> decúbito supino con caderas y rodillas flexionadas y los pies apoyados.<br><b>Gesto:</b> flexionar el tronco hasta despegar las escápulas de la camilla (encogimiento o <i>curl-up</i>), sin tirar del cuello.<br><b>Grado 3:</b> lo consigue con los brazos extendidos hacia delante.<br><b>Grado 4:</b> con los brazos cruzados sobre el pecho.<br><b>Grado 5:</b> con las manos detrás de la cabeza.<br><b>Grados 0-2:</b> si no logra despegar las escápulas, valora la contracción abdominal con la palpación (1) o el movimiento parcial (2), según tu referencia (Kendall / Daniels).<br><b>Transverso del abdomen:</b> no se gradúa con la escala de Daniels. Si quieres valorar su activación, pide \"meter el ombligo hacia dentro\" sin mover la pelvis ni contener la respiración, palpando por dentro de las espinas ilíacas anterosuperiores. Anótalo en \"Otros hallazgos\" de inspección y palpación.<br><b>Ojo:</b> si arquea la zona lumbar o se le levantan los pies, está compensando. Si reproduce el dolor lumbar, anótalo y no insistas."
         },
         {
           "id": "fuerza_extensores_lumbares",
-          "etiqueta": "Extensores lumbares / Erectores espinales"
+          "etiqueta": "Extensores lumbares / Erectores espinales",
+          "estructura": "Erectores espinales / extensores lumbares",
+          "ayuda": "<b>Posición:</b> decúbito prono (con una almohada bajo el abdomen si es cómodo). Estabiliza la pelvis fijando o apoyando las piernas.<br><b>Gesto:</b> levantar el tronco de la camilla extendiendo la columna.<br><b>Grado 3:</b> eleva el tronco contra la gravedad con los brazos a lo largo del cuerpo.<br><b>Grados 4-5:</b> se aumenta la carga con la posición de los brazos (manos detrás del cuello, después brazos por encima de la cabeza), según tu referencia (Kendall / Daniels). Evita la resistencia manual intensa.<br><b>Grados 0-2:</b> si no logra elevar el tronco, valora con la palpación la contracción de los erectores (1) o el movimiento parcial (2).<br><b>Ojo:</b> que el movimiento sea de extensión de la columna y no un empuje con los brazos. Si reproduce el dolor lumbar, anótalo.<br><br><b>Grados:</b> 1 = contracción palpable sin movimiento · 2 = recorrido completo con la gravedad eliminada · 3 = recorrido completo contra la gravedad · 4 = contra resistencia moderada · 5 = contra resistencia máxima."
         },
         {
           "id": "fuerza_gluteo_mayor",
-          "etiqueta": "Glúteo mayor (extensión de cadera)"
+          "etiqueta": "Glúteo mayor (extensión de cadera)",
+          "estructura": "Glúteo mayor (extensión de cadera)",
+          "ayuda": "<b>Posición:</b> decúbito prono, con la rodilla del lado explorado flexionada a 90° (así se reduce la participación de los isquiotibiales). Estabiliza la pelvis con la otra mano.<br><b>Gesto:</b> elevar el muslo de la camilla (extensión de cadera) manteniendo la rodilla flexionada.<br><b>Grado 3:</b> levanta el muslo contra la gravedad.<br><b>Grados 4-5:</b> resistencia en la cara posterior de la parte distal del muslo, hacia la camilla, de forma progresiva.<br><b>Grado 2:</b> decúbito lateral con la pierna sostenida: extiende la cadera con la gravedad eliminada.<br><b>Ojo:</b> que no compense con hiperextensión lumbar ni con elevación o rotación de la pelvis. Compara con el lado contrario.<br><br><b>Grados:</b> 1 = contracción palpable sin movimiento · 2 = recorrido completo con la gravedad eliminada · 3 = recorrido completo contra la gravedad · 4 = contra resistencia moderada · 5 = contra resistencia máxima."
         },
         {
           "id": "fuerza_gluteo_medio",
-          "etiqueta": "Glúteo medio (estabilidad lumbopélvica)"
+          "etiqueta": "Glúteo medio (estabilidad lumbopélvica)",
+          "estructura": "Glúteo medio (abducción de cadera y estabilidad lumbopélvica)",
+          "ayuda": "<b>Posición:</b> decúbito lateral sobre el lado contrario, con la pierna explorada arriba, cadera en ligera extensión y sin flexión ni rotación interna.<br><b>Gesto:</b> abducir la cadera elevando la pierna hacia el techo, con la pelvis estable.<br><b>Grado 3:</b> completa la abducción contra la gravedad sin que el tronco rote hacia atrás.<br><b>Grados 4-5:</b> resistencia en la cara lateral de la parte distal del muslo, hacia abajo, de forma progresiva.<br><b>Grado 2:</b> decúbito supino: desliza la pierna lateralmente sobre la camilla (gravedad eliminada).<br><b>Ojo:</b> si flexiona la cadera o rota internamente, entra el tensor de la fascia lata; si eleva la pelvis, compensa el cuadrado lumbar. Compara con el lado contrario.<br><br><b>Grados:</b> 1 = contracción palpable sin movimiento · 2 = recorrido completo con la gravedad eliminada · 3 = recorrido completo contra la gravedad · 4 = contra resistencia moderada · 5 = contra resistencia máxima."
         }
       ]
     },
@@ -543,13 +677,30 @@ window.FISIOAP_DATOS['lumbalgia'] = {
           "id": "test_slr",
           "nombre": "Test de Elevación de la Pierna Recta (SLR / Lasègue)",
           "estructura": "Mecanoneurosensibilidad del nervio ciático (L4-S2)",
-          "ayuda": "Elevación pasiva de la pierna extendida en supino. Medir el ángulo y los síntomas provocados. Positivo si reproduce el dolor radicular por debajo de los 60°."
+          "ayuda": "<b>¿Cómo se realiza?</b><br>Paciente en decúbito supino y relajado, con la pierna explorada extendida. Eleva pasivamente la pierna con la rodilla extendida (flexión de cadera) hasta que aparezcan los síntomas o se alcance el límite del movimiento. Anota el ángulo y dónde aparecen los síntomas. Si se reproducen los síntomas habituales, haz una maniobra de diferenciación: baja ligeramente la pierna hasta que cedan y añade dorsiflexión del tobillo para ver si aumentan.<br><br><b>✅ Positivo</b><br>Reproduce el dolor irradiado habitual del paciente, y este cambia con la maniobra de diferenciación (por ejemplo, aumenta con la dorsiflexión del tobillo y cede al bajar la pierna).<br><br><b>➖ Negativo</b><br>No reproduce el dolor irradiado habitual. Puede aparecer tirantez en la parte posterior del muslo o molestia lumbar local sin que esto se considere, por sí solo, un resultado positivo.<br><br><b>Importante:</b> ambas pruebas deben interpretarse según los síntomas habituales del paciente, su distribución y la respuesta a las maniobras de diferenciación. Una sensación aislada de estiramiento no equivale a una prueba positiva. Un resultado positivo tampoco confirma por sí solo una hernia discal o una radiculopatía, y uno negativo no las descarta por completo.",
+          "imagen": "slr.webp",
+          "video": null,
+          "detalle": true
         },
         {
           "id": "test_slump",
           "nombre": "Test de Slump",
           "estructura": "Tensión del tejido nervioso del eje neuraxial",
-          "ayuda": "Paciente sentado con pies colgando; realizar flexión dorsal/lumbar, mentón al pecho, extensión de rodilla y dorsiflexión de tobillo. Positivo si reproduce los síntomas radiculares conocidos y se modifica al liberar la flexión cervical."
+          "ayuda": "<b>¿Cómo se realiza?</b><br>Con el paciente sentado en el borde de la camilla, pídele que flexione progresivamente la espalda y el cuello, acercando la barbilla al pecho. Manteniendo esa posición, extiende lentamente la rodilla que vas a explorar y añade dorsiflexión del tobillo. Observa cuándo y dónde aparecen los síntomas.<br>Si se reproducen los síntomas habituales, mantén la posición de la pierna y pide al paciente que levante la cabeza, extendiendo el cuello. Comprueba si los síntomas disminuyen.<br><br><b>✅ Positivo</b><br>Reproduce los síntomas habituales del paciente y estos disminuyen de forma apreciable al extender el cuello, lo que apoya la participación de la mecanosensibilidad neural.<br><br><b>➖ Negativo</b><br>No reproduce los síntomas habituales o estos no presentan cambios relevantes con la maniobra de diferenciación estructural. Interpreta el resultado junto con el resto de la exploración.<br><br><b>Importante:</b> ambas pruebas deben interpretarse según los síntomas habituales del paciente, su distribución y la respuesta a las maniobras de diferenciación. Una sensación aislada de estiramiento no equivale a una prueba positiva. Un resultado positivo tampoco confirma por sí solo una hernia discal o una radiculopatía, y uno negativo no las descarta por completo.",
+          "imagen": "slump.webp",
+          "video": null,
+          "detalle": true
+        }
+      ]
+    },
+    "pruebasFuncionales": {
+      "titulo": "Pruebas funcionales",
+      "campos": [
+        {
+          "id": "func_marcha_puntillas",
+          "tipo": "tristate",
+          "etiqueta": "Capaz de marcha de puntillas",
+          "ayuda": "Pídele que camine de puntillas unos pasos. Sí = la realiza; No = no puede; sin marcar = no valorada."
         }
       ]
     }
