@@ -152,7 +152,7 @@ window.FISIOAP_DATOS['epoc'] = {
       },
       {
         "id": "historiaDolor",
-        "titulo": "Síntomas y Cuestionario CAT (ANEXO X)",
+        "titulo": "Síntomas respiratorios",
         "tipo": "narrativa",
         "campos": [
           {
@@ -160,14 +160,6 @@ window.FISIOAP_DATOS['epoc'] = {
             "tipo": "texto",
             "etiqueta": "Sintomatología predominante",
             "ayuda": "Disnea de esfuerzo, tos crónica, expectoración/broncorrea, fatiga precoz..."
-          },
-          {
-            "id": "cat_score",
-            "tipo": "numero",
-            "etiqueta": "Puntuación total Cuestionario CAT (0-40)",
-            "min": 0,
-            "max": 40,
-            "ayuda": "COPD Assessment Test (0-10 leve, 11-20 moderado, 21-30 alto, >30 muy alto impacto)."
           }
         ],
         "gruposNarrativos": [
@@ -176,15 +168,6 @@ window.FISIOAP_DATOS['epoc'] = {
               {
                 "campo": "sintomas_respiratorios",
                 "texto": "Sintomatología clínica predominante: {valor}"
-              }
-            ],
-            "sufijo": "."
-          },
-          {
-            "fragmentos": [
-              {
-                "campo": "cat_score",
-                "texto": "Puntuación del cuestionario de impacto CAT: {valor}/40 puntos"
               }
             ],
             "sufijo": "."
@@ -317,10 +300,12 @@ window.FISIOAP_DATOS['epoc'] = {
       "titulo": "Datos Antropométricos y Valoración Respiratoria Básica",
       "campos": [
         {
-          "id": "antropo_peso_talla_imc",
-          "tipo": "texto",
-          "etiqueta": "Peso, Talla e Índice de Masa Corporal (IMC)",
-          "ayuda": "Ej.: Peso: 72 kg, Talla: 1.68 m, IMC: 25.5 kg/m² (evaluar desnutrición u obesidad)."
+          "id": "antropo_imc",
+          "tipo": "imc",
+          "etiqueta": "Peso, talla e índice de masa corporal (IMC)",
+          "idPeso": "antropo_peso",
+          "idTalla": "antropo_talla",
+          "ayuda": "IMC = peso (kg) / talla² (m²). Introduce el peso en kilogramos y la talla en centímetros (por ejemplo, 168, no 1,68)."
         },
         {
           "id": "insp_patron_respiratorio",
@@ -447,29 +432,187 @@ window.FISIOAP_DATOS['epoc'] = {
       }
     },
     "testsEspecificos": {
-      "titulo": "Pruebas diagnósticas y Escalas del Protocolo",
+      "titulo": "Pruebas específicas",
       "fuente": "protocolo",
-      "tests": [
+      "tests": [],
+      "grupos": [
         {
-          "id": "test_espirometria",
-          "nombre": "Resultados de la Espirometría (FEV1% y FEV1/FVC)",
-          "estructura": "Grado de obstrucción al flujo aéreo",
-          "ayuda": "Registrar valor de FEV1% posbroncodilatador (Riesgo Bajo exige FEV1 ≥ 50% del teórico) y cociente FEV1/FVC < 0.70."
-        },
-        {
-          "id": "test_mmrc",
-          "nombre": "Escala de Disnea mMRC (Medical Research Council Modificada) - ANEXO IX",
-          "estructura": "Grado de disnea funcional (0 a 4)",
-          "ayuda": "0: Disnea solo ante ejercicio intenso. 1: Disnea al andar deprisa en llano o subiendo una pendiente suave. (Grados 2, 3 y 4 se consideran disnea moderada-severa fuera de criterio bajo riesgo puro)."
-        },
-        {
-          "id": "test_cat",
-          "nombre": "Cuestionario CAT (COPD Assessment Test) - ANEXO X",
-          "estructura": "Evaluación del impacto global de la EPOC",
-          "ayuda": "8 ítems (tos, flemas, opresión, disnea al subir escaleras, limitaciones en casa, confianza para salir, sueño y energía). Puntuación total de 0 a 40."
+          "id": "espirometria",
+          "titulo": "Espirometría",
+          "tituloTexto": "ESPIROMETRÍA",
+          "ayuda": "Registra los datos de la espirometría que consten en la historia clínica o que aporte el paciente. Esta herramienta no calcula ni asigna el perfil de riesgo: solo recoge los valores.",
+          "campos": [
+            {
+              "id": "espiro_fecha",
+              "tipo": "fecha",
+              "etiqueta": "Fecha de la espirometría",
+              "textoFrase": "realizada el {valor}",
+              "ayuda": "Día en que se realizó la prueba (no puede ser posterior a hoy)."
+            },
+            {
+              "id": "espiro_procedencia",
+              "tipo": "select",
+              "etiqueta": "Procedencia del resultado (opcional)",
+              "opciones": [
+                "Consta en la historia clínica",
+                "La aporta el paciente"
+              ],
+              "textoFrase": "procedencia: {valor}",
+              "valorMinusculas": true,
+              "ayuda": "Indica dónde has consultado el resultado. Déjalo sin seleccionar si no lo sabes."
+            },
+            {
+              "id": "espiro_fev1",
+              "tipo": "numero",
+              "etiqueta": "FEV1 posbroncodilatador (% del valor teórico)",
+              "unidad": "%",
+              "step": 1,
+              "rangoValido": [
+                5,
+                200
+              ],
+              "mensajeRango": "El FEV1 se registra como porcentaje del teórico (entre 5 y 200).",
+              "textoFrase": "FEV1 posbroncodilatador {valor} % del teórico",
+              "ayuda": "FEV1: volumen de aire que el paciente expulsa en el primer segundo de una espiración forzada. Aquí se anota como % del valor teórico (el esperado para su edad, sexo y talla), medido tras el broncodilatador. En el protocolo SCS, el perfil de EPOC de riesgo bajo incluye un FEV1 igual o superior al 50 % del teórico."
+            },
+            {
+              "id": "espiro_cociente",
+              "tipo": "numero",
+              "etiqueta": "Cociente FEV1/FVC (decimal de 0 a 1, no porcentaje)",
+              "unidad": "decimal (ej.: 0,65 = 65 %)",
+              "step": 0.01,
+              "rangoValido": [
+                0.2,
+                1
+              ],
+              "mensajeRango": "Introduce el cociente en forma decimal entre 0,2 y 1 (por ejemplo, 0,65). Si lo tienes como porcentaje, divídelo entre 100.",
+              "textoFrase": "FEV1/FVC {valor}",
+              "ayuda": "Relación entre el FEV1 y la capacidad vital forzada (FVC: el total de aire que se expulsa en una espiración forzada). Se anota como decimal: 0,65 equivale a 65 %. El protocolo SCS toma como umbral un cociente inferior a 0,70."
+            }
+          ]
         }
       ]
-    }
+    },
+    "escalasPuntuadas": [
+      {
+        "id": "mmrc",
+        "tipo": "gradoUnico",
+        "titulo": "Escala de disnea mMRC (Medical Research Council modificada) - ANEXO IX",
+        "tituloTexto": "ESCALA DE DISNEA mMRC",
+        "fuente": "protocolo",
+        "resumen": "Mide el grado de disnea (falta de aire) en la vida diaria, de 0 (solo con ejercicio intenso) a 4 (la disnea impide salir de casa o aparece al vestirse). Marca una única respuesta.",
+        "notaProtocolo": "El protocolo SCS utiliza mMRC 0-1 como criterio de inclusión en el perfil de EPOC de riesgo bajo.",
+        "recursoDescargable": {
+          "etiqueta": "mMRC (versión imprimible)",
+          "archivo": "pdf/mmrc.pdf"
+        },
+        "grados": [
+          {
+            "valor": 0,
+            "descripcion": "Ausencia de disnea, excepto al realizar ejercicio intenso."
+          },
+          {
+            "valor": 1,
+            "descripcion": "Disnea al andar deprisa o al subir una cuesta poco pronunciada."
+          },
+          {
+            "valor": 2,
+            "descripcion": "Incapacidad de mantener el paso de otras personas de la misma edad, debido a la dificultad respiratoria o la necesidad de pararse a descansar al andar en llano siguiendo el propio paso."
+          },
+          {
+            "valor": 3,
+            "descripcion": "Necesidad de pararse a descansar al andar unos 100 metros o a los pocos minutos de andar en llano."
+          },
+          {
+            "valor": 4,
+            "descripcion": "La disnea impide al paciente salir de casa o aparece con actividades como vestirse o desvestirse."
+          }
+        ]
+      },
+      {
+        "id": "cat",
+        "titulo": "Cuestionario CAT (COPD Assessment Test) - ANEXO X",
+        "tituloTexto": "CUESTIONARIO CAT",
+        "fuente": "protocolo",
+        "resumen": "El CAT evalúa el impacto de la EPOC sobre la salud y la vida cotidiana del paciente: 8 ítems puntuados de 0 a 5 (total de 0 a 40; a mayor puntuación, mayor impacto).",
+        "avisoVersion": "Versión provisional. El texto de los ítems procede del PDF aportado, una transcripción no oficial (cabecera \"www.1aria.com\"). Antes de usar el cuestionario con pacientes, sustituir ese PDF y el texto de los 8 ítems por el documento oficial autorizado del CAT en español y contrastarlos.",
+        "recursoDescargable": {
+          "etiqueta": "CAT (versión imprimible)",
+          "archivo": "pdf/cat.pdf"
+        },
+        "tituloGuia": "Cómo se puntúa el CAT",
+        "guiaHTML": "<p>Cada ítem se puntúa de <b>0 a 5</b>: el extremo izquierdo (el mejor estado) vale 0 y el derecho (el peor) vale 5. La suma de los 8 ítems va de <b>0 a 40</b>; 0 es la mejor percepción de la calidad de vida y 40 la peor.</p><p>La calculadora solo muestra el total cuando están respondidos <b>los 8 ítems</b>: si falta alguno, indica que el cuestionario está incompleto y no escribe puntuación en el texto.</p><p><b>Escenarios de impacto sugeridos</b> (según el PDF aportado): bajo (1-10), medio (11-20), alto (21-30) y muy alto (31-40). La herramienta no los asigna automáticamente.</p>",
+        "puntuacionMaxPorItem": 5,
+        "maxItemsSinContestar": 0,
+        "sinPorcentaje": true,
+        "items": [
+          {
+            "id": "cat_1",
+            "etiqueta": "Ítem 1",
+            "anclas": [
+              "Yo nunca toso",
+              "Toso todo el tiempo"
+            ]
+          },
+          {
+            "id": "cat_2",
+            "etiqueta": "Ítem 2",
+            "anclas": [
+              "No tengo flema (moco en el pecho)",
+              "Tengo el pecho lleno de flema (moco)"
+            ]
+          },
+          {
+            "id": "cat_3",
+            "etiqueta": "Ítem 3",
+            "anclas": [
+              "No siento el pecho oprimido",
+              "Siento el pecho oprimido"
+            ]
+          },
+          {
+            "id": "cat_4",
+            "etiqueta": "Ítem 4",
+            "anclas": [
+              "No me falta el aliento al subir pendientes o escaleras",
+              "Me falta el aliento al subir pendientes o escaleras"
+            ]
+          },
+          {
+            "id": "cat_5",
+            "etiqueta": "Ítem 5",
+            "anclas": [
+              "No tengo limitación para tareas del hogar",
+              "Estoy totalmente limitado para las tareas del hogar"
+            ]
+          },
+          {
+            "id": "cat_6",
+            "etiqueta": "Ítem 6",
+            "anclas": [
+              "No tengo problemas para salir de mi casa",
+              "No me siento seguro para salir de mi casa"
+            ]
+          },
+          {
+            "id": "cat_7",
+            "etiqueta": "Ítem 7",
+            "anclas": [
+              "Duermo profundamente",
+              "Mi problema respiratorio me impide dormir"
+            ]
+          },
+          {
+            "id": "cat_8",
+            "etiqueta": "Ítem 8",
+            "anclas": [
+              "Tengo mucha energía",
+              "No tengo nada de energía"
+            ]
+          }
+        ]
+      }
+    ]
   },
   "planActuacion": {
     "fuente": "editable",
