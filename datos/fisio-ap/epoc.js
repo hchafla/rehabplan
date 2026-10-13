@@ -535,13 +535,12 @@ window.FISIOAP_DATOS['epoc'] = {
         "tituloTexto": "CUESTIONARIO CAT",
         "fuente": "protocolo",
         "resumen": "El CAT evalúa el impacto de la EPOC sobre la salud y la vida cotidiana del paciente: 8 ítems puntuados de 0 a 5 (total de 0 a 40; a mayor puntuación, mayor impacto).",
-        "avisoVersion": "Versión provisional. El texto de los ítems procede del PDF aportado, una transcripción no oficial (cabecera \"www.1aria.com\"). Antes de usar el cuestionario con pacientes, sustituir ese PDF y el texto de los 8 ítems por el documento oficial autorizado del CAT en español y contrastarlos.",
         "recursoDescargable": {
           "etiqueta": "CAT (versión imprimible)",
           "archivo": "pdf/cat.pdf"
         },
         "tituloGuia": "Cómo se puntúa el CAT",
-        "guiaHTML": "<p>Cada ítem se puntúa de <b>0 a 5</b>: el extremo izquierdo (el mejor estado) vale 0 y el derecho (el peor) vale 5. La suma de los 8 ítems va de <b>0 a 40</b>; 0 es la mejor percepción de la calidad de vida y 40 la peor.</p><p>La calculadora solo muestra el total cuando están respondidos <b>los 8 ítems</b>: si falta alguno, indica que el cuestionario está incompleto y no escribe puntuación en el texto.</p><p><b>Escenarios de impacto sugeridos</b> (según el PDF aportado): bajo (1-10), medio (11-20), alto (21-30) y muy alto (31-40). La herramienta no los asigna automáticamente.</p>",
+        "guiaHTML": "<p>Cada ítem se puntúa de <b>0 a 5</b>: el enunciado de la izquierda (el estado más favorable) vale 0 y el de la derecha vale 5. La suma de los 8 ítems va de <b>0 a 40</b>.</p><p>La calculadora solo muestra el total cuando están respondidos <b>los 8 ítems</b>: si falta alguno, indica que el cuestionario está incompleto y no escribe puntuación en el texto.</p><p><i>Versión: CAT en español (EE. UU.), © 2009 GSK. La CAT (prueba de evaluación de la COPD) y el logotipo de CAT son marcas registradas del grupo de empresas de GSK.</i></p>",
         "puntuacionMaxPorItem": 5,
         "maxItemsSinContestar": 0,
         "sinPorcentaje": true,
@@ -550,56 +549,56 @@ window.FISIOAP_DATOS['epoc'] = {
             "id": "cat_1",
             "etiqueta": "Ítem 1",
             "anclas": [
-              "Yo nunca toso",
-              "Toso todo el tiempo"
+              "Nunca toso",
+              "Siempre estoy tosiendo"
             ]
           },
           {
             "id": "cat_2",
             "etiqueta": "Ítem 2",
             "anclas": [
-              "No tengo flema (moco en el pecho)",
-              "Tengo el pecho lleno de flema (moco)"
+              "No tengo flema (mucosidad) en el pecho",
+              "Tengo el pecho completamente lleno de flema (mucosidad)"
             ]
           },
           {
             "id": "cat_3",
             "etiqueta": "Ítem 3",
             "anclas": [
-              "No siento el pecho oprimido",
-              "Siento el pecho oprimido"
+              "No siento ninguna opresión en el pecho",
+              "Siento mucha opresión en el pecho"
             ]
           },
           {
             "id": "cat_4",
             "etiqueta": "Ítem 4",
             "anclas": [
-              "No me falta el aliento al subir pendientes o escaleras",
-              "Me falta el aliento al subir pendientes o escaleras"
+              "Cuando subo una pendiente o un tramo de escaleras, no me falta el aire",
+              "Cuando subo una pendiente o un tramo de escaleras, me falta mucho el aire"
             ]
           },
           {
             "id": "cat_5",
             "etiqueta": "Ítem 5",
             "anclas": [
-              "No tengo limitación para tareas del hogar",
-              "Estoy totalmente limitado para las tareas del hogar"
+              "No me siento limitado para realizar actividades domésticas",
+              "Me siento muy limitado para realizar actividades domésticas"
             ]
           },
           {
             "id": "cat_6",
             "etiqueta": "Ítem 6",
             "anclas": [
-              "No tengo problemas para salir de mi casa",
-              "No me siento seguro para salir de mi casa"
+              "Me siento seguro al salir de casa a pesar de la enfermedad pulmonar que padezco",
+              "No me siento nada seguro al salir de casa debido a la enfermedad pulmonar que padezco"
             ]
           },
           {
             "id": "cat_7",
             "etiqueta": "Ítem 7",
             "anclas": [
-              "Duermo profundamente",
-              "Mi problema respiratorio me impide dormir"
+              "Duermo sin problemas",
+              "Tengo problemas para dormir debido a la enfermedad pulmonar que padezco"
             ]
           },
           {
@@ -607,7 +606,7 @@ window.FISIOAP_DATOS['epoc'] = {
             "etiqueta": "Ítem 8",
             "anclas": [
               "Tengo mucha energía",
-              "No tengo nada de energía"
+              "No tengo ninguna energía"
             ]
           }
         ]
