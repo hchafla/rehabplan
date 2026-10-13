@@ -1388,6 +1388,29 @@
                 cont.appendChild(caja);
             }
         });
+
+        // Bloques de campos (p. ej. espirometría): título, ayuda breve y campos
+        (datos.grupos || []).forEach((g) => {
+            const caja = document.createElement('div');
+            caja.className = 'grupo-prueba';
+            const h4 = document.createElement('h4');
+            h4.className = 'grupo-prueba-titulo';
+            h4.textContent = g.titulo;
+            caja.appendChild(h4);
+            if (g.ayuda) {
+                const ay = document.createElement('p');
+                ay.className = 'ayuda-seccion';
+                ay.textContent = g.ayuda;
+                caja.appendChild(ay);
+            }
+            const grid = document.createElement('div');
+            grid.className = 'campo-grid';
+            (g.campos || []).forEach((campo) => {
+                grid.appendChild(construirCampoGenerico(campo, estado.exploracion.campos, regenerarExploracion));
+            });
+            caja.appendChild(grid);
+            cont.appendChild(caja);
+        });
     }
 
     /* ==========================================================
@@ -1477,20 +1500,67 @@
         };
     }
 
+    // Escalas con subescalas (p. ej. WOMAC: dolor / rigidez / capacidad funcional).
+    // Cada subescala es la suma de sus ítems y solo se puntúa si está COMPLETA:
+    // no se estima ni se prorratea nada que el instrumento no indique.
+    function calcularSubescalas(escala, campos) {
+        const maxItem = escala.puntuacionMaxPorItem || 5;
+        const subs = escala.subescalas.map((sub) => {
+            let suma = 0;
+            let contestados = 0;
+            sub.items.forEach((it) => {
+                const v = campos[escala.id + '__' + it.id];
+                if (typeof v === 'number' && v >= 0 && v <= maxItem) {
+                    suma += v;
+                    contestados += 1;
+                }
+            });
+            return {
+                id: sub.id,
+                titulo: sub.titulo,
+                tituloTexto: sub.tituloTexto || sub.titulo.toLowerCase(),
+                suma, contestados,
+                total: sub.items.length,
+                max: sub.items.length * maxItem,
+                completa: contestados === sub.items.length
+            };
+        });
+        const completa = subs.every((x) => x.completa);
+        return {
+            subs,
+            total: {
+                completa,
+                suma: subs.reduce((a, x) => a + x.suma, 0),
+                max: subs.reduce((a, x) => a + x.max, 0)
+            }
+        };
+    }
+
+    function textoResultadoSubescalas(escala, campos) {
+        const r = calcularSubescalas(escala, campos);
+        const partes = r.subs.filter((x) => x.completa).map((x) => `${x.tituloTexto} ${x.suma}/${x.max}`);
+        if (r.total.completa) partes.push(`total ${r.total.suma}/${r.total.max}`);
+        return partes.join('; ');
+    }
+
     function textoResultadoEscala(escala, campos) {
+        if (escala.tipo === 'gradoUnico') {
+            const g = campos[escala.id + '__grado'];
+            return typeof g === 'number' ? `grado ${g}` : '';
+        }
+        if (Array.isArray(escala.subescalas)) return textoResultadoSubescalas(escala, campos);
         const r = calcularEscala(escala, campos);
         if (!r.valido) return '';
+        if (escala.sinPorcentaje) return `${r.suma}/${r.maximo}`;
         const pct = formatearNumeroEs(r.porcentaje, 1).replace(/,0$/, '');
         let txt = `${r.suma}/${r.maximo} (${pct} %)`;
         if (r.sinContestar > 0) txt += `, calculado sobre ${r.contestados} de ${r.total} ítems contestados`;
         return txt;
     }
 
-    // Construye el panel completo de una escala (botón PDF, guía, ítems 0-N,
-    // resultado). Es independiente de la sección: recibe el almacén de campos
-    // y la función que regenera el texto de esa sección.
-    function construirPanelEscala(escala, campos, regenerar, opciones) {
-        const sinTitulo = !!(opciones && opciones.sinTitulo);
+    // Cabecera común de una escala: título, resumen breve, notas (protocolo /
+    // versión provisional), botón al PDF imprimible y guía desplegable.
+    function construirCabeceraEscala(escala, sinTitulo) {
         const panel = document.createElement('div');
         panel.className = 'dinamometria-panel escala-panel';
 
@@ -1499,25 +1569,82 @@
             h3.textContent = escala.titulo;
             panel.appendChild(h3);
         }
-
+        if (escala.resumen) {
+            const p = document.createElement('p');
+            p.className = 'escala-resumen';
+            p.textContent = escala.resumen;
+            panel.appendChild(p);
+        }
+        if (escala.notaProtocolo) {
+            const p = document.createElement('p');
+            p.className = 'escala-nota-protocolo';
+            p.textContent = '📌 ' + escala.notaProtocolo;
+            panel.appendChild(p);
+        }
+        if (escala.avisoVersion) {
+            const p = document.createElement('p');
+            p.className = 'escala-aviso-version';
+            p.textContent = '⚠ ' + escala.avisoVersion;
+            panel.appendChild(p);
+        }
         if (escala.recursoDescargable) {
             const fila = document.createElement('div');
             fila.className = 'escala-recurso';
             fila.appendChild(construirBotonRecurso(escala.recursoDescargable));
             panel.appendChild(fila);
         }
-
         if (escala.guiaHTML) {
             const det = document.createElement('details');
             det.className = 'dinamometria-info escala-info';
             const sum = document.createElement('summary');
-            sum.textContent = 'Cómo usar e interpretar esta escala';
+            sum.textContent = escala.tituloGuia || 'Cómo usar e interpretar esta escala';
             det.appendChild(sum);
             const cuerpo = document.createElement('div');
             cuerpo.innerHTML = escala.guiaHTML; // texto escrito por el usuario en el .js
             det.appendChild(cuerpo);
             panel.appendChild(det);
         }
+        return panel;
+    }
+
+    // Escala de una sola respuesta con descripciones por grado (p. ej. mMRC 0-4):
+    // muestra todas las descripciones y permite elegir una única.
+    function construirPanelGrado(escala, campos, regenerar, opciones) {
+        const panel = construirCabeceraEscala(escala, !!(opciones && opciones.sinTitulo));
+        const clave = escala.id + '__grado';
+        const etiquetas = escala.grados.map((g) => `${g.valor} · ${g.descripcion}`);
+        const mapa = {};
+        escala.grados.forEach((g, i) => { mapa[etiquetas[i]] = g.valor; });
+
+        const resultado = document.createElement('div');
+        resultado.className = 'escala-resultado';
+        resultado.setAttribute('aria-live', 'polite');
+        const actualizar = () => {
+            const v = campos[clave];
+            resultado.className = 'escala-resultado';
+            if (typeof v === 'number') {
+                resultado.classList.add('escala-resultado-ok');
+                resultado.textContent = `Grado seleccionado: ${v}`;
+            } else {
+                resultado.textContent = 'Sin seleccionar. Marca una única respuesta.';
+            }
+        };
+        panel.appendChild(construirGrupoBotones({
+            id: clave, sinEtiqueta: true, opciones: etiquetas, mapaValores: mapa, claseExtra: 'escala-grado'
+        }, campos, () => { actualizar(); regenerar(); }));
+        panel.appendChild(resultado);
+        actualizar();
+        return panel;
+    }
+
+    // Construye el panel completo de una escala (botón PDF, guía, ítems 0-N,
+    // resultado). Es independiente de la sección: recibe el almacén de campos
+    // y la función que regenera el texto de esa sección.
+    function construirPanelEscala(escala, campos, regenerar, opciones) {
+        const sinTitulo = !!(opciones && opciones.sinTitulo);
+        if (escala.tipo === 'gradoUnico') return construirPanelGrado(escala, campos, regenerar, opciones);
+        const conSubescalas = Array.isArray(escala.subescalas);
+        const panel = construirCabeceraEscala(escala, sinTitulo);
 
         const maxItem = escala.puntuacionMaxPorItem || 5;
         const aviso = document.createElement('p');
@@ -1531,8 +1658,34 @@
         resultado.setAttribute('aria-live', 'polite');
 
         const actualizar = () => {
-            const r = calcularEscala(escala, campos);
             resultado.className = 'escala-resultado';
+            if (conSubescalas) {
+                const r = calcularSubescalas(escala, campos);
+                if (!r.subs.some((x) => x.contestados > 0)) {
+                    resultado.textContent = 'Sin puntuación todavía.';
+                    return;
+                }
+                resultado.classList.add('escala-resultado-multilinea');
+                const lineas = r.subs.map((x) => x.completa
+                    ? `${x.titulo}: ${x.suma}/${x.max}`
+                    : `${x.titulo}: incompleto (${x.contestados} de ${x.total} contestados)`);
+                lineas.push(r.total.completa
+                    ? `Total: ${r.total.suma}/${r.total.max}`
+                    : 'Total: pendiente de completar todos los apartados');
+                if (r.total.completa) resultado.classList.add('escala-resultado-ok');
+                resultado.textContent = lineas.join('\n');
+                return;
+            }
+            const r = calcularEscala(escala, campos);
+            if (escala.maxItemsSinContestar === 0 && r.contestados < r.total) {
+                // Cuestionario estricto (p. ej. CAT): no se muestra total parcial.
+                resultado.classList.add('escala-resultado-pendiente');
+                resultado.textContent = r.contestados === 0
+                    ? `Sin puntuación todavía. Respondidas: 0 de ${r.total}.`
+                    : `Cuestionario incompleto: ${r.contestados} de ${r.total} respondidas. ` +
+                      'No se muestra puntuación total hasta completarlo.';
+                return;
+            }
             if (r.contestados === 0) {
                 resultado.textContent = 'Sin puntuación todavía.';
             } else if (!r.valido) {
@@ -1541,7 +1694,8 @@
                     `(se admiten como máximo ${escala.maxItemsSinContestar}). No se incluirá puntuación en el texto.`;
             } else {
                 resultado.classList.add('escala-resultado-ok');
-                resultado.textContent = `Puntuación: ${textoResultadoEscala(escala, campos)}`;
+                resultado.textContent = `Puntuación: ${textoResultadoEscala(escala, campos)}` +
+                    (escala.maxItemsSinContestar === 0 ? ` · ${r.contestados} de ${r.total} respondidas` : '');
             }
         };
         const alCambiar = () => { actualizar(); regenerar(); };
@@ -1549,58 +1703,90 @@
         const opcionesBotones = [];
         for (let n = 0; n <= maxItem; n++) opcionesBotones.push(String(n));
 
-        const listaItems = document.createElement('div');
-        listaItems.className = 'escala-items';
-        escala.items.forEach((it) => {
-            const clave = escala.id + '__' + it.id;
-            const bloque = document.createElement('div');
-            bloque.className = 'escala-item-bloque';
+        // Construye la lista de ítems de un bloque (toda la escala o una subescala)
+        const construirListaItems = (items) => {
+            const listaItems = document.createElement('div');
+            listaItems.className = 'escala-items';
+            items.forEach((it) => {
+                const clave = escala.id + '__' + it.id;
+                const bloque = document.createElement('div');
+                bloque.className = 'escala-item-bloque';
 
-            // El grupo de botones guarda texto "0".."5"; aquí lo guardamos como número.
-            const almacen = new Proxy({}, {
-                set(_, prop, valor) {
-                    if (prop === clave) campos[clave] = Number(valor);
-                    return true;
-                },
-                deleteProperty(_, prop) {
-                    if (prop === clave) delete campos[clave];
-                    return true;
-                }
-            });
-
-            // Texto de la opción elegida (si el ítem trae sus opciones), para
-            // poder contrastarlo con el cuestionario en papel.
-            const textoItem = document.createElement('p');
-            textoItem.className = 'escala-item-texto';
-            textoItem.hidden = true;
-            const actualizarTextoItem = () => {
-                const v = campos[clave];
-                if (Array.isArray(it.opciones) && typeof v === 'number' && it.opciones[v]) {
-                    textoItem.textContent = v + ' · ' + it.opciones[v];
-                    textoItem.hidden = false;
-                } else {
-                    textoItem.textContent = '';
-                    textoItem.hidden = true;
-                }
-            };
-
-            const grupoItem = construirGrupoBotones(
-                { id: clave, etiqueta: it.etiqueta, opciones: opcionesBotones, claseExtra: 'escala-item' },
-                almacen,
-                () => { actualizarTextoItem(); alCambiar(); }
-            );
-            // Al pasar el ratón por cada número se ve la frase del cuestionario
-            // que le corresponde (ayuda a transcribir lo que marcó el paciente).
-            if (Array.isArray(it.opciones)) {
-                grupoItem.querySelectorAll('button').forEach((b, i) => {
-                    if (it.opciones[i]) b.title = i + ' · ' + it.opciones[i];
+                // El grupo de botones guarda texto "0".."N"; aquí lo guardamos como número.
+                const almacen = new Proxy({}, {
+                    set(_, prop, valor) {
+                        if (prop === clave) campos[clave] = Number(valor);
+                        return true;
+                    },
+                    deleteProperty(_, prop) {
+                        if (prop === clave) delete campos[clave];
+                        return true;
+                    }
                 });
-            }
-            bloque.appendChild(grupoItem);
-            bloque.appendChild(textoItem);
-            listaItems.appendChild(bloque);
-        });
-        panel.appendChild(listaItems);
+
+                // Texto de la opción elegida (si el ítem trae sus opciones), para
+                // poder contrastarlo con el cuestionario en papel.
+                const textoItem = document.createElement('p');
+                textoItem.className = 'escala-item-texto';
+                textoItem.hidden = true;
+                const actualizarTextoItem = () => {
+                    const v = campos[clave];
+                    if (Array.isArray(it.opciones) && typeof v === 'number' && it.opciones[v]) {
+                        textoItem.textContent = v + ' · ' + it.opciones[v];
+                        textoItem.hidden = false;
+                    } else {
+                        textoItem.textContent = '';
+                        textoItem.hidden = true;
+                    }
+                };
+
+                const grupoItem = construirGrupoBotones(
+                    { id: clave, etiqueta: it.etiqueta, opciones: opcionesBotones, claseExtra: 'escala-item' },
+                    almacen,
+                    () => { actualizarTextoItem(); alCambiar(); }
+                );
+                // Al pasar el ratón por cada número se ve la frase del cuestionario
+                // que le corresponde (ayuda a transcribir lo que marcó el paciente).
+                if (Array.isArray(it.opciones)) {
+                    grupoItem.querySelectorAll('button').forEach((b, i) => {
+                        if (it.opciones[i]) b.title = i + ' · ' + it.opciones[i];
+                    });
+                }
+                if (Array.isArray(it.anclas) && it.anclas.length === 2) {
+                    const btns = grupoItem.querySelectorAll('button');
+                    btns[0].title = '0 · ' + it.anclas[0];
+                    btns[btns.length - 1].title = maxItem + ' · ' + it.anclas[1];
+                    const anclas = document.createElement('p');
+                    anclas.className = 'escala-item-anclas';
+                    anclas.textContent = `0 · ${it.anclas[0]}   —   ${maxItem} · ${it.anclas[1]}`;
+                    bloque.appendChild(grupoItem);
+                    bloque.appendChild(anclas);
+                } else {
+                    bloque.appendChild(grupoItem);
+                }
+                bloque.appendChild(textoItem);
+                listaItems.appendChild(bloque);
+            });
+            return listaItems;
+        };
+
+        if (conSubescalas) {
+            escala.subescalas.forEach((sub) => {
+                const h4 = document.createElement('h4');
+                h4.className = 'escala-subtitulo';
+                h4.textContent = sub.titulo;
+                panel.appendChild(h4);
+                if (sub.instrucciones) {
+                    const ins = document.createElement('p');
+                    ins.className = 'escala-subinstrucciones';
+                    ins.textContent = sub.instrucciones;
+                    panel.appendChild(ins);
+                }
+                panel.appendChild(construirListaItems(sub.items));
+            });
+        } else {
+            panel.appendChild(construirListaItems(escala.items));
+        }
         panel.appendChild(resultado);
         actualizar();
         return panel;
@@ -1651,7 +1837,7 @@
         if (ef.inspeccionPalpacion) {
             const insp = [];
             ef.inspeccionPalpacion.campos.forEach((campo) => {
-                const t = formatearValorCampo(campo, campos[campo.id]);
+                const t = textoCampoExploracion(campo, campos);
                 if (t) insp.push(t);
             });
             if (insp.length) partes.push(`INSPECCIÓN Y PALPACIÓN: ${insp.join('; ')}.`);
@@ -1686,7 +1872,7 @@
         if (ef.pruebasFuncionales) {
             const pf = [];
             (ef.pruebasFuncionales.campos || []).forEach((campo) => {
-                const t = formatearValorCampo(campo, campos[campo.id]);
+                const t = textoCampoExploracion(campo, campos);
                 if (t) pf.push(t);
             });
             if (pf.length) partes.push(`${(ef.pruebasFuncionales.tituloTexto || ef.pruebasFuncionales.titulo).toUpperCase()}: ${pf.join('; ')}.`);
@@ -1724,6 +1910,15 @@
                 }
             });
             if (tests.length) partes.push(`TESTS ESPECÍFICOS: ${tests.join('; ')}.`);
+            // Bloques de campos dentro de "pruebas específicas" (p. ej. espirometría)
+            (ef.testsEspecificos.grupos || []).forEach((g) => {
+                const pg = [];
+                (g.campos || []).forEach((campo) => {
+                    const t = textoCampoExploracion(campo, campos);
+                    if (t) pg.push(t);
+                });
+                if (pg.length) partes.push(`${(g.tituloTexto || g.titulo).toUpperCase()}: ${pg.join('; ')}.`);
+            });
         }
 
         // Escalas puntuadas (NDI…): siempre al final. Sin datos válidos no se escribe nada.
@@ -1856,11 +2051,155 @@
        Constructores de campos genéricos (data-driven)
        ========================================================== */
 
+
+    /* ==========================================================
+       CAMPOS: fecha, validación de rango y IMC calculado
+       ========================================================== */
+
+    function rellenar2(n) { return String(n).padStart(2, '0'); }
+
+    function hoyISO() {
+        const d = new Date();
+        return d.getFullYear() + '-' + rellenar2(d.getMonth() + 1) + '-' + rellenar2(d.getDate());
+    }
+
+    // "2026-09-12" -> "12/09/2026". Devuelve '' si no es una fecha real o es futura.
+    function fechaEs(iso) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
+        if (!m) return '';
+        const f = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+        if (f.getFullYear() !== Number(m[1]) || f.getMonth() !== Number(m[2]) - 1 || f.getDate() !== Number(m[3])) return '';
+        if (iso > hoyISO()) return '';
+        return `${m[3]}/${m[2]}/${m[1]}`;
+    }
+
+    // Número desde texto con punto o coma decimal; null si no es un número.
+    function leerNumero(valor) {
+        if (valor === undefined || valor === null || String(valor).trim() === '') return null;
+        const n = parseFloat(String(valor).replace(',', '.'));
+        return Number.isFinite(n) ? n : null;
+    }
+
+    function enRango(n, rango) {
+        return n !== null && (!rango || (n >= rango[0] && n <= rango[1]));
+    }
+
+    // 62.5 -> "62,5" (coma decimal, sin ceros de más)
+    function numeroEs(n) {
+        return String(n).replace('.', ',');
+    }
+
+    // Mensaje de aviso para un campo con valor no válido ('' si es válido o está vacío)
+    function mensajeAvisoCampo(campo, valor) {
+        if (valor === undefined || valor === null || String(valor).trim() === '') return '';
+        if (campo.tipo === 'fecha') {
+            return fechaEs(valor) ? '' : 'La fecha no es válida o es posterior a hoy. No se incluirá en el texto.';
+        }
+        if (campo.tipo === 'numero' && campo.rangoValido) {
+            if (enRango(leerNumero(valor), campo.rangoValido)) return '';
+            const base = campo.mensajeRango ||
+                `Valor fuera del rango esperado (${numeroEs(campo.rangoValido[0])} a ${numeroEs(campo.rangoValido[1])}).`;
+            return base + ' No se incluirá en el texto.';
+        }
+        return '';
+    }
+
+    // IMC = peso (kg) / talla (m)². Solo con peso y talla plausibles.
+    function calcularImc(campo, campos) {
+        const peso = leerNumero(campos[campo.idPeso]);
+        const talla = leerNumero(campos[campo.idTalla]);
+        const pesoOk = enRango(peso, campo.pesoRango || [20, 300]);
+        const tallaOk = enRango(talla, campo.tallaRango || [100, 250]);
+        const imc = (pesoOk && tallaOk) ? peso / Math.pow(talla / 100, 2) : null;
+        return { peso: pesoOk ? peso : null, talla: tallaOk ? talla : null, imc };
+    }
+
+    function textoImc(campo, campos) {
+        const r = calcularImc(campo, campos);
+        const partes = [];
+        if (r.peso !== null) partes.push(`peso: ${numeroEs(r.peso)} kg`);
+        if (r.talla !== null) partes.push(`talla: ${numeroEs(r.talla)} cm`);
+        if (r.imc !== null) partes.push(`IMC: ${formatearNumeroEs(r.imc, 1)} kg/m²`);
+        return partes.join('; ');
+    }
+
+    // Texto de un campo de exploración para el texto clínico. Los campos con
+    // "textoFrase" (con {valor}) se redactan con esa frase; los que traen un
+    // valor no válido (fuera de rango, fecha futura) no se escriben.
+    function textoCampoExploracion(campo, campos) {
+        if (campo.tipo === 'imc') return textoImc(campo, campos);
+        const valor = campos[campo.id];
+        if (campo.tipo === 'fecha') {
+            const f = fechaEs(valor);
+            if (!f) return '';
+            return (campo.textoFrase || `${campo.etiqueta.toLowerCase()}: {valor}`).replace('{valor}', f);
+        }
+        if (campo.tipo === 'numero') {
+            const n = leerNumero(valor);
+            if (n === null) return '';
+            if (campo.rangoValido && !enRango(n, campo.rangoValido)) return '';
+            if (campo.textoFrase) return campo.textoFrase.replace('{valor}', numeroEs(n));
+            return formatearValorCampo(campo, String(n));
+        }
+        if (campo.textoFrase && (campo.tipo === 'select' || campo.tipo === 'texto')) {
+            let v = limpio(valor);
+            if (!v) return '';
+            if (campo.valorMinusculas) v = v.charAt(0).toLowerCase() + v.slice(1);
+            return campo.textoFrase.replace('{valor}', v);
+        }
+        return formatearValorCampo(campo, valor);
+    }
+
+    // Campo compuesto: peso (kg) + talla (cm) con IMC calculado al momento.
+    function construirCampoImc(campo, almacen, onCambio, prefijoId) {
+        const wrap = document.createElement('div');
+        wrap.className = 'campo-imc';
+        const titulo = document.createElement('span');
+        titulo.className = 'campo-imc-titulo';
+        titulo.textContent = campo.etiqueta;
+        wrap.appendChild(titulo);
+
+        const resultado = document.createElement('div');
+        resultado.className = 'imc-resultado';
+        resultado.setAttribute('aria-live', 'polite');
+        const actualizar = () => {
+            const r = calcularImc(campo, almacen);
+            if (r.imc !== null) {
+                resultado.textContent = `IMC: ${formatearNumeroEs(r.imc, 1)} kg/m²`;
+                resultado.classList.add('imc-resultado-ok');
+            } else {
+                resultado.textContent = 'IMC: introduce peso (kg) y talla (cm) para calcularlo.';
+                resultado.classList.remove('imc-resultado-ok');
+            }
+        };
+        const alCambiar = () => { actualizar(); onCambio(); };
+
+        const fila = document.createElement('div');
+        fila.className = 'campo-imc-fila';
+        fila.appendChild(construirCampoGenerico({
+            id: campo.idPeso, tipo: 'numero', etiqueta: 'Peso', unidad: 'kg',
+            min: 0, step: 0.1, rangoValido: campo.pesoRango || [20, 300],
+            mensajeRango: 'Revisa el peso: se espera en kilogramos (entre 20 y 300 kg).'
+        }, almacen, alCambiar, prefijoId));
+        fila.appendChild(construirCampoGenerico({
+            id: campo.idTalla, tipo: 'numero', etiqueta: 'Talla', unidad: 'cm',
+            min: 0, step: 1, rangoValido: campo.tallaRango || [100, 250],
+            mensajeRango: 'Revisa la talla: se espera en centímetros (entre 100 y 250 cm; por ejemplo, 168, no 1,68).'
+        }, almacen, alCambiar, prefijoId));
+        wrap.appendChild(fila);
+        wrap.appendChild(resultado);
+        if (campo.ayuda) wrap.appendChild(construirAyudaVisible(campo.ayuda));
+        actualizar();
+        return wrap;
+    }
+
     function construirCampoGenerico(campo, almacen, onCambio, prefijoId) {
         prefijoId = prefijoId || '';
         const wrap = document.createElement('label');
         wrap.className = 'campo-simple';
         if (campo.ayuda) wrap.title = campo.ayuda;
+
+        if (campo.tipo === 'imc') return construirCampoImc(campo, almacen, onCambio, prefijoId);
 
         if (campo.tipo === 'tristate' || campo.tipo === 'binario') {
             wrap.classList.add('campo-tristate');
@@ -1907,6 +2246,10 @@
             if (campo.min !== undefined) input.min = campo.min;
             if (campo.max !== undefined) input.max = campo.max;
             if (campo.step !== undefined) input.step = campo.step;
+        } else if (campo.tipo === 'fecha') {
+            input = document.createElement('input');
+            input.type = 'date';
+            input.max = hoyISO();
         } else if (campo.tipo === 'select') {
             input = document.createElement('select');
             input.innerHTML = '<option value="">Seleccionar…</option>' +
@@ -1920,15 +2263,39 @@
         }
         input.id = prefijoId + 'campo_' + campo.id;
         if (campo.ayuda) input.title = campo.ayuda;
+        const aviso = document.createElement('span');
+        aviso.className = 'campo-aviso';
+        aviso.hidden = true;
+        aviso.setAttribute('role', 'alert');
+        const revisarAviso = () => {
+            const msg = mensajeAvisoCampo(campo, input.value);
+            aviso.textContent = msg;
+            aviso.hidden = !msg;
+            input.classList.toggle('campo-invalido', !!msg);
+        };
         input.addEventListener('input', () => {
             almacen[campo.id] = input.value;
+            revisarAviso();
             onCambio();
         });
         input.addEventListener('change', () => {
             almacen[campo.id] = input.value;
+            revisarAviso();
             onCambio();
         });
-        wrap.appendChild(input);
+        if (campo.unidad) {
+            const fila = document.createElement('span');
+            fila.className = 'campo-con-unidad';
+            fila.appendChild(input);
+            const u = document.createElement('span');
+            u.className = 'campo-unidad';
+            u.textContent = campo.unidad;
+            fila.appendChild(u);
+            wrap.appendChild(fila);
+        } else {
+            wrap.appendChild(input);
+        }
+        wrap.appendChild(aviso);
         if (campo.ayuda) wrap.appendChild(construirAyudaVisible(campo.ayuda));
         return wrap;
     }
