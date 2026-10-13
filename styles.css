@@ -2202,3 +2202,48 @@ textarea:focus-visible {
     font-size: 0.95rem; line-height: 1; cursor: pointer;
 }
 .btn-info-mov:hover { background: var(--brand); color: #fff; }
+
+
+/* ---------- Escalas: texto de la opción elegida ---------- */
+.escala-item-bloque { display: grid; gap: 2px; }
+.escala-item-texto { margin: 2px 0 0; font-size: 0.85rem; color: var(--ink-soft, #566); }
+
+/* ---------- Ayuda emergente con formato (párrafos, títulos, separadores) ---------- */
+.modal-test-ayuda p { margin: 0.4em 0; }
+.modal-test-ayuda h3 { margin: 0.6em 0 0.3em; font-size: 1.05rem; }
+.modal-test-ayuda hr { border: 0; border-top: 1px solid var(--border, #d8dee4); margin: 0.9em 0; }
+.test-detalle { margin: -4px 0 12px 12px; }
+
+
+/* ---------- Escalas con subescalas (WOMAC) ---------- */
+.escala-subtitulo { margin: 16px 0 4px; font-size: 1rem; color: var(--brand-dark); }
+.escala-subinstrucciones { margin: 0 0 6px; font-size: 0.88rem; color: var(--ink-soft, #566); }
+.escala-resultado-multilinea { white-space: pre-line; }
+
+
+/* ---------- Campos con unidad, fecha, avisos de rango e IMC ---------- */
+.campo-simple input[type="date"] {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border, #cfd6dd);
+    border-radius: var(--radius-sm, 6px); font: inherit; background: var(--surface, #fff); color: inherit;
+}
+.campo-con-unidad { display: flex; align-items: center; gap: 8px; }
+.campo-con-unidad input { flex: 1 1 auto; min-width: 0; }
+.campo-unidad { color: var(--ink-soft, #566); font-weight: 600; white-space: nowrap; }
+.campo-aviso { display: block; margin-top: 4px; font-size: 0.85rem; color: var(--danger, #b3261e); }
+.campo-simple input.campo-invalido { border-color: var(--danger, #b3261e); }
+.campo-imc { grid-column: 1 / -1; display: grid; gap: 6px; }
+.campo-imc-titulo { font-weight: 600; }
+.campo-imc-fila { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.imc-resultado { padding: 8px 12px; border-radius: var(--radius-md, 8px); background: var(--surface-2, #f4f6f8); font-weight: 600; }
+.imc-resultado-ok { background: var(--brand-soft); color: var(--brand-dark); }
+.grupo-prueba { margin-top: 12px; }
+.grupo-prueba-titulo { margin: 8px 0 4px; font-size: 1rem; color: var(--brand-dark); }
+
+/* ---------- Escalas: resumen, notas, grado único, cuestionario incompleto ---------- */
+.escala-resumen { margin: 4px 0 8px; }
+.escala-nota-protocolo { margin: 0 0 8px; padding: 8px 10px; border-radius: var(--radius-md, 8px); background: var(--brand-soft); color: var(--brand-dark); font-size: 0.9rem; }
+.escala-aviso-version { margin: 0 0 8px; padding: 8px 10px; border-radius: var(--radius-md, 8px); border-left: 4px solid var(--accent); background: var(--surface-2, #f4f6f8); font-size: 0.9rem; }
+.escala-item-anclas { margin: 2px 0 0; font-size: 0.85rem; color: var(--ink-soft, #566); }
+.escala-grado .grupo-botones-fila { display: grid; gap: 6px; }
+.escala-grado .grupo-botones-fila button { width: 100%; text-align: left; white-space: normal; line-height: 1.35; padding: 10px 12px; }
+.escala-resultado-pendiente { border-left: 4px solid var(--accent); }
